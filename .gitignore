@@ -36,6 +36,8 @@ include/
 tests/
 cover/
 share/
+man/
+
 
 *.egg-info/
 .installed.cfg
