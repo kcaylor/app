@@ -1,18 +1,12 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}PulsePod - Login{% endblock %}
+{% block title %}PulsePod - Sign Up{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Login</h1>
+    <h1>Sign Up</h1>
 </div>
-<p>
-    New User? 
-    <a href="{{ url_for('auth.signup') }}">
-        Click here to sign up
-    </a>
-</p>
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
 </div>

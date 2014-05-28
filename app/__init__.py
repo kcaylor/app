@@ -1,14 +1,18 @@
-from flask import Flask, render_template
+from flask import Flask
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.mailgun import Mailgun
 from flask.ext.moment import Moment
-from flask.ext.mongoalchemy import MongoAlchemy
+from flask.ext.mongoengine import MongoEngine
+from flask.ext.login import LoginManager
 from config import config
 
 boostrap = Bootstrap()
 mail = Mailgun()
 moment = Moment()
-db = MongoAlchemy()
+db = MongoEngine()
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'auth.login'
 
 
 def create_app(config_name):
@@ -20,6 +24,7 @@ def create_app(config_name):
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
+    login_manager.init_app(app)
 
     # attach routes and custom error pages here
     from main import main as main_blueprint

@@ -5,7 +5,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('APP_SECRET')
-    MONGOALCHEMY_SERVER_AUTH = False
     MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN')
     MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY')
     PULSEPOD_MAIL_SENDER = 'PulsePod Admin <postmaster@pulsepod.io>'
@@ -19,25 +18,34 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    MONGOALCHEMY_DATABASE = os.environ.get('MONGOALCHEMY_DEV_DATABASE')
-    MONGOALCHEMY_SERVER = os.environ.get('MONGOALCHEMY_DEV_SERVER')
-    MONGOALCHEMY_USER = os.environ.get('MONGOALCHEMY_DEV_USER')
-    MONGOALCHEMY_PORT = os.environ.get('MONGOALCHEMY_DEV_PORT')
-    MONGOALCHEMY_PASSWORD = os.environ.get('MONGOALCHEMY_DEV_PASSWORD')
+    MONGODB_SETTINGS = {
+        "DB": os.environ.get('MONGODB_DEV_DATABASE'),
+        "USERNAME": os.environ.get('MONGODB_DEV_USER'),
+        "PASSWORD": os.environ.get('MONGODB_DEV_PASSWORD'),
+        "HOST": os.environ.get('MONGODB_DEV_HOST'),
+        "PORT": os.environ.get('MONGODB_DEV_PORT')
+    }
 
 
 class TestingConfig(Config):
     TESTING = True
-    MONGOALCHEMY_DATABASE = 'pulsepod'
-    MONGOALCHEMY_SERVER = 'localhost'
+    MONGODB_SETTINGS = {
+        "DB": 'testing',
+        "USERNAME": '',
+        "PASSWORD": '',
+        "HOST": 'localhost',
+        "PORT": 27017
+    }
 
 
 class ProductionConfig(Config):
-    MONGOALCHEMY_DATABASE = os.environ.get('MONGOALCHEMY_DATABASE')
-    MONGOALCHEMY_SERVER = os.environ.get('MONGOALCHEMY_SERVER')
-    MONGOALCHEMY_USER = os.environ.get('MONGOALCHEMY_USER')
-    MONGOALCHEMY_PORT = os.environ.get('MONGOALCHEMY_PORT')
-    MONGOALCHEMY_PASSWORD = os.environ.get('MONGOALCHEMY_PASSWORD')
+    MONGODB_SETTINGS = {
+        "DB": os.environ.get('MONGODB_DATABASE'),
+        "USERNAME": os.environ.get('MONGODB_USER'),
+        "PASSWORD": os.environ.get('MONGODB_PASSWORD'),
+        "HOST": os.environ.get('MONGODB_HOST'),
+        "PORT": os.environ.get('MONGODB_PORT')
+    }
 
 config = {
     'development': DevelopmentConfig,
