@@ -7,13 +7,9 @@
 <div class="page-header">
     <h1>Login</h1>
 </div>
-<p>
-    New User? 
-    <a href="{{ url_for('auth.signup') }}">
-        Click here to sign up
-    </a>
-</p>
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
+    <p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Reset it</a>.</p>
+    <p>New User? <a href="{{ url_for('auth.signup') }}">Sign up</a>.</p>
 </div>
 {% endblock %}

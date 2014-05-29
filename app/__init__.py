@@ -4,15 +4,21 @@ from flask.ext.mailgun import Mailgun
 from flask.ext.moment import Moment
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import LoginManager
+from flask.ext.assets import Environment, Bundle
+
 from config import config
 
 boostrap = Bootstrap()
 mail = Mailgun()
 moment = Moment()
 db = MongoEngine()
+assets = Environment()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+login_manager.login_message = \
+    'Give your data a pulse by logging in or signing up!'
+login_manager.login_message_category = "info"
 
 
 def create_app(config_name):
@@ -25,6 +31,21 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+    assets.init_app(app)
+
+    coffee = Bundle(
+        'coffee/test.coffee',
+        filters=['coffeescript', 'yui_js'],
+        output='js/app.js'
+    )
+    assets.register('coffee_app', coffee)
+
+    stylus = Bundle(
+        'stylus/test.styl',
+        filters=['stylus', 'yui_js'],
+        output='css/test.css'
+    )
+    assets.register('stylus_app', stylus)
 
     # attach routes and custom error pages here
     from main import main as main_blueprint

@@ -1,0 +1,267 @@
+
+#wrapper { 
+ margin: 20px;    
+}
+
+.grid-block, .main, .pod, .notebook, .comments li, .comment-form {
+    background: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+body {
+    background: #eee;
+    color: #666666;
+}
+
+.navbar { margin-bottom: 10px }
+.navbar .navbar-inner {
+    border-radius: 0px 0px 3px 3px;
+}
+
+#spinner { height: 300px }
+
+.notebook {
+    *zoom: 1;
+    -webkit-transition: all 300ms 0ms;
+    -webkit-transition-delay: ease-in;
+    -moz-transition: all 300ms 0ms ease-in;
+    -o-transition: all 300ms 0ms ease-in;
+    transition: all 300ms 0ms ease-in;
+    position: relative;
+    opacity: 1;
+}
+
+.notebook:before, .notebook:after {
+    content: "";
+    display: table;
+}
+
+.notebook:after { clear: both }
+.notebook.invisible { opacity: 0 }
+
+
+.notebook .favorite {
+    display: inline-block;
+    margin: 7px 12px 0 0;
+    float: right;
+}
+
+.notebook .share {
+    display: inline-block;
+    margin: 7px 12px 0 0;
+    float: right;
+}
+
+.notebook .notebook-content { float: left }
+.notebook .notebook-content h3 {
+    margin: 0;
+    line-height: 1.2;
+    font-size: 18px;
+}
+
+.notebook .notebook-content h3 a {
+    display: block;
+    margin-right: 10px;
+}
+.notebook .notebook-content h3 span {
+    font-weight: normal;
+    font-size: 14px;
+    display: inline-block;
+    color: #aaaaaa;
+}
+.notebook .notebook-content p { margin: 0 }
+
+.notebook .fav {
+    display: inline-block;
+    float: right;
+    margin-top: 7px;
+}
+
+.notebook .share {
+    display: inline-block;
+    float: right;
+    margin-top: 7px;
+}
+
+.notebook .edit {
+    display: block;
+    float: right;
+    margin-top: 7px;
+}
+
+
+.pod {
+    *zoom: 1;
+    -webkit-transition: all 300ms 0ms;
+    -webkit-transition-delay: ease-in;
+    -moz-transition: all 300ms 0ms ease-in;
+    -o-transition: all 300ms 0ms ease-in;
+    transition: all 300ms 0ms ease-in;
+    position: relative;
+    opacity: 1;
+}
+.pod:before, .pod:after {
+    content: "";
+    display: table;
+}
+.pod:after { clear: both }
+.pod.invisible { opacity: 0 }
+.pod .favorite {
+    display: block;
+    margin: 7px 12px 0 0;
+    float: left;
+}
+.pod .pod-content { float: left }
+.pod .pod-content h3 {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 18px;
+}
+.pod .pod-content h3 a {
+    display: inline-block;
+    margin-right: 10px;
+}
+.pod .pod-content h3 span {
+    font-weight: normal;
+    font-size: 14px;
+    display: inline-block;
+    color: #aaaaaa;
+}
+.pod .pod-content p { margin: 0 }
+
+.pod .fav {
+    display: block;
+    float: right;
+    margin-top: 7px;
+}
+.pod .share {
+    display: block;
+    float: right;
+    margin-top: 7px;
+}
+.pod .edit {
+    display: block;
+    float: right;
+    margin-top: 7px;
+}
+
+
+.comments {
+    list-style-type: none;
+    margin: 0;
+}
+.comments li h4 {
+    font-size: 16px;
+    margin: 0;
+}
+.comments li h4 .date {
+    font-size: 12px;
+    font-weight: normal;
+}
+.comments li h4 a { font-size: 12px }
+.comments li p:last-child { margin-bottom: 0 }
+
+.dropdown-menu span {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    line-height: 20px;
+    color: #bbb;
+    white-space: nowrap;
+}
+
+.load-more {
+    display: block;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.05);
+    text-align: center;
+    height: 60px;
+    line-height: 60px;
+    margin-bottom: 10px;
+}
+.load-more:hover {
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.capitalize {text-transform:capitalize;}
+
+@font-face {
+    font-family: 'icomoon';
+    src:url('fonts/icomoon.eot?-vtm6gz');
+    src:url('fonts/icomoon.eot?#iefix-vtm6gz') format('embedded-opentype'),
+        url('fonts/icomoon.woff?-vtm6gz') format('woff'),
+        url('fonts/icomoon.ttf?-vtm6gz') format('truetype'),
+        url('fonts/icomoon.svg?-vtm6gz#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-notebook:before {
+    content: "\e600";
+}
+
+#map { height: 180px; }
+
+
+.leaflet-animated-icon {
+  border-radius: 50%;
+  border: none;
+  opacity: .2;
+  background: black;
+}
+
+.leaflet-div-icon {
+    border-radius: 50%;
+    border: none;
+    line-height: 30px;
+    font-family: verdana;
+    text-align: center;
+    color: white;
+    opacity: .8;
+    vertical-align:middle;
+}
+
+.leaflet-div-icon.public {
+    background: #49AFCD;
+}
+
+.leaflet-div-icon.private {
+    background: #DA4F49;
+}
+
+/* Adjustments to account for mapbox.css box-sizing rules */
+.leaflet-control-zoomslider-knob { width:14px; height:6px; }
+.leaflet-container .leaflet-control-zoomslider-body {
+  -webkit-box-sizing:content-box;
+     -moz-box-sizing:content-box;
+          box-sizing:content-box;
+}
+
+.attribution {
+    position: absolute;
+    bottom: 0;
+    background-color: white;
+    padding: 3px;
+    padding-bottom: 0;
+}
+
+
+
+

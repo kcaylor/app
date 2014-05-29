@@ -1,0 +1,3 @@
+Vvar square;\u000a\u000asquare = function(x) {\u000a  return x * x;\u000a};\u000a
+p1
+.

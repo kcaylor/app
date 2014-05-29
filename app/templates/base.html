@@ -3,13 +3,20 @@
 {% block title %}PulsePod{% endblock %}
 
 {% block head %}
-{{ super() }}
-<link rel="shortcut icon" 
-    href="{{ url_for('static', filename = 'favicon.ico') }}"
-    type="image/x-icon">
-<link rel="icon"
-    href="{{ url_for('static', filename = 'favicon.ico') }}"
-    type="image/x-icon">
+    {{ super() }}
+    <link rel="shortcut icon" 
+        href="{{ url_for('static', filename = 'favicon.ico') }}"
+        type="image/x-icon">
+    <link rel="icon"
+        href="{{ url_for('static', filename = 'favicon.ico') }}"
+        type="image/x-icon">
+
+    {% assets "coffee_app" %}
+         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% assets "stylus_app" %}
+         <script type="text/css" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 {% endblock %}
 
 {% block navbar %}
@@ -32,7 +39,14 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated() %}
-                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    Account <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('auth.change_password') }}">Change Password</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                    </ul>
+                </li>
                 {% else %}
                 <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
                 {% endif %}
@@ -44,8 +58,8 @@
 
 {% block content %}
 <div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert-{{category}}">
         <button type="button" class="close" 
             data-dismiss="alert">&times;</button>
         {{ message }}

@@ -4,10 +4,34 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Hello, {% if current_user.is_authenticated() %}{{ current_user.username }}{% else %}Stranger{% endif %}!
+<h2>{% if current_user.is_authenticated() %}{{ current_user.username|capitalize }}'s 
+    &nbsp;{% endif %}Pod List
+</h2>
 </div>
-<div class="container">
-<p>The local date and time is {{ moment(current_time).format('LLL')}}.</p>
-<p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
+<div class="notebooks">
+{% for pod in pods %}
+<div class="notebook">
+    <div class="notebook-content">
+        <h3>
+            <a href="{{ url_for('main.pod_info', name=pod.name) }}">
+                {{ pod.name }}
+            </a>
+            <small>
+            <span class="label label-{{ label_voltage(pod.voltage) }}"> 
+                <span class="glyphicon glyphicon-flash"></span>
+                {{ pod.voltage|replace('None','unknown') }}
+            </span>
+            </small>
+        </h3>
+            <span>
+            {% if pod.last %}
+                &nbsp;Last updated {{ moment(pod.last).fromNow(refresh=True) }}
+            {% else %}
+                &nbsp;Waiting for first update
+            {% endif %}
+            </span>
+    </div>
+</div>
+{% endfor %}
 </div>
 {% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod - {{pod.name}}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+<h2>
+    {{pod.name}}
+</h2>
+</div>
+<div>
+{% if data %}
+<table class="table table-striped table-hover">
+<tr>
+    <th>Date</th><th>Variable</th><th>Value</th>
+</tr>
+{% for item in data %}
+<tr>
+    <td>{{ moment(item.time_stamp).format('LLL') }}</td>
+    <td>{{ item.sensor_name }}</td>
+    <td>{{ item.value|round(1) }}</td>
+</tr>
+{% endfor %}
+</ul>
+{% else %}
+Waiting for initial data
+{% endif %}
+{% endblock %}

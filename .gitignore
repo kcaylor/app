@@ -38,7 +38,6 @@ cover/
 share/
 man/
 
-
 *.egg-info/
 .installed.cfg
 *.egg
