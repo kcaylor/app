@@ -19,6 +19,7 @@ def make_shell_context():
     )
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command("assets", ManageAssets())
+manager.add_option('-c', '--config', dest='config', required=False)
 
 
 @manager.command
