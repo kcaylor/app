@@ -20,7 +20,7 @@ def index():
 @login_required
 def pod_info(name):
     pod = Pod.objects(name=name).first()
-    data = Data.objects(pod_name=name).limit(50)
+    data = Data.objects(pod_name=pod.name).limit(50)
     if len(data) is 0:
         flash('This pod needs to be deployed', 'warning')
     return render_template(

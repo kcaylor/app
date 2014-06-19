@@ -1,5 +1,6 @@
 var square;
 
-square = function(x) {
-  return x * x;
+square = function (x) {
+    "use strict";
+    return x * x;
 };

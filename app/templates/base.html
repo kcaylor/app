@@ -10,13 +10,6 @@
     <link rel="icon"
         href="{{ url_for('static', filename = 'favicon.ico') }}"
         type="image/x-icon">
-
-    {% assets "coffee_app" %}
-         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
-    {% assets "stylus_app" %}
-         <script type="text/css" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
 {% endblock %}
 
 {% block navbar %}

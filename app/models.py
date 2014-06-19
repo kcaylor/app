@@ -13,12 +13,96 @@ class Data(db.Document):
     pod_name = db.StringField(db_field='p')
     sensor_name = db.StringField(db_field='s')
     location = db.DictField(db_field='loc')
-#    pod = db.ObjectIdField()
-#    sensor = db.ObjectIdField()
+    pod = db.ObjectIdField()
+    sensor = db.ObjectIdField()
 
     meta = {
         'collection': 'data'
     }
+
+    def __repr__(self):
+        return '<Data %r>' % self.value
+
+    def get_id(self):
+        return unicode(self.id)
+
+    @staticmethod
+    def generate_fake(count=1000):
+        from faker import Faker
+        from random import random, randint
+        npods = len(Pod.objects())
+        nsensors = len(Sensor.objects())
+        fake = Faker()
+        for i in range(count):
+            pod = Pod.objects()[randint(0, npods-1)]
+            sensor = Sensor.objects()[randint(0, nsensors-1)]
+            data = Data(
+                time_stamp=fake.date_time_this_month(),
+                sensor_name=sensor.name,
+                pod_name=pod.name,
+                value=random()*100,
+                pod=pod.id,
+                sensor=sensor.id
+            )
+            try:
+                data.save()
+            except:
+                "Data save failed"
+
+
+class Sensor(db.Document):
+
+    name = db.StringField()
+    sid_hex = db.StringField()
+    sid = db.IntField(unique=True)
+    context = db.StringField()
+    variable = db.StringField()
+    nbytes = db.IntField()
+    fmt = db.StringField()
+    byte_order = db.StringField()
+    info = db.StringField()
+    unit = db.StringField()
+    m = db.FloatField()
+    b = db.FloatField()
+    sensing_chip = db.StringField()
+
+    meta = {
+        'collection': 'sensors'
+    }
+
+    def __repr__(self):
+        return '<Sensor %r>' % self.name
+
+    def get_id(self):
+        return unicode(self.id)
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import choice, randint, random
+        from faker import Faker
+
+        fake = Faker()
+        fake.seed(1234)
+        for i in range(count):
+            sensor = Sensor(
+                name=fake.domain_word(),
+                sid=randint(1, 256),
+                context=fake.domain_word(),
+                variable=fake.domain_word(),
+                nbytes=choice([2, 4, 8, 12, 16]),
+                fmt=choice(['x', 'c', 'b', 'B', '?', 'h', 'H',
+                            'i', 'I', 'l', 'L', 'q', 'Q', 'f',
+                            'd', 's', 'p', 'P']),
+                byteorder='<',
+                info=fake.catch_phrase(),
+                unit='b/s',
+                m=random(),
+                b=random(),
+            )
+            try:
+                sensor.save()
+            except:
+                "Sensor save failed"
 
 
 class Pod(db.Document):
@@ -29,7 +113,9 @@ class Pod(db.Document):
     qr = db.StringField()
     imei = db.StringField()
     radio = db.StringField()
-    last = db.DateTimeField()
+    created_at = db.DateTimeField(
+        default=datetime.datetime.now,
+        required=True)
     voltage = db.FloatField()
     mode = db.StringField()
     number = db.StringField()
@@ -51,6 +137,59 @@ class Pod(db.Document):
 
     def get_id(self):
         return unicode(self.id)
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import choice, randint
+        from faker import Faker
+
+        fake = Faker()
+        fake.seed(3123)
+        for i in range(count):
+            pod = Pod(
+                name=fake.first_name() + '-' + fake.last_name() + '-' +
+                str(fake.random_int(min=1000)),
+                owner=fake.user_name(),
+                pod_id=fake.random_int(min=20),
+                qr='https://s3.amazonaws.com/pulsepodqrsvgs/default.svg',
+                imei=str(randint(100000000000000, 999999999999999)),
+                radio='gsm',
+                last=fake.date_time_this_month(),
+                voltage=randint(300, 400),
+                mode=choice(['normal', 'teenager', 'asleep', 'inactive']),
+                number='6096584015',
+                nbk_name='Data from ' + fake.street_address(),
+                sensors=[],
+                sids=[randint(1, 20), randint(1, 20), randint(1, 20)],
+                location={
+                    'lat': float(fake.latitude()),
+                    'lng': float(fake.longitude()),
+                    'accuracy': randint(1, 100)
+                },
+                elevation={
+                    'elevation': randint(10, 1000),
+                    'resolution': randint(1, 10)
+                },
+                cellTowers={
+                    'cellId': randint(10000000, 99999999),
+                    'locationAreaCode': randint(10000, 99999),
+                    'mobileCountryCode': randint(100, 999),
+                    'mobileNetworkCode': randint(100, 999),
+                    'age': randint(0, 1000)
+                },
+                address={
+                    'formatted_address': fake.street_address(),
+                    'street_address': fake.street_address(),
+                    'country': fake.country(),
+                    'administrative_area_level_1': fake.state(),
+                    'administrative_area_level_2': fake.city(),
+                },
+                tags=fake.words(nb=5)
+            )
+            try:
+                pod.save()
+            except:
+                "Pod save failed"
 
 
 class User(UserMixin, db.Document):
