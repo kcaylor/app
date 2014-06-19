@@ -1,3 +1,2 @@
 # Procfile for app
-web: python manage.py runserver
-
+web: python -u manage.py serve

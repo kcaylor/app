@@ -30,5 +30,12 @@ def test():
     import nose
     nose.main(argv=[''])
 
+
+@manager.command
+def serve():
+    from waitress import serve
+    port = int(os.getenv('PORT', 5000))
+    serve(app, port=port)
+
 if __name__ == '__main__':
     manager.run()
