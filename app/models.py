@@ -13,8 +13,8 @@ class Data(db.Document):
     pod_name = db.StringField(db_field='p')
     sensor_name = db.StringField(db_field='s')
     location = db.DictField(db_field='loc')
-    pod = db.ObjectIdField()
-    sensor = db.ObjectIdField()
+    # pod = db.ObjectIdField()
+    # sensor = db.ObjectIdField()
 
     meta = {
         'collection': 'data'
@@ -127,6 +127,8 @@ class Pod(db.Document):
     cellTowers = db.DictField()
     address = db.DictField()
     tags = db.ListField()
+    last = db.DateTimeField()
+    notebook = db.IntField(db_field='_notebook')
 
     meta = {
         'collection': 'pods'
