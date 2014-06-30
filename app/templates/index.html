@@ -14,12 +14,12 @@
     <div class="notebook-content">
         <h3>
             <a href="{{ url_for('main.pod_info', name=pod.name) }}">
-                {{ pod.name }}
+                {{ pod.nbk_name }}
             </a>
             <small>
             <span class="label label-{{ label_voltage(pod.voltage) }}"> 
                 <span class="glyphicon glyphicon-flash"></span>
-                &nbsp;{{ pod.voltage | replace('None', 'unknown') }}
+                &nbsp;{{ pod.voltage|round(1)|replace('None', 'unknown') }}
             </span>
             </small>
         </h3>

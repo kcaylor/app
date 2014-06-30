@@ -8,7 +8,12 @@ from ..models import Pod, Data
 @main.route('/')
 @login_required
 def index():
-    pods = Pod.objects().order_by('-last').only('name', 'voltage', 'last')
+    pods = Pod.objects().order_by('-last').only(
+        'name',
+        'nbk_name',
+        'voltage',
+        'last'
+    )
     return render_template(
         'index.html',
         current_time=datetime.utcnow(),

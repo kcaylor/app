@@ -1,0 +1,15 @@
+.editable-buttons {
+    display: block;
+    padding: 5px;
+}
+
+.editable-container.editable-inline, .editableform > .control-group, .editable-input, .editableform .form-control {
+    width:100%;
+    
+}
+
+.notebook_name{
+    width:100%;
+    font-size: 30px;
+    padding: 5px;
+}

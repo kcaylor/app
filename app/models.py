@@ -105,6 +105,29 @@ class Sensor(db.Document):
                 "Sensor save failed"
 
 
+class Notebook(db.Document):
+
+    name = db.StringField(db_field='nbk_name')
+    pod_id = db.ObjectIdField(db_field='_id_pod')
+    notebook = db.IntField(db_field='_notebook')
+    elevation = db.DictField()
+    sensors = db.ListField()
+    sids = db.ListField()
+    location = db.DictField()
+    cellTowers = db.DictField()
+    address = db.DictField()
+
+    meta = {
+        'collection': 'pods_notebooks'
+    }
+
+    def __repr__(self):
+        return '<Notebook %r>' % self.name
+
+    def get_id(self):
+        return unicode(self.id)
+
+
 class Pod(db.Document):
 
     name = db.StringField()
@@ -120,16 +143,15 @@ class Pod(db.Document):
     mode = db.StringField()
     number = db.StringField()
     nbk_name = db.StringField()
-    sensors = db.ListField()
-    sids = db.ListField()
-    location = db.DictField()
-    elevation = db.DictField()
-    cellTowers = db.DictField()
-    address = db.DictField()
     tags = db.ListField()
     last = db.DateTimeField()
     notebook = db.IntField(db_field='_notebook')
-
+    elevation = db.DictField()
+    sensors = db.ListField()
+    sids = db.ListField()
+    location = db.DictField()
+    cellTowers = db.DictField()
+    address = db.DictField()
     meta = {
         'collection': 'pods'
     }
