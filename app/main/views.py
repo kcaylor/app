@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import render_template, flash
 from flask.ext.login import login_required
 from . import main
-from ..models import Pod, Data
+from ..models import Pod, Data, Sensor
 
 
 @main.route('/')
@@ -26,6 +26,7 @@ def index():
 def pod_info(name):
     pod = Pod.objects(name=name).first()
     data = Data.objects(pod_name=name).order_by('-t').limit(50)
+    sensors = Sensor.objects(sid__in=pod.sids)
     if pod.notebook <= 1:
         flash('This pod needs to be deployed', 'warning')
     if pod.notebook > 1 and len(data) is 0:
@@ -34,7 +35,8 @@ def pod_info(name):
         'pod_info.html',
         current_time=datetime.utcnow(),
         pod=pod,
-        data=data
+        data=data,
+        sensors=sensors
     )
 
 

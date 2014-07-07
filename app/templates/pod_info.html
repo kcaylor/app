@@ -26,11 +26,82 @@
     <a href="#" id="notebook_name" data-type="text" data-pk="{{pod.id}}" 
        data-url="{{ url_for('edit.nbk_name') }}" 
        data-title="Change this notebook name">{{pod.nbk_name}}</a>
-    
 </h2>
+    <span class="label label-default">Tags</span>
+    <span class="label label-primary">Will</span>
+    <span class="label label-success">Go</span>
+    <span class="label label-warning">Here</span>
 </div>
+<!-- Nav tabs -->
 <div>
+<ul class="nav nav-tabs" role="tablist">
+  <li class="active"><a href="#Location" role="tab" data-toggle="tab">Location</a></li>
+  <li><a href="#Sensors" role="tab" data-toggle="tab">Sensors <span class="badge">{{ sensors|count }}</span></a></li>
+  <li><a href="#Pod_Info" role="tab" data-toggle="tab">Pod Info</a></li>
+  <li><a href="#Notes" role="tab" data-toggle="tab">Notes</a></li>
+</ul>
+</div>
 
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active" id="Location">
+    <table id="location_table" class="table .table-striped">
+        <thead>
+        <tr>
+            <th>Address</th><th>Latitude</th><th>Longitude</th><th>Elevation</th>
+        </tr> 
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{pod.address['formatted_address']}}</td>
+                <td>{{pod.location['lat']|round(2)}}</td>
+                <td>{{pod.location['lng']|round(2)}}</td>
+                <td>{{pod.elevation['elevation']|round(0)}} &#177; {{pod.elevation['resolution']|round(0)}}</td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="Sensors">
+      <table id="sensor_table" class="table .table-striped">
+      <thead>
+        <tr>
+            {% for sensor in sensors %}
+                <th>{{sensor.context}} {{sensor.variable}}</th>
+            {% endfor %} 
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      </table>
+  </div>
+  <div class="tab-pane" id="Pod_Info">
+    <table id="pod_info_table" class="table .table-striped">
+      <thead>
+        <tr>
+            <th>Pod</th>
+            <th>Pod Id</th>
+            <th>Radio</th>
+            <th>Mode</th>
+            <th>Number</th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                <td>{{pod.name}}</td>
+                <td>{{pod.pod_id}}</td>
+                <td>{{pod.radio|upper}}</td>
+                <td>{{pod.mode}}</td>
+                <td>{{pod.number}}</td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="Notes">
+    Some functionality here to add notes about each deployment.
+  </div>
+</div>
+
+<div>
 {% if data %}
 <table id="data_table" class="display">
 <thead>
