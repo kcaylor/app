@@ -32,15 +32,32 @@
     <span class="label label-success">Go</span>
     <span class="label label-warning">Here</span>
 </div>
+{% if forecast %}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">Today's Conditions</h3>
+      <div class="text-right">
+      <small ><a href="http://forecast.io/" target="_blank">Powered by Forecast</a>
+      </small>
+      </div>
+  </div>
+  <div class="panel-body">
+    {{ forecast.daily['data'][0]['summary'] }} There is a forecast high temperature of 
+    {{ forecast.daily['data'][0]['apparentTemperatureMax']|round(1) }}&#8451;, and a low temperature of {{ forecast.daily['data'][0]['apparentTemperatureMin']|round(1) }}&#8451;.
+  </div>
+</div>
+{% endif %}
 <!-- Nav tabs -->
 <div>
 <ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#Location" role="tab" data-toggle="tab">Location</a></li>
-  <li><a href="#Sensors" role="tab" data-toggle="tab">Sensors <span class="badge">{{ sensors|count }}</span></a></li>
+  <li><a href="#Sensors" role="tab" data-toggle="tab">Sensors</span></a></li>
   <li><a href="#Pod_Info" role="tab" data-toggle="tab">Pod Info</a></li>
   <li><a href="#Notes" role="tab" data-toggle="tab">Notes</a></li>
 </ul>
 </div>
+
+<meta id="notebook-data" data-json="{{json}}">
 
 <!-- Tab panes -->
 <div class="tab-content">
@@ -97,12 +114,19 @@
     </table>
   </div>
   <div class="tab-pane" id="Notes">
-    Some functionality here to add notes about each deployment.
+    <br>
+    Some functionality will be added here to let users create time-stamped notes related to each deployment.
+    <br>
+    <br>
+    <br>
   </div>
 </div>
 
-<div>
+<div id="data_display">
 {% if data %}
+<!-- Dynamic:
+<table id="data_table_dynamic" class="display"></table>
+ -->
 <table id="data_table" class="display">
 <thead>
     <tr>
@@ -123,8 +147,9 @@
 </tr>
 {% endfor %}
 </tbody>
-</ul>
+</table>
 {% else %}
 No data reported for this deployment
 {% endif %}
+</div>
 {% endblock %}

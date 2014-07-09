@@ -10,6 +10,8 @@ class Config:
     PULSEPOD_MAIL_SENDER = 'PulsePod Admin <postmaster@pulsepod.io>'
     PULSEPOD_MAIL_SUBJECT_PREFIX = '[PulsePod] '
     PULSEPOD_ADMIN = os.environ.get('PULSEPOD_ADMIN')
+    FORECAST_API_KEY = os.environ.get('FORECAST_API_KEY')
+    FORECAST_URL = 'https://api.forecast.io/forecast/'
 
     @staticmethod
     def init_app(app):

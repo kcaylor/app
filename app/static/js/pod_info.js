@@ -1,5 +1,6 @@
 /*global $, document */
 $.fn.editable.defaults.mode = 'inline';
+
 $('#notebook_name').editable({
     placement: "right",
     inputclass: "notebook_name",
@@ -7,9 +8,19 @@ $('#notebook_name').editable({
     }
 });
 
+// var nbkData = $('#notebook-data').data();
+
 $(document).ready(function () {
     'use strict';
-    var table = $('#data_table').DataTable();
+    var table = $('#data_table').DataTable({
+        "order": [ 1, 'asc' ],
+        // "data": nbkData.json,
+        // "columns": [
+        //     { "title" : "Date"},
+        //     { "title" : "Sensor", "class": "center"},
+        //     { "title" : "Value", "class": "center"}
+        // ]
+    });
 
     $("#data_table tfoot th").each(function (i) {
         var select = $('<select><option value=""></option></select>')

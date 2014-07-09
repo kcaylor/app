@@ -3,7 +3,7 @@ from flask import render_template, flash
 from flask.ext.login import login_required
 from . import main
 from ..models import Pod, Data, Sensor
-
+from ..forecast import get_forecast
 
 @main.route('/')
 @login_required
@@ -24,9 +24,20 @@ def index():
 @main.route('/pods/<name>')
 @login_required
 def pod_info(name):
-    pod = Pod.objects(name=name).first()
-    data = Data.objects(pod_name=name).order_by('-t').limit(50)
-    sensors = Sensor.objects(sid__in=pod.sids)
+    pod = Pod.objects(
+        name=name
+        ).first()
+    data = Data.objects(
+        pod_name=name
+        ).order_by(
+            '-time_stamp'
+        ).only(
+            'time_stamp', 'value', 'sensor_name'
+        ).limit(100)
+    sensors = Sensor.objects(
+        sid__in=pod.sids
+        )
+    forecast = get_forecast(lat=pod.location['lat'], lng=pod.location['lng'])
     if pod.notebook <= 1:
         flash('This pod needs to be deployed', 'warning')
     if pod.notebook > 1 and len(data) is 0:
@@ -36,7 +47,9 @@ def pod_info(name):
         current_time=datetime.utcnow(),
         pod=pod,
         data=data,
-        sensors=sensors
+        sensors=sensors,
+        json=data.to_json(),
+        forecast=forecast
     )
 
 
