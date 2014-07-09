@@ -5,6 +5,7 @@ from . import main
 from ..models import Pod, Data, Sensor
 from ..forecast import get_forecast
 
+
 @main.route('/')
 @login_required
 def index():

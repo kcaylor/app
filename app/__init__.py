@@ -6,6 +6,8 @@ from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import LoginManager
 from flask.ext.assets import Environment, Bundle
 
+from forecast import weather_icon
+
 from config import config
 
 boostrap = Bootstrap()
@@ -57,5 +59,8 @@ def create_app(config_name):
 
     from .edit import edit as edit_blueprint
     app.register_blueprint(edit_blueprint, url_prefix='/edit')
+
+    # add in view function (context_processors)
+    app.jinja_env.globals.update(weather_icon=weather_icon)
 
     return app
