@@ -16,6 +16,7 @@ mail = Mailgun()
 moment = Moment()
 db = MongoEngine()
 assets = Environment()
+csrf = CsrfProtect()
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -35,7 +36,7 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
-    CsrfProtect(app)
+    csrf.init_app(app)
 
     # assets.init_app(app)
 
