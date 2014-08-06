@@ -13,7 +13,7 @@ import uuid
 @main.route('/')
 @login_required
 def index():
-    notebooks = Notebook.objects().order_by('-last').only(
+    notebooks = Notebook.objects(observations__gt=0).order_by('-last').only(
         'name',
         'voltage',
         'last'
