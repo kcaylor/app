@@ -12,14 +12,16 @@ class Config:
     PULSEPOD_ADMIN = os.environ.get('PULSEPOD_ADMIN')
     FORECAST_API_KEY = os.environ.get('FORECAST_API_KEY')
     FORECAST_URL = 'https://api.forecast.io/forecast/'
-
+    # STORMPATH_API_KEY_ID = os.environ.get('STORMPATH_API_KEY_ID')
+    # STORMPATH_API_KEY_SECRET = os.environ.get('STORMPATH_API_KEY_SECRET')
+    # STORMPATH_APPLICATION = os.environ.get('STORMPATH_APPLICATION')
+    
     @staticmethod
     def init_app(app):
         pass
 
 
 class DevelopmentConfig(Config):
-    ASSETS_DEBUG = True
     DEBUG = True
     MONGODB_SETTINGS = {
         "DB": os.environ.get('MONGODB_DEV_DATABASE'),
@@ -31,8 +33,8 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    ASSETS_DEBUG = True
     TESTING = True
+    WTF_CSRF_ENABLED=False
     MONGODB_SETTINGS = {
         "DB": 'testing',
         "USERNAME": '',

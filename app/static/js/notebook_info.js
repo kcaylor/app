@@ -5,6 +5,11 @@ $('#notebook_name').editable({
     placement: "right",
     inputclass: "notebook_name",
     error: function (errors) {
+    },
+    display: function (value, response) {
+        'use strict';
+        //render response into element
+        $(this).html(response);
     }
 });
 

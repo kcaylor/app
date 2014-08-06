@@ -5,6 +5,7 @@ from flask.ext.moment import Moment
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import LoginManager
 from flask.ext.assets import Environment, Bundle
+from flask.ext.wtf import CsrfProtect
 
 from forecast import weather_icon
 
@@ -34,6 +35,8 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+    CsrfProtect(app)
+
     # assets.init_app(app)
 
     # coffee = Bundle(

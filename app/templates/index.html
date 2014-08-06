@@ -5,27 +5,27 @@
 {% block page_content %}
 <div class="page-header">
 <h2>{% if current_user.is_authenticated() %}{{ current_user.username|capitalize }}'s 
-    &nbsp;{% endif %}Pod List
+    &nbsp;{% endif %}Notebook List
 </h2>
 </div>
 <div class="notebooks">
-{% for pod in pods %}
+{% for notebook in notebooks %}
 <div class="notebook">
     <div class="notebook-content">
         <h3>
-            <a href="{{ url_for('main.pod_info', name=pod.name) }}">
-                {{ pod.nbk_name }}
+            <a href="{{ url_for('main.notebook_info', _id=notebook.get_id() ) }}">
+                {{ notebook.name }}
             </a>
             <small>
-            <span class="label label-{{ label_voltage(pod.voltage) }}"> 
+            <span class="label label-{{ label_voltage(notebook.voltage) }}"> 
                 <span class="glyphicon glyphicon-flash"></span>
-                &nbsp;{{ pod.voltage|round(1)|replace('None', 'unknown') }}
+                &nbsp;{{ notebook.voltage|round(1)|replace('None', 'unknown') }}
             </span>
             </small>
         </h3>
             <span>
-            {% if pod.last %}
-                &nbsp;Last updated {{ moment(pod.last).fromNow(refresh=True) }}
+            {% if notebook.last %}
+                &nbsp;Last updated {{ moment(notebook.last).fromNow(refresh=True) }}
             {% else %}
                 &nbsp;Waiting for first update
             {% endif %}

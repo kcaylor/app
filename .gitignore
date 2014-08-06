@@ -37,6 +37,7 @@ tests/
 cover/
 share/
 man/
+tmp/
 
 *.egg-info/
 .installed.cfg

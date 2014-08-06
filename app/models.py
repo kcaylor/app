@@ -4,6 +4,12 @@ from . import db, login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 import datetime
+from faker.providers import BaseProvider
+
+
+class PulsePod(BaseProvider):
+        def sensor_name(self):
+            return 'bar'
 
 
 class Data(db.Document):
@@ -11,10 +17,12 @@ class Data(db.Document):
     time_stamp = db.DateTimeField(db_field='t')
     value = db.FloatField(db_field='v')
     pod_name = db.StringField(db_field='p')
+    nbk_id = db.StringField(db_field='n')
     sensor_name = db.StringField(db_field='s')
     location = db.DictField(db_field='loc')
-    # pod = db.ObjectIdField()
-    # sensor = db.ObjectIdField()
+    notebook = db.ObjectIdField()
+    pod = db.ObjectIdField()
+    sensor = db.ObjectIdField()
 
     meta = {
         'collection': 'data'
@@ -83,6 +91,7 @@ class Sensor(db.Document):
 
         fake = Faker()
         fake.seed(1234)
+        fake.add_provider(PulsePod)
         for i in range(count):
             sensor = Sensor(
                 name=fake.domain_word(),
@@ -107,18 +116,20 @@ class Sensor(db.Document):
 
 class Notebook(db.Document):
 
-    name = db.StringField(db_field='nbk_name')
-    pod_id = db.ObjectIdField(db_field='_id_pod')
-    notebook = db.IntField(db_field='_notebook')
+    name = db.StringField(db_field='name')
+    pod_id = db.IntField(db_field='pod_id')
+    nbk_id = db.StringField()
     elevation = db.DictField()
     sensors = db.ListField()
     sids = db.ListField()
     location = db.DictField()
     cellTowers = db.DictField()
     address = db.DictField()
+    last = db.DateTimeField()
+    voltage = db.FloatField()
 
     meta = {
-        'collection': 'pods_notebooks'
+        'collection': 'notebooks'
     }
 
     def __repr__(self):
@@ -126,6 +137,59 @@ class Notebook(db.Document):
 
     def get_id(self):
         return unicode(self.id)
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import choice, randint, sample
+        from faker import Faker
+        npods = len(Pod.objects())
+        nsensors = len(Sensor.objects())
+        nusers = len(User.objects())
+        fake = Faker()
+        fake.seed(3123)
+        for i in range(count):
+            pod = Pod.objects()[randint(0, npods-1)]
+            sensors = [Sensor.objects()[i] for i in sorted(
+                sample(range(len(Sensor.objects())), 3)
+            )]
+            notebook = Notebook(
+                pod=pod['id'],
+                owner=pod['owner'],
+                last=fake.date_time_this_week(),
+                name='Data from ' + fake.street_address(),
+                sensors=sensors,
+                sids=[sensors[x].id for x in range(len(sensors))],
+                location={
+                    'lat': float(fake.latitude()),
+                    'lng': float(fake.longitude()),
+                    'accuracy': randint(1, 100)
+                },
+                elevation={
+                    'elevation': randint(10, 1000),
+                    'resolution': randint(1, 10)
+                },
+                cellTowers={
+                    'cellId': randint(10000000, 99999999),
+                    'locationAreaCode': randint(10000, 99999),
+                    'mobileCountryCode': randint(100, 999),
+                    'mobileNetworkCode': randint(100, 999),
+                    'age': randint(0, 1000)
+                },
+                address={
+                    'formatted_address': fake.street_address(),
+                    'street_address': fake.street_address(),
+                    'country': fake.country(),
+                    'administrative_area_level_1': fake.state(),
+                    'administrative_area_level_2': fake.city(),
+                },
+                tags=fake.words(nb=5)
+            )
+            try:
+                notebook.save()
+                pod['current_notebook'] = notebook['id']
+                pod.save()
+            except:
+                "Notebook save failed"
 
 
 class Pod(db.Document):
@@ -139,19 +203,9 @@ class Pod(db.Document):
     created_at = db.DateTimeField(
         default=datetime.datetime.now,
         required=True)
-    voltage = db.FloatField()
     mode = db.StringField()
     number = db.StringField()
-    nbk_name = db.StringField()
-    tags = db.ListField()
-    last = db.DateTimeField()
-    notebook = db.IntField(db_field='_notebook')
-    elevation = db.DictField()
-    sensors = db.ListField()
-    sids = db.ListField()
-    location = db.DictField()
-    cellTowers = db.DictField()
-    address = db.DictField()
+    current_notebook = db.StringField()
     meta = {
         'collection': 'pods'
     }
@@ -164,25 +218,22 @@ class Pod(db.Document):
 
     @staticmethod
     def generate_fake(count=100):
-        from random import choice, randint
+        from random import choice, randint, sample
         from faker import Faker
-
+        nusers = len(User.objects())
         fake = Faker()
         fake.seed(3123)
         for i in range(count):
             pod = Pod(
                 name=fake.first_name() + '-' + fake.last_name() + '-' +
                 str(fake.random_int(min=1000)),
-                owner=fake.user_name(),
+                owner=User.objects()[randint(0, nusers-1)]['id'],
                 pod_id=fake.random_int(min=20),
                 qr='https://s3.amazonaws.com/pulsepodqrsvgs/default.svg',
                 imei=str(randint(100000000000000, 999999999999999)),
                 radio='gsm',
-                last=fake.date_time_this_month(),
-                voltage=randint(300, 400),
                 mode=choice(['normal', 'teenager', 'asleep', 'inactive']),
                 number='6096584015',
-                nbk_name='Data from ' + fake.street_address(),
                 sensors=[],
                 sids=[randint(1, 20), randint(1, 20), randint(1, 20)],
                 location={

@@ -2,51 +2,54 @@ from datetime import datetime
 from flask import render_template, flash
 from flask.ext.login import login_required
 from . import main
-from ..models import Pod, Data, Sensor
+from ..models.pod import Pod
+from ..models.data import Data
+from ..models.sensor import Sensor
+from ..models.notebook import Notebook
 from ..forecast import get_forecast
+import uuid
 
 
 @main.route('/')
 @login_required
 def index():
-    pods = Pod.objects().order_by('-last').only(
+    notebooks = Notebook.objects().order_by('-last').only(
         'name',
-        'nbk_name',
         'voltage',
         'last'
     )
     return render_template(
         'index.html',
         current_time=datetime.utcnow(),
-        pods=pods
+        notebooks=notebooks
     )
 
 
-@main.route('/pods/<name>')
+@main.route('/notebook/<_id>')
 @login_required
-def pod_info(name):
-    pod = Pod.objects(
-        name=name
+def notebook_info(_id):
+    notebook = Notebook.objects(
+        id=_id
         ).first()
     data = Data.objects(
-        pod_name=name
+        notebook=notebook
         ).order_by(
             '-time_stamp'
         ).only(
-            'time_stamp', 'value', 'sensor_name'
+            'time_stamp', 'value', 'variable'
         ).limit(100)
     sensors = Sensor.objects(
-        sid__in=pod.sids
+        sid__in=notebook.sids
         )
-    forecast = get_forecast(lat=pod.location['lat'], lng=pod.location['lng'])
-    if pod.notebook <= 1:
-        flash('This pod needs to be deployed', 'warning')
-    if pod.notebook > 1 and len(data) is 0:
+    forecast = get_forecast(
+        lat=notebook.lat(),
+        lng=notebook.lng())
+    if len(data) is 0:
         flash('Waiting for initial data transmission', 'warning')
     return render_template(
-        'pod_info.html',
+        'notebook_info.html',
         current_time=datetime.utcnow(),
-        pod=pod,
+        notebook=notebook,
         data=data,
         sensors=sensors,
         json=data.to_json(),

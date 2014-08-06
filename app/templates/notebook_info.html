@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} PulsePod - {{pod.name}}{% endblock %}
+{% block title %} PulsePod - {{notebook.name}}{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -18,15 +18,15 @@
     <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/js/bootstrap-editable.min.js"></script>
     <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
-    <script src="/static/js/pod_info.js"></script>
+    <script src="/static/js/notebook_info.js"></script>
 {% endblock %}
 
 {% block page_content %}
 <div class="page-header">
 <h2>
-    <a href="#" id="notebook_name" data-type="text" data-pk="{{pod.id}}" 
+    <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}" 
        data-url="{{ url_for('edit.nbk_name') }}" 
-       data-title="Change this notebook name">{{pod.nbk_name}}</a>
+       data-title="Change this notebook name">{{notebook.name}}</a>
 </h2>
     <span class="label label-default">Tags</span>
     <span class="label label-primary">Will</span>
@@ -110,10 +110,10 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{pod.address['formatted_address']}}</td>
-                <td>{{pod.location['lat']|round(2)}}</td>
-                <td>{{pod.location['lng']|round(2)}}</td>
-                <td>{{pod.elevation['elevation']|round(0)}} &#177; {{pod.elevation['resolution']|round(0)}}</td>
+                <td>{{notebook.address['formatted_address']}}</td>
+                <td>{{notebook.location['coordinates'][1]|round(2)}}</td>
+                <td>{{notebook.location['coordinates'][0]|round(2)}}</td>
+                <td>{{notebook.elevation['elevation']|round(0)}} &#177; {{notebook.elevation['resolution']|round(0)}}</td>
             </tr>
         </tbody>
     </table>
@@ -144,11 +144,11 @@
       </thead>
         <tbody>
             <tr>
-                <td>{{pod.name}}</td>
-                <td>{{pod.pod_id}}</td>
-                <td>{{pod.radio|upper}}</td>
-                <td>{{pod.mode}}</td>
-                <td>{{pod.number}}</td>
+                <td>{{notebook.pod.name}}</td>
+                <td>{{notebook.pod.pod_id}}</td>
+                <td>{{notebook.pod.radio|upper}}</td>
+                <td>{{notebook.pod.mode}}</td>
+                <td>{{notebook.pod.number}}</td>
             </tr>
         </tbody>
     </table>
@@ -182,7 +182,7 @@
 {% for item in data %}
 <tr>
     <td data-order="{{item.time_stamp}}" >{{ moment(item.time_stamp).format('LLL') }}</td>
-    <td>{{ item.sensor_name }}</td>
+    <td>{{ item.variable }}</td>
     <td>{{ item.value|round(1) }}</td>
 </tr>
 {% endfor %}

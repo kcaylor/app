@@ -2,15 +2,16 @@ import json
 from flask.ext.login import login_required
 from flask import request
 from . import edit
-from ..models import Pod
+from ..models.notebook import Notebook
 
 
 @edit.route('/nbk_name', methods=['POST'])
 @login_required
 def nbk_name():
-    # pod = Pod.objects(id=request.form["pk"])
-    # pod.nbk_name = request.form["value"]
+    notebook = Notebook.objects(id=request.form["pk"]).first()
+    notebook.name = request.form["value"]
     # result = {}
-    # pod.save()
-    # return json.dumps(result)
-    return request.form["pk"]
+    notebook.save()
+    # return notebook.name
+    # return json.dumps({'message': 'hello'})
+    return str(notebook.name)
