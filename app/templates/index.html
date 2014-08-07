@@ -16,6 +16,10 @@
             <a href="{{ url_for('main.notebook_info', _id=notebook.get_id() ) }}">
                 {{ notebook.name }}
             </a>
+            <br>
+            <small>
+                <span class="badge">{{ notebook.observations }}</span>
+            </small>
             <small>
             <span class="label label-{{ label_voltage(notebook.voltage) }}"> 
                 <span class="glyphicon glyphicon-flash"></span>

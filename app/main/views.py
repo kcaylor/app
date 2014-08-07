@@ -16,7 +16,8 @@ def index():
     notebooks = Notebook.objects(observations__gt=0).order_by('-last').only(
         'name',
         'voltage',
-        'last'
+        'last',
+        'observations'
     )
     return render_template(
         'index.html',
