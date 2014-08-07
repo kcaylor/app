@@ -37,6 +37,10 @@ class Pod(db.Document):
     observations = db.IntField(
         default=0
     )
+    about = db.StringField(
+        default=''
+    )
+
     meta = {
         'collection': 'pods',
         'indexes': [
