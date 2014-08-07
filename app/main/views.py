@@ -58,6 +58,20 @@ def notebook_info(_id):
     )
 
 
+@main.route('/map')
+@login_required
+def map():
+    notebooks = Notebook.objects(observations__gt=0).order_by('-last').only(
+        'name',
+        'location',
+        'nbk_id',
+    )
+    return render_template(
+        'map.html',
+        notebooks=notebooks
+    )
+
+
 @main.context_processor
 def helper_functions():
 

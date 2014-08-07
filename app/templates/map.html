@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod - Map{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link href="/static/css/MarkerCluster.css" rel="stylesheet">
+    <link href="/static/css/MarkerCluster.Default.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="/static/js/leaflet.markercluster.js"></script>
+    <script src="/static/js/map.js"></script>
+
+    <script>
+        var map = L.map('map').setView([20, -100 ], 2);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+            {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', maxZoom: 18 }).addTo(map);
+        
+        var markers = L.markerClusterGroup();
+
+        {% for notebook in notebooks %}
+            var marker = L.marker(
+                new L.LatLng({{ notebook.lat() }}, 
+                             {{ notebook.lng() }}),
+                            { title: "{{notebook.name}}" });
+            marker.bindPopup("{{ notebook.name }}");
+            markers.addLayer(marker);
+        {% endfor %}
+
+        map.addLayer(markers);
+
+    </script>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+<h2>Map of&nbsp;{% if current_user.is_authenticated() %}{{ current_user.username|capitalize }}'s 
+    &nbsp;{% endif %}Notebooks
+</h2>
+</div>
+
+<div id="map" style='width: 900px; height: 350px'></div>
+{% endblock %}  

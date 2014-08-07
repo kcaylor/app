@@ -57,6 +57,10 @@ class Notebook(db.Document):
     def lng(self):
         return self.location['coordinates'][0]
 
+    def map_coords(self):
+        return [self.location['coordinates'][1],
+                self.location['coordinates'][0]]
+
     @staticmethod
     def generate_fake(count=100):
         from random import choice, randint, sample

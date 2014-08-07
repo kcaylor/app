@@ -38,6 +38,8 @@ cover/
 share/
 man/
 tmp/
+bower_components/
+
 
 *.egg-info/
 .installed.cfg
