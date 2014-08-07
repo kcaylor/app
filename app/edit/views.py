@@ -7,7 +7,7 @@ from ..models.notebook import Notebook
 
 @edit.route('/nbk_name', methods=['POST'])
 @login_required
-@csrf.exempt
+@csrf.excempt
 def nbk_name():
     notebook = Notebook.objects(id=request.form["pk"]).first()
     notebook.name = request.form["value"]
