@@ -15,6 +15,15 @@ def nbk_name():
     return str(notebook.name)
 
 
+@edit.route('/nbk_tags', methods=['POST'])
+@login_required
+def nbk_tags():
+    notebook = Notebook.objects(id=request.form["nbk_id"]).first()
+    notebook.tags = str(request.form["tags"]).split(',')
+    notebook.save()
+    return str(notebook.tags)
+
+
 @edit.route('/nbk_notes', methods=['POST'])
 @login_required
 # @csrf.exempt

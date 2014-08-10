@@ -1,6 +1,8 @@
 /*global $, document */
 
 var csrftoken = $('meta[name=csrf-token]').attr('content');
+var nbk_id = $('meta[name=nbk_id]').attr('content');
+var nbk_tags = $('meta[name=nbk_tags]').attr('content');
 
 $.ajaxSetup({
     beforeSend: function (xhr, settings) {
@@ -24,6 +26,15 @@ $('#notebook_name').editable({
         $(this).html(response);
     }
 });
+
+
+$(".tm-input").tagsManager({
+    prefilled: nbk_tags,
+    AjaxPush: '/edit/nbk_tags',
+    AjaxPushAllTags: true,
+    AjaxPushParameters: { 'nbk_id': nbk_id }
+});
+
 
 // var nbkData = $('#notebook-data').data();
 

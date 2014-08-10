@@ -8,31 +8,38 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
     <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet">
     <link href="/static/css/weather-icons.min.css" rel="stylesheet">
+    <link href="/static/css/tagmanager.css" rel="stylesheet">
     <link href="/static/css/pod_info.css" rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.1/modernizr.min.js"></script>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
-
     <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/js/bootstrap-editable.min.js"></script>
     <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    <script src="/static/js/tagmanager.js"></script>
     <script src="/static/js/notebook_info.js"></script>
 {% endblock %}
 
 {% block page_content %}
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="nbk_id" content="{{ notebook.id }}">
+<meta name="nbk_tags" content="{{ notebook.tags|join(',') }}">
+
 <div class="page-header">
 <h2>
     <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}" 
        data-title="Change this notebook name">{{notebook.name}}</a>
 </h2>
+<input type="text" name="tags" placeholder="Tags" class="tm-input"/>
+<!--     
     <span class="label label-default">Tags</span>
     <span class="label label-primary">Will</span>
     <span class="label label-success">Go</span>
     <span class="label label-warning">Here</span>
-</div>
+ -->
+ </div>
 
 {% if forecast %}
 <div class="container">
