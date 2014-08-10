@@ -2,29 +2,6 @@ from .. import db
 from flask import current_app
 import datetime
 
-# from messages.invalid_message import InvalidMessage, UnknownMessage
-# from messages.status_message import StatusMessage
-# from messages.data_messages import DataMessage
-# from messages.deploy_messages import DeployMessage, DeployMessageLong
-
-
-# class NewMessageObject(object):
-#     @staticmethod
-#     def create(message_type=None):
-#         if message_type is None:
-#             assert 0, "Must provide a message_type"
-#         if message_type == "data":
-#             return DataMessage()
-#         if message_type == "status":
-#             return StatusMessage()
-#         if message_type == "deploy":
-#                 return DeployMessage()
-#         if message_type == "deploy_long":
-#                 return DeployMessageLong()
-#         if message_type == "invalid":
-#             return InvalidMessage()
-#         return UnknownMessage()
-
 
 class Message(db.Document):
 
