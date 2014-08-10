@@ -1,4 +1,16 @@
 /*global $, document */
+
+var csrftoken = $('meta[name=csrf-token]').attr('content');
+
+$.ajaxSetup({
+    beforeSend: function (xhr, settings) {
+        'use strict';
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
 $.fn.editable.defaults.mode = 'inline';
 
 $('#notebook_name').editable({

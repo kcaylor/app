@@ -21,7 +21,6 @@ class Notebook(db.Document):
         default=[]
     )
     public = db.BooleanField(default=True)
-    confirmed = db.BooleanField(default=False)
     owner = db.ReferenceField('User')
     sids = db.ListField(db.IntField())
     location = db.PointField()

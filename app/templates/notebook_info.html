@@ -22,6 +22,7 @@
 {% endblock %}
 
 {% block page_content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="page-header">
 <h2>
     <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}" 
