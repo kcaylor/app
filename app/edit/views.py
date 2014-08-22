@@ -1,8 +1,7 @@
 from flask.ext.login import login_required
-from app import csrf
 from flask import request
 from . import edit
-from ..models.notebook import Notebook
+from app.shared.models.notebook import Notebook
 
 
 @edit.route('/nbk_name', methods=['POST'])

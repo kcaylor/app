@@ -1,18 +1,9 @@
 import os
-from app.HMACAuth import HMACAuth
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    def __init__(self):
-        self.eve_settings = {
-            'PUBLIC_METHODS': ['GET'],
-            'PUBLIC_ITEM_METHODS': ['GET'],
-            'DOMAIN': {'stub': {}}
-    }
-    auth = HMACAuth
-    API_NAME = 'PulsePodAPI'
     SECRET_KEY = os.environ.get('APP_SECRET')
     MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN')
     MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY')

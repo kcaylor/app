@@ -2,21 +2,17 @@ from flask import Flask
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.mailgun import Mailgun
 from flask.ext.moment import Moment
-from flask.ext.mongoengine import MongoEngine
-from flask.ext.login import LoginManager
 from flask.ext.wtf import CsrfProtect
-
 from forecast import weather_icon
-
 from config import config
+
+from app.shared.models import db, login_manager
 
 boostrap = Bootstrap()
 mail = Mailgun()
 moment = Moment()
-db = MongoEngine()
 csrf = CsrfProtect()
 
-login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 login_manager.login_message = \

@@ -2,12 +2,10 @@ from datetime import datetime
 from flask import render_template, flash
 from flask.ext.login import login_required
 from . import main
-from ..models.pod import Pod
-from ..models.data import Data
-from ..models.sensor import Sensor
-from ..models.notebook import Notebook
-from ..forecast import get_forecast
-import uuid
+from app.shared.models.data import Data
+from app.shared.models.sensor import Sensor
+from app.shared.models.notebook import Notebook
+from app.forecast import get_forecast
 
 
 @main.route('/')
@@ -31,17 +29,17 @@ def index():
 def notebook_info(_id):
     notebook = Notebook.objects(
         id=_id
-        ).first()
+    ).first()
     data = Data.objects(
         notebook=notebook
-        ).order_by(
-            '-time_stamp'
-        ).only(
-            'time_stamp', 'value', 'variable'
-        ).limit(100)
+    ).order_by(
+        '-time_stamp'
+    ).only(
+        'time_stamp', 'value', 'variable'
+    ).limit(100)
     sensors = Sensor.objects(
         sid__in=notebook.sids
-        )
+    )
     forecast = get_forecast(
         lat=notebook.lat(),
         lng=notebook.lng())
