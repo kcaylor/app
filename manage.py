@@ -41,6 +41,7 @@ def make_shell_context():
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
 
+
 @manager.command
 def test(coverage=False):
     """Run the unit tests (using nose)"""
@@ -63,6 +64,32 @@ def test(coverage=False):
         COV.erase()
     nose.main(argv=[''])
 
+
+@manager.command
+def reset():
+    """Reset the testing database"""
+    if app.testing:
+        print "Reseting testing database"
+        print "\t...dropping old collections"
+        User.drop_collection()
+        Pod.drop_collection()
+        Notebook.drop_collection()
+        Data.drop_collection()
+        Sensor.drop_collection()
+        Message.drop_collection()
+        print "\t...generating new fake data"
+        Sensor.generate_fake(15)
+        User.generate_fake(10)
+        Pod.generate_fake(20)
+        Notebook.generate_fake(40)
+        Data.generate_fake(300)
+        Message.generate_fake(100)
+        for notebook in Notebook.objects():
+            notebook.observations = Data.objects(notebook=notebook).count()
+            notebook.save()
+    else:
+        print "Cannot run this command under %s config" % \
+            app.config['FLASK_CONFIG']
 
 
 @manager.command

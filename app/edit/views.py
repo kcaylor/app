@@ -32,3 +32,9 @@ def nbk_notes():
     notebook.notes = request.form["value"]
     notebook.save()
     return str(notebook.name)
+
+
+@edit.route('/all_tags', methods=['GET'])
+@login_required
+def all_tags():
+    return Notebook.objects.item_frequencies('tags', normalize=True).keys()

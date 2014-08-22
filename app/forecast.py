@@ -13,13 +13,16 @@ def get_forecast(lat=None, lng=None, time=None, **flags):
         if time:
             url = url + ',' + str(time)
         url = url + '?units=si&exclude=hourly'
-        forecast = requests.get(url=url)
-        if forecast.status_code is requests.codes.ok:
-            return forecast.json()
-        else:
-            return {'error': forecast.status_code}
+        try:
+            forecast = requests.get(url=url)
+            if forecast.status_code is requests.codes.ok:
+                return forecast.json()
+            else:
+                return None
+        except:
+                return None
     else:
-        return {}
+        return None
 
 
 # forecast.io icons:

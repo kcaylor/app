@@ -4,7 +4,6 @@ from flask.ext.mailgun import Mailgun
 from flask.ext.moment import Moment
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import LoginManager
-from flask.ext.assets import Environment, Bundle
 from flask.ext.wtf import CsrfProtect
 
 from forecast import weather_icon
@@ -15,7 +14,6 @@ boostrap = Bootstrap()
 mail = Mailgun()
 moment = Moment()
 db = MongoEngine()
-assets = Environment()
 csrf = CsrfProtect()
 
 login_manager = LoginManager()
@@ -37,22 +35,6 @@ def create_app(config_name):
     db.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
-
-    # assets.init_app(app)
-
-    # coffee = Bundle(
-    #     'coffee/test.coffee',
-    #     filters=['coffeescript', 'yui_js'],
-    #     output='js/app.js'
-    # )
-    # assets.register('coffee_app', coffee)
-
-    # stylus = Bundle(
-    #     'stylus/test.styl',
-    #     filters=['stylus', 'yui_js'],
-    #     output='css/test.css'
-    # )
-    # assets.register('stylus_app', stylus)
 
     # attach routes and custom error pages here
     from main import main as main_blueprint

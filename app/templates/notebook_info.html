@@ -172,6 +172,15 @@
   </div>
 </div>
 
+{% if data %}
+<div id="downloads">
+  <h4>Download Notebook Data</h4>
+  <span class="label">xls</span>
+  <span class="label">csv</span>
+  <span class="label">dropbox</span>
+</div>
+{% endif %}
+
 <div id="data_display">
 {% if data %}
 <!-- Dynamic:
