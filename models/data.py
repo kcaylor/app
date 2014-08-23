@@ -44,30 +44,32 @@ class Data(db.Document):
     @staticmethod
     def generate_fake(count=1000):
         from faker import Faker
-        from random import random, randint, sample
+        from random import random, randint
         from .notebook import Notebook
         from .sensor import Sensor
 
         fake = Faker()
         # fake.seed(3123)
         fake_data = []
+        nSensors = Sensor.objects().count()
+        nNotebooks = Notebook.objects().count()
+        if nSensors is 0:
+            return "Error: No Sensor objects defined." \
+                " Use Sensor.generate_fake()"
+        if nNotebooks is 0:
+            return "Error: No Notebook objects defined." \
+                " Use Notebook.generate_fake()"
         for i in range(count):
             try:
-                if Sensor.objects().count() > 0:
-                    sensor = Sensor.objects()[
-                        randint(0, Sensor.objects().count()-1)
-                    ]
-                else:
-                    sensor = Sensor.generate_fake(1)[0]
+                sensor = Sensor.objects()[
+                    randint(0, nSensors - 1)
+                ]
             except:
                 return "Error: No Sensor objects defined"
             try:
-                if Notebook.objects().count() > 0:
-                    notebook = Notebook.objects()[
-                        randint(0, Notebook.objects().count()-1)
-                    ]
-                else:
-                    notebook = Notebook.generate_fake(1)[0]
+                notebook = Notebook.objects()[
+                    randint(0, nNotebooks - 1)
+                ]
             except:
                 return "Error: No Notebook objects defined."
             data = Data(
@@ -75,7 +77,7 @@ class Data(db.Document):
                 location=notebook.location,
                 # Sensor and pod names are fixed.
                 variable=str(sensor.context) + ' ' + str(sensor.variable),
-                value=random()*100,
+                value=random() * 100,
                 pod=notebook.pod,
                 sensor=sensor,
                 notebook=notebook

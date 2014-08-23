@@ -15,14 +15,7 @@ class InvalidMessage(Message):
         return 'this is a fake message'
 
     def parse(self):
-        pass
-
-    def post(self):
-        pass
-
-    def patch(self):
-        patched = {}
-        self.patch_message(patched)
+        self.message.save()
 
 
 class UnknownMessage(InvalidMessage):
