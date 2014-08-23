@@ -1,5 +1,6 @@
 from . import db
 
+
 class Notebook(db.Document):
 
     name = db.StringField(db_field='name')
@@ -59,6 +60,11 @@ class Notebook(db.Document):
     def map_coords(self):
         return [self.location['coordinates'][1],
                 self.location['coordinates'][0]]
+
+    def reset_observations(self):
+        from .data import Data
+        self.observations = Data.objects(notebook=self).count()
+        self.save()
 
     def xls(self):
         import xlsxwriter
@@ -151,7 +157,7 @@ class Notebook(db.Document):
                 row += 1
             data_worksheet[variable].write(row, 2, 'Average')
             data_worksheet[variable].write(
-                row, 3,  "=AVERAGE(D1:D%d)" % int(row), value_format
+                row, 3, "=AVERAGE(D1:D%d)" % int(row), value_format
             )
         workbook.close()
 
@@ -175,7 +181,7 @@ class Notebook(db.Document):
         for i in range(count):
             try:
                 if nPods > 0:
-                    pod = Pod.objects()[randint(0, nPods-1)]
+                    pod = Pod.objects()[randint(0, nPods - 1)]
                 else:
                     pod = Pod.generate_fake(1)[0]
             except:
@@ -194,6 +200,7 @@ class Notebook(db.Document):
                 pod_id=pod.pod_id,
                 nbk_id=uuid.uuid4(),
                 owner=pod['owner'],
+                public=choice([True, True, True, False, False]),
                 last=fake.date_time_this_month(),
                 name='Data from ' + fake.street_address(),
                 sensors=sensors,

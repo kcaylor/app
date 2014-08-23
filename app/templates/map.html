@@ -16,7 +16,7 @@
     <script src="/static/js/map.js"></script>
 
     <script>
-        var map = L.map('map').setView([20, -100 ], 2);
+        var map = L.map('map').setView([20, -10 ], 2);
 
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',
             {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors', maxZoom: 18 }).addTo(map);
@@ -28,7 +28,7 @@
                 new L.LatLng({{ notebook.lat() }}, 
                              {{ notebook.lng() }}),
                             { title: "{{notebook.name}}" });
-            marker.bindPopup("{{ notebook.name }}");
+            marker.bindPopup("<a href={{ url_for('main.notebook_info', _id=notebook.get_id() ) }}>{{ notebook.name }}</a>");
             markers.addLayer(marker);
         {% endfor %}
 
@@ -39,10 +39,9 @@
 
 {% block page_content %}
 <div class="page-header">
-<h2>Map of&nbsp;{% if current_user.is_authenticated() %}{{ current_user.username|capitalize }}'s 
-    &nbsp;{% endif %}Notebooks
+<h2>Map of PulsePod Notebooks
 </h2>
 </div>
 
-<div id="map" style='width: 900px; height: 350px'></div>
+<div id="map" style='width: 900px; height: 550px'></div>
 {% endblock %}  

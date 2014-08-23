@@ -1,24 +1,53 @@
 from datetime import datetime
 from flask import render_template, flash
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 from . import main
 from app.shared.models.data import Data
 from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.forecast import get_forecast
+from mongoengine import Q
 
 
 @main.route('/')
 @login_required
 def index():
-    notebooks = Notebook.objects(observations__gt=0).order_by('-last').only(
+    with_obs_owned = Q(observations__gt=0) & Q(owner=current_user.get_id())
+    notebooks = Notebook.objects(
+        with_obs_owned
+    ).order_by('-last').only(
         'name',
         'voltage',
         'last',
-        'observations'
+        'observations',
+        'owner',
+        'public',
     )
     return render_template(
-        'index.html',
+        'notebook_list.html',
+        title="%s's Notebooks" % current_user.username or 'Guest',
+        current_time=datetime.utcnow(),
+        notebooks=notebooks
+    )
+
+
+@main.route('/public')
+@login_required
+def public():
+    with_obs_public = Q(observations__gt=0) & Q(public=True)
+    notebooks = Notebook.objects(
+        with_obs_public
+    ).order_by('-last').only(
+        'name',
+        'voltage',
+        'last',
+        'observations',
+        'owner',
+        'public'
+    )
+    return render_template(
+        'notebook_list.html',
+        title="Public Notebooks",
         current_time=datetime.utcnow(),
         notebooks=notebooks
     )

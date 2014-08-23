@@ -4,11 +4,11 @@
 
 {% block page_content %}
 <div class="page-header">
-<h2>{% if current_user.is_authenticated() %}{{ current_user.username|capitalize }}'s 
-    &nbsp;{% endif %}Notebook List
+<h2>{{ title }}
 </h2>
 </div>
 <div class="notebooks">
+{% if notebooks %}
 {% for notebook in notebooks %}
 <div class="notebook">
     <div class="notebook-content">
@@ -37,5 +37,13 @@
     </div>
 </div>
 {% endfor %}
+{% else %}
+<h4> Bummer. </h4>
+You haven't deployed a PulsePod and don't have any Notebooks of your own.
+</div>
+<div> 
+While you wait for yours to arrive, you can still check out all our <a href="{{ url_for('main.public') }}">public</a> data instead!
+</div>
+{% endif %}
 </div>
 {% endblock %}

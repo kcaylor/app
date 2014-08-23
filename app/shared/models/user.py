@@ -3,10 +3,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db, login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
-import datetime
 
 
 class User(UserMixin, db.Document):
+
+    ROLES = ['admin', 'user', 'guest']
 
     confirmed = db.BooleanField(default=False)
     username = db.StringField(max_length=64, unique=True)
@@ -18,7 +19,9 @@ class User(UserMixin, db.Document):
     observations = db.IntField(
         default=0
     )
-    role = db.StringField(default='user')
+    role = db.StringField(
+        choices=ROLES,
+        default='user')
     meta = {
         'indexes': ['email', 'username'],
         'collection': 'users',
@@ -77,9 +80,29 @@ class User(UserMixin, db.Document):
     def get_id(self):
         return unicode(self.id)
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    @staticmethod
+    def create_administrator():
+        import os
+        admin = User(
+            confirmed=True,
+            username=os.environ.get('ADMIN_USER'),
+            email=os.environ.get('ADMIN_EMAIL'),
+            role='admin'
+        )
+        admin.password = os.environ.get('ADMIN_PASSWORD')
+        admin.save()
+
     @staticmethod
     def generate_fake(count=10):
-        from random import choice, randint, sample
         from faker import Faker
         fake = Faker()
         # fake.seed(3123)
@@ -89,9 +112,9 @@ class User(UserMixin, db.Document):
                 confirmed=True,
                 username=fake.user_name(),
                 email=fake.safe_email(),
-                password=fake.md5()
             )
             #try:
+            user.password = fake.md5()
             user.save()
             fake_users.append(user)
             #except:
@@ -106,6 +129,9 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
+    def get_id(self):
+        return None
 
 login_manager.anonymous_user = AnonymousUser
 

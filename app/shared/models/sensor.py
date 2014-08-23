@@ -61,7 +61,7 @@ class Sensor(db.Document):
         for i in range(count):
             sensor = Sensor(
                 name=fake.domain_word(),
-                sid=randint(1, 256),
+                sid=i,
                 context=fake.domain_word(),
                 variable=fake.domain_word(),
                 info=fake.catch_phrase(),
