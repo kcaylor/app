@@ -1,5 +1,4 @@
 from . import Message
-from flask import current_app
 
 
 class DataMessage(Message):
@@ -17,17 +16,18 @@ class DataMessage(Message):
         from time import time
         import struct
         now = int(time())
-        hr = 60*60
+        hr = 60 * 60
         for sensor in notebook.sensors:
             data_str += ('%x' % int(sensor.sid)).zfill(self.SID_LENGTH)
             nobs = randint(1, 3)
             data_str += ('%x' % nobs).zfill(self.NOBS_LENGTH)
             for i in range(nobs):
-                if len(data_str) < 164-(8+2*sensor.nbytes):
-                    data_str += struct.pack('<L', int(now-i*hr)).encode('hex')
+                if len(data_str) < 164 - (8 + 2 * sensor.nbytes):
+                    data_str += struct.pack('<L', int(
+                        now - i * hr)).encode('hex')
                     data_str += struct.pack(
                         str(sensor.byteorder + sensor.fmt),
-                        random()*100).encode('hex')
+                        random() * 100).encode('hex')
         return data_str
 
     def get_sensor(self, i):
@@ -121,7 +121,7 @@ class DataMessage(Message):
                             self.message.save()
                             return
 
-                        i += 2*sensor['nbytes']
+                        i += 2 * sensor['nbytes']
                         data = Data(
                             pod=self.pod,
                             notebook=self.notebook,
@@ -133,24 +133,43 @@ class DataMessage(Message):
                         )
                         data_list.append(data)
                         nobs -= 1
+                # Update the voltage (if we have a new value):
+                voltage = self.notebook.voltage
+                for data_item in data_list:
+                    if data_item.sensor.name is 'vbatt':
+                        voltage = data_item.value
+                    # save the data, while we are here:
+                # Update notebook "last" time, if this message is new:
+                if self.message.time_stamp > self.notebook.last:
+                    nbk_last = self.message.time_stamp
+                else:
+                    nbk_last = self.notebook.last
+                # Update pod "last" time, if this message is new:
+                if self.message.time_stamp > self.pod.last:
+                    pod_last = self.message.time_stamp
+                else:
+                    pod_last = self.pod.last
+                # Update notebooks, pods, and user:
                 Notebook.objects(id=self.notebook.id).update_one(
                     inc__observations=self.total_nobs,
-                    set__last=self.message.time_stamp
+                    set__last=nbk_last,
+                    set__voltage=voltage
                 )
                 Pod.objects(id=self.pod.id).update_one(
                     inc__observations=self.total_nobs,
-                    set__number=self.number
+                    set__number=self.number,
+                    set__last=pod_last
                 )
                 User.objects(id=self.notebook.owner.id).update_one(
                     inc__observations=self.total_nobs
                 )
                 self.message.status = 'posted'
                 self.message.save()
-                [data.save() for data in data_list]
-                for data in data_list:
+                [data_item.save() for data_item in data_list]
+                for data_item in data_list:
                     print "Added %s from %s with %s" % \
-                        (data.__repr__(),
-                         data.sensor.__repr__(),
+                        (data_item.__repr__(),
+                         data_item.sensor.__repr__(),
                          self.notebook.__repr__())
                 print "Incremented %s, %s, and %s with %d observations" % \
                     (self.pod.__repr__(),
@@ -161,23 +180,4 @@ class DataMessage(Message):
                 return "message already parsed"
 
     def patch(self):
-        # IF THIS IS A DATA MESSAGE.....
-        patched['nobs'] = self.nobs
-        if self.nposted > 0:
-            patched['status'] = 'posted'
-            patched['nposted'] = self.nposted
-            patched['data'] = self.data_ids
-            patched['notebook'] = self.notebook()['nbk_id']
-            v = next((item for item in self.data
-                     if item["sensor"] == "53a06d3f0299cf3e11caa88d"),
-                     None)
-            if v:
-                self.pod['last'] = v['t']
-                self.pod['voltage'] = v['v']
-                self.notebook['voltage'] = v['v']
-                self.notebook['last'] = v['t']
-                self.pod['mode'] = 'normal'
-            if self.number and not self.number == self.pod['number']:
-                self.pod['number'] = self.number
-            self.notebook.save()
-            self.pod.save()
+        pass
