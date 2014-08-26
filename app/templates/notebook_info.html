@@ -28,10 +28,15 @@
 <meta name="nbk_tags" content="{{ notebook.tags|join(',') }}">
 
 <div class="page-header">
-<h2>
-    <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}" 
-       data-title="Change this notebook name">{{notebook.name}}</a>
-</h2>
+{% if current_user.can_edit(notebook) %}
+  <h2>
+      <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}" 
+         data-title="Change this notebook name">{{notebook.name}}</a>
+  </h2>
+{% else %}
+  <h2>{{notebook.name}}</h2>
+{% endif %}
+
 <input type="text" name="tags" placeholder="Tags" class="tm-input"/>
 <!--     
     <span class="label label-default">Tags</span>

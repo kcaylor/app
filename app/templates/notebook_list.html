@@ -24,7 +24,12 @@
             <span class="label label-{{ label_voltage(notebook.voltage) }}"> 
                 <span class="glyphicon glyphicon-flash"></span>
                 &nbsp;{{ notebook.voltage|round(1)|replace('None', 'unknown') }}
-            </span>
+            </span>&nbsp;
+            {% if notebook.public %}
+                <span id="nbk_public" class="label label-success">Public</span>
+            {% else %}
+                <span id="nbk_public" class="label label-warning">Private</span>
+            {% endif %}
             </small>
         </h3>
             <span>

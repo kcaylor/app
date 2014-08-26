@@ -334,7 +334,8 @@ class DeployMessage(Message):
                         elevation=elevation,
                         address=address,
                         name=self.default_name(address),
-                        nbk_id=self.new_nbk_id()
+                        nbk_id=self.new_nbk_id(),
+                        confirmed=False
                     )
                     self.message.status = 'parsed'
                     self.message.save()

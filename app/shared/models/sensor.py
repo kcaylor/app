@@ -62,8 +62,8 @@ class Sensor(db.Document):
             sensor = Sensor(
                 name=fake.domain_word(),
                 sid=i,
-                context=fake.domain_word(),
-                variable=fake.domain_word(),
+                context=fake.word(),
+                variable=fake.word(),
                 info=fake.catch_phrase(),
                 unit='b/s',
             )

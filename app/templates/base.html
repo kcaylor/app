@@ -30,7 +30,12 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index') }}">Your Notebooks</a></li>
+                <li>
+                <a href="{{ url_for('main.index') }}">Your Notebooks
+                <small>
+                <span class="badge">{{ new_notebooks }}</span>
+                </small></a>
+                </li>
             </ul>
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.public') }}">All Notebooks</a></li>

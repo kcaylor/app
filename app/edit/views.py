@@ -23,6 +23,15 @@ def nbk_tags():
     return str(notebook.tags)
 
 
+@edit.route('/nbk_privacy', methods=['POST'])
+@login_required
+def nbk_privacy():
+    # notebook = Notebook.objects(id=request.form["nbk_id"]).first()
+    # notebook.public = not request.form["public"]
+    # notebook.save()
+    return not request.form["public"]
+
+
 @edit.route('/nbk_notes', methods=['POST'])
 @login_required
 # @csrf.exempt

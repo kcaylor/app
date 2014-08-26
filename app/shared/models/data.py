@@ -84,6 +84,12 @@ class Data(db.Document):
             )
             try:
                 data.save()
+                notebook.observations += 1
+                notebook.save()
+                sensor.observations += 1
+                sensor.save()
+                notebook.owner.observations += 1
+                notebook.owner.save()
                 fake_data.append(data)
             except:
                 "Data save failed"

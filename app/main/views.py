@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, flash
+from flask import render_template, flash, Markup, url_for
 from flask.ext.login import login_required, current_user
 from . import main
 from app.shared.models.data import Data
@@ -7,6 +7,12 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.forecast import get_forecast
 from mongoengine import Q
+
+
+# @main.before_app_request
+# def before_request():
+#     if not current_user.is_authenticated():
+#         return redirect(url_for('auth.login'))
 
 
 @main.route('/')
@@ -23,11 +29,31 @@ def index():
         'owner',
         'public',
     )
+    unconfirmed_owned = Q(confirmed=False) & Q(owner=current_user.get_id())
+    unconfirmed_notebooks = Notebook.objects(
+        unconfirmed_owned
+    ).order_by('-last').only(
+        'name',
+        'voltage',
+        'last',
+        'observations',
+        'owner',
+        'public',
+    )
+    for notebook in unconfirmed_notebooks:
+        url = url_for('main.notebook_info', _id=notebook.get_id())
+        message = Markup(
+            "Your new notebook, <a href=%s>%s</a> needs to be confirmed."
+            % (url, notebook.name)
+        )
+        flash(message, 'warning')
     return render_template(
         'notebook_list.html',
-        title="%s's Notebooks" % current_user.username or 'Guest',
+        title="%s's Notebooks" %
+        current_user.username if 'username' in dir(current_user) else 'Guest',
         current_time=datetime.utcnow(),
-        notebooks=notebooks
+        notebooks=notebooks,
+        new_notebooks=''
     )
 
 
@@ -80,7 +106,7 @@ def notebook_info(_id):
         notebook=notebook,
         data=data,
         sensors=sensors,
-        json=data.to_json(),
+        # json=data.to_json(),
         forecast=forecast
     )
 

@@ -129,7 +129,8 @@ class Notebook(db.Document):
 
         # Write the variable worksheets:
         data_worksheet = {}
-        for variable in set([item.variable for item in data]):
+        for sensor in set([item.sensor for item in data]):
+            variable = sensor.context + sensor.variable
             data_worksheet[variable] = workbook.add_worksheet(variable)
             # Add a header row to this data:
             data_worksheet[variable].set_column('A:A', 30)
@@ -200,6 +201,7 @@ class Notebook(db.Document):
                 pod_id=pod.pod_id,
                 nbk_id=uuid.uuid4(),
                 owner=pod['owner'],
+                confirmed=choice([True, True, True, True, False]),
                 public=choice([True, True, True, False, False]),
                 last=fake.date_time_this_month(),
                 name='Data from ' + fake.street_address(),
