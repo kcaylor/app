@@ -207,4 +207,3 @@ class SMSSyncMessage(Message):
 
     def __repr__(self):
         return '<SMSSyncMessage %r>' % self.message_content
-
