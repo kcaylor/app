@@ -201,3 +201,10 @@ class PulsePiMessage(Message):
 
     def __repr__(self):
         return '<PulsePiMessage %r>' % self.message_content
+
+
+class SMSSyncMessage(Message):
+
+    def __repr__(self):
+        return '<SMSSyncMessage %r>' % self.message_content
+
