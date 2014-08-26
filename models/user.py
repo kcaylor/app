@@ -27,6 +27,15 @@ class User(UserMixin, db.Document):
         'collection': 'users',
     }
 
+    def can_edit(self, notebook):
+        if self.role == 'admin':
+            return True
+        if self.role == 'guest':
+            return False
+        if self.role == 'user':
+            return notebook.owner.username == self.username
+        return False
+
     def generate_reset_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'reset': self.get_id()})
@@ -91,6 +100,8 @@ class User(UserMixin, db.Document):
 
     @staticmethod
     def create_administrator():
+        if User.objects(role='admin').count() > 0:
+            return "Administrator already exists"
         import os
         admin = User(
             confirmed=True,
@@ -100,6 +111,19 @@ class User(UserMixin, db.Document):
         )
         admin.password = os.environ.get('ADMIN_PASSWORD')
         admin.save()
+
+    @staticmethod
+    def create_guest():
+        if User.objects(role='guest').count() > 0:
+            return "Guest user already exists"
+        guest = User(
+            confirmed=True,
+            username='guest',
+            email='guest@pulsepod.io',
+            role='guest'
+        )
+        guest.password = 'pulsepodguest'
+        guest.save()
 
     @staticmethod
     def generate_fake(count=10):
@@ -132,6 +156,9 @@ class AnonymousUser(AnonymousUserMixin):
 
     def get_id(self):
         return None
+
+    def can_edit(self, notebook):
+        return False
 
 login_manager.anonymous_user = AnonymousUser
 
