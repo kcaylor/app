@@ -35,6 +35,7 @@ class Message(db.Document):
         2: 'data',
         3: 'deploy',
         4: 'deploy_long',
+        9999: 'invalid'
     }
 
     message_content = db.StringField(
@@ -64,7 +65,7 @@ class Message(db.Document):
         required=True
     )
     message_type = db.StringField(
-        choices=FRAMES.values()+list(['unknown', 'invalid']),
+        choices=FRAMES.values() + list(['unknown']),
         db_field='type',
         default='unknown'
     )
@@ -159,7 +160,6 @@ class Message(db.Document):
 
     def compute_signature(self):
         from app.HMACAuth import compute_signature
-        from requests.auth import HTTPBasicAuth
         import json
         data = {}
         data['message'] = self.message_content
