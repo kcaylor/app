@@ -73,7 +73,7 @@ class Notebook(db.Document):
         data = Data.objects(notebook=self.id)
         # Initalize the workbook
         if not filename:
-            filename = '/app/app/static/tmp/%s.xlsx' % unicode(self.nbk_id)
+            filename = '/app/app/static/xlsx/%s.xlsx' % unicode(self.nbk_id)
         workbook = xlsxwriter.Workbook(filename)
         # Set up formatting for cells
         date_format = workbook.add_format(
