@@ -33,7 +33,11 @@ class User(UserMixin, db.Document):
         if self.role == 'guest':
             return False
         if self.role == 'user':
-            return notebook.owner.username == self.username
+            try:
+                owner = notebook.owner.username
+                return owner == self.username
+            except AttributeError:
+                return False
         return False
 
     def generate_reset_token(self, expiration=3600):
@@ -160,7 +164,6 @@ class AnonymousUser(AnonymousUserMixin):
     def can_edit(self, notebook):
         return False
 
-    username = 'Anonymous User'
 
 login_manager.anonymous_user = AnonymousUser
 
