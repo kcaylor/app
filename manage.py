@@ -61,7 +61,7 @@ def test(coverage=False):
         basedir = os.path.abspath(os.path.dirname(__file__))
         covdir = os.path.join(basedir, 'tmp/coverage')
         COV.html_report(directory=covdir)
-        print ('HTML Version: file://%s/index.html' % covdir)
+        print('HTML Version: file://%s/index.html' % covdir)
         COV.erase()
     nose.main(argv=[''])
 
@@ -83,10 +83,13 @@ def reset():
         User.generate_fake(10)
         Pod.generate_fake(20)
         Notebook.generate_fake(40)
-        Data.generate_fake(300)
+        Data.generate_fake(500)
         Message.generate_fake(100)
         for notebook in Notebook.objects():
-            notebook.observations = Data.objects(notebook=notebook).count()
+            data = Data.objects(notebook=notebook)
+            notebook.observations = data.count()
+            notebook.sensors = list(set(item.sensor for item in data))
+            notebook.sids = [item.sid for item in notebook.sensors]
             notebook.save()
     else:
         print "Cannot run this command under %s config" % \

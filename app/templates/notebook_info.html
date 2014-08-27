@@ -24,7 +24,7 @@
 
 {% block page_content %}
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<meta name="nbk_id" content="{{ notebook.id }}">
+<meta  name="nbk_id" content="{{ notebook.id }}">
 <meta name="nbk_tags" content="{{ notebook.tags|join(',') }}">
 
 <div class="page-header">
@@ -179,10 +179,11 @@
 
 {% if data %}
 <div id="downloads">
-  <h4>Download Notebook Data</h4>
-  <span class="label">xls</span>
-  <span class="label">csv</span>
-  <span class="label">dropbox</span>
+  <h4>Notebook Data</h4>
+  <span id="download_xls" class="label">
+  <a href="/static/tmp/{{ notebook.nbk_id}}.xlsx">xls</a></span>
+  <span id="download_csv" class="label">
+  <a href="#">csv</a></span>
 </div>
 {% endif %}
 

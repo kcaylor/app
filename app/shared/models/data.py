@@ -85,6 +85,9 @@ class Data(db.Document):
             try:
                 data.save()
                 notebook.observations += 1
+                if data.sensor not in notebook.sensors:
+                    notebook.sensors += data.sensor
+                    notebook.sids += data.sensor.sid
                 notebook.save()
                 sensor.observations += 1
                 sensor.save()
