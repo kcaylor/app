@@ -140,57 +140,57 @@ class Notebook(db.Document):
         # Write the variable worksheets:
         data_worksheet = {}
         for sensor in self.sensors:
-            variable = sensor.variable
+            thisSensor = sensor.variable
             worksheet_name = sensor.context + ' ' + sensor.variable
-            data_worksheet[variable] = workbook.add_worksheet(worksheet_name)
+            data_worksheet[thisSensor] = workbook.add_worksheet(worksheet_name)
             header = '&C&"Arial Bold"%s, %s' % (self.name, worksheet_name)
-            data_worksheet[variable].set_header(header)
-            data_worksheet[variable].set_portrait()
-            data_worksheet[variable].repeat_rows(0, 1)
+            data_worksheet[thisSensor].set_header(header)
+            data_worksheet[thisSensor].set_portrait()
+            data_worksheet[thisSensor].repeat_rows(0, 1)
             # Add a header row to this data:
-            data_worksheet[variable].set_column('A:A', 25)
-            data_worksheet[variable].set_column('B:B', 12)
-            data_worksheet[variable].set_column('C:C', 12)
-            data_worksheet[variable].set_column('D:D', 12)
+            data_worksheet[thisSensor].set_column('A:A', 25)
+            data_worksheet[thisSensor].set_column('B:B', 12)
+            data_worksheet[thisSensor].set_column('C:C', 12)
+            data_worksheet[thisSensor].set_column('D:D', 12)
             data_header = "%s, [%s]" % (worksheet_name, sensor.unit)
-            data_worksheet[variable].write(0, 0, data_header, header_format)
-            data_worksheet[variable].write(1, 0, 'Time Stamp', header_format)
-            data_worksheet[variable].write(1, 1, 'Latitude', header_format)
-            data_worksheet[variable].write(1, 2, 'Longitude', header_format)
+            data_worksheet[thisSensor].write(0, 0, data_header, header_format)
+            data_worksheet[thisSensor].write(1, 0, 'Time Stamp', header_format)
+            data_worksheet[thisSensor].write(1, 1, 'Latitude', header_format)
+            data_worksheet[thisSensor].write(1, 2, 'Longitude', header_format)
             value_header = 'Value (%s)' % sensor.unit
-            data_worksheet[variable].write(1, 3, value_header, header_format)
+            data_worksheet[thisSensor].write(1, 3, value_header, header_format)
             row = 2
             col = 0
             # Write the data for this variable:
             for time, variable, value in \
                     [item.display() for item in data(sensor=sensor)]:
-                data_worksheet[variable].write(
+                data_worksheet[thisSensor].write(
                     row, col, time, date_format
                 )
-                data_worksheet[variable].write(
+                data_worksheet[thisSensor].write(
                     row, col + 1, self.lat(), location_format
                 )
-                data_worksheet[variable].write(
+                data_worksheet[thisSensor].write(
                     row, col + 2, self.lng(), location_format
                 )
-                data_worksheet[variable].write(
+                data_worksheet[thisSensor].write(
                     row, col + 3, value, value_format
                 )
                 row += 1
-            data_worksheet[variable].write(row, 2, 'Average:', average_format)
-            data_worksheet[variable].write(
+            data_worksheet[thisSensor].write(row, 2, 'Average:', average_format)
+            data_worksheet[thisSensor].write(
                 row, 3, "=AVERAGE(D1:D%d)" % int(row), value_format
             )
-            data_worksheet[variable].write(
+            data_worksheet[thisSensor].write(
                 row + 1, 2, 'Maximum:', average_format
             )
-            data_worksheet[variable].write(
+            data_worksheet[thisSensor].write(
                 row + 1, 3, "=MAX(D1:D%d)" % int(row), value_format
             )
-            data_worksheet[variable].write(
+            data_worksheet[thisSensor].write(
                 row + 2, 2, 'Minimum:', average_format
             )
-            data_worksheet[variable].write(
+            data_worksheet[thisSensor].write(
                 row + 2, 3, "=MIN(D1:D%d)" % int(row), value_format
             )
 
