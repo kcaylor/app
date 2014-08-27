@@ -160,6 +160,8 @@ class AnonymousUser(AnonymousUserMixin):
     def can_edit(self, notebook):
         return False
 
+    username = 'Anonymous User'
+
 login_manager.anonymous_user = AnonymousUser
 
 
