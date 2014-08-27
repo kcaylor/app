@@ -17,6 +17,7 @@ MarkupSafe==0.18
 MongoAlchemy==0.15
 WTForms==1.0.5
 Werkzeug==0.9.4
+XlsxWriter==0.5.7
 amqp==1.4.5
 anyjson==0.3.3
 billiard==3.3.0.17
