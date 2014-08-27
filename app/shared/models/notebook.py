@@ -173,7 +173,7 @@ class Notebook(db.Document):
                     data_worksheet[thisSensor].write(
                         row, col + 2, self.lng(), location_format
                     )
-                    if type(value) is int:
+                    if type(value) is int or type(value) is float:
                         data_worksheet[thisSensor].write(
                             row, col + 3, value, value_format
                         )
