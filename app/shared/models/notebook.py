@@ -69,11 +69,13 @@ class Notebook(db.Document):
     def xls(self, filename=None):
         import xlsxwriter
         from .data import Data
+        from flask import current_app as app
+        xlsx_path = app.config['XLSX_PATH']
         # Go get all the data for this notebook
         data = Data.objects(notebook=self.id)
         # Initalize the workbook
         if not filename:
-            filename = '/app/app/static/xlsx/%s.xlsx' % unicode(self.nbk_id)
+            filename = xlsx_path + '%s.xlsx' % unicode(self.nbk_id)
         workbook = xlsxwriter.Workbook(filename)
         # Set up formatting for cells
         date_format = workbook.add_format(
@@ -251,7 +253,7 @@ class Notebook(db.Document):
                 address={
                     'formatted_address': fake.street_address(),
                     'street_address': fake.street_address(),
-                    'country': fake.country(),
+                    'country': {'full': fake.country()},
                     'administrative_area_level_1': fake.state(),
                     'administrative_area_level_2': fake.city(),
                 },

@@ -15,7 +15,8 @@ class Config:
     # STORMPATH_API_KEY_ID = os.environ.get('STORMPATH_API_KEY_ID')
     # STORMPATH_API_KEY_SECRET = os.environ.get('STORMPATH_API_KEY_SECRET')
     # STORMPATH_APPLICATION = os.environ.get('STORMPATH_APPLICATION')
-    
+    XLSX_PATH = 'app/static/xlsx/'
+
     @staticmethod
     def init_app(app):
         pass
@@ -52,6 +53,7 @@ class ProductionConfig(Config):
         "HOST": os.environ.get('MONGODB_HOST'),
         "PORT": int(os.environ.get('MONGODB_PORT'))
     }
+    XLSX_PATH = '/app/app/static/xlsx/'
 
 config = {
     'development': DevelopmentConfig,

@@ -37,14 +37,17 @@
   <h2>{{notebook.name}}</h2>
 {% endif %}
 
+{% if current_user.can_edit(notebook) %}
 <input type="text" name="tags" placeholder="Tags" class="tm-input"/>
-<!--     
-    <span class="label label-default">Tags</span>
-    <span class="label label-primary">Will</span>
-    <span class="label label-success">Go</span>
-    <span class="label label-warning">Here</span>
- -->
+{% else %}
+  <h4>
+  {% for tag in notebook.tags %}
+    <span class="label label-default label-large">{{ tag }}</span>
+  {% endfor %}
+  </h4>
+{% endif %}
  </div>
+
 
 {% if forecast %}
 <div class="container">
@@ -106,6 +109,9 @@
   <li><a href="#Sensors" role="tab" data-toggle="tab">Sensors</span></a></li>
   <li><a href="#Pod_Info" role="tab" data-toggle="tab">Pod Info</a></li>
   <li><a href="#Notes" role="tab" data-toggle="tab">Notes</a></li>
+  {% if data %}
+  <li><a href="#Downloads" role="tab" data-toggle="tab">Downloads</a></li>
+  {% endif %}
 </ul>
 </div>
 
@@ -175,20 +181,21 @@
     <br>
     <br>
   </div>
+  <div class="tab-pane" id="Downloads">
+    <br>
+      <a href="/static/xlsx/{{ notebook.nbk_id}}.xlsx">
+        <button type="button" class="btn btn-default navbar-btn">xls</button>
+      </a>
+      &nbsp;
+      <a href="#">
+        <button type="button" class="btn btn-default navbar-btn">csv</button>
+      </a>
+  </div>
 </div>
-
-{% if data %}
-<div id="downloads">
-  <h4>Notebook Data</h4>
-  <span id="download_xls" class="label">
-  <a href="/static/xlsx/{{ notebook.nbk_id}}.xlsx">xls</a></span>
-  <span id="download_csv" class="label">
-  <a href="#">csv</a></span>
-</div>
-{% endif %}
 
 <div id="data_display">
 {% if data %}
+<h4>Notebook Data</h4>
 <!-- Dynamic:
 <table id="data_table_dynamic" class="display"></table>
  -->

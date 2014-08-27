@@ -39,7 +39,7 @@ share/
 man/
 tmp/
 bower_components/
-
+app/static/xlsx/*.xlsx
 
 *.egg-info/
 .installed.cfg
