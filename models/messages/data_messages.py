@@ -153,7 +153,9 @@ class DataMessage(Message):
                 Notebook.objects(id=self.notebook.id).update_one(
                     inc__observations=self.total_nobs,
                     set__last=nbk_last,
-                    set__voltage=voltage
+                    set__voltage=voltage,
+                    add_to_set__sensors=sensor,
+                    add_to_set__sids=sensor.sid
                 )
                 Pod.objects(id=self.pod.id).update_one(
                     inc__observations=self.total_nobs,
