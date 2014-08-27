@@ -173,11 +173,14 @@ class Notebook(db.Document):
                 data_worksheet[thisSensor].write(
                     row, col + 2, self.lng(), location_format
                 )
-                data_worksheet[thisSensor].write(
-                    row, col + 3, value, value_format
-                )
+                if value:
+                    data_worksheet[thisSensor].write(
+                        row, col + 3, value, value_format
+                    )
                 row += 1
-            data_worksheet[thisSensor].write(row, 2, 'Average:', average_format)
+            data_worksheet[thisSensor].write(
+                row, 2, 'Average:', average_format
+            )
             data_worksheet[thisSensor].write(
                 row, 3, "=AVERAGE(D1:D%d)" % int(row), value_format
             )
