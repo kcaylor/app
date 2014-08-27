@@ -85,7 +85,7 @@ def notebook_info(_id):
     notebook = Notebook.objects(
         id=_id
     ).first()
-    # notebook.xls()
+    notebook.xls()
     data = Data.objects(
         notebook=notebook
     ).order_by(
