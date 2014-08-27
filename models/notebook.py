@@ -117,7 +117,9 @@ class Notebook(db.Document):
         info_worksheet.write(4, 0, 'Last Data:', info_label_format)
         info_worksheet.write(4, 1, self.last, date_format)
         info_worksheet.write(5, 0, 'Country:', info_label_format)
-        info_worksheet.write(5, 1, self.address['country'], info_format)
+        info_worksheet.write(
+            5, 1, self.address['country']['full'], info_format
+        )
         info_worksheet.write(6, 0, 'Address:', info_label_format)
         info_worksheet.write(
             6, 1, self.address['formatted_address'], info_format
