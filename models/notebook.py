@@ -140,9 +140,10 @@ class Notebook(db.Document):
         # Write the variable worksheets:
         data_worksheet = {}
         for sensor in self.sensors:
-            variable = sensor.context + ' ' + sensor.variable
-            data_worksheet[variable] = workbook.add_worksheet(variable)
-            header = '&C&"Arial Bold"%s, %s' % (self.name, variable)
+            variable = sensor.variable
+            worksheet_name = sensor.context + ' ' + sensor.variable
+            data_worksheet[variable] = workbook.add_worksheet(worksheet_name)
+            header = '&C&"Arial Bold"%s, %s' % (self.name, worksheet_name)
             data_worksheet[variable].set_header(header)
             data_worksheet[variable].set_portrait()
             data_worksheet[variable].repeat_rows(0, 1)
@@ -151,7 +152,7 @@ class Notebook(db.Document):
             data_worksheet[variable].set_column('B:B', 12)
             data_worksheet[variable].set_column('C:C', 12)
             data_worksheet[variable].set_column('D:D', 12)
-            data_header = "%s, [%s]" % (variable, sensor.unit)
+            data_header = "%s, [%s]" % (worksheet_name, sensor.unit)
             data_worksheet[variable].write(0, 0, data_header, header_format)
             data_worksheet[variable].write(1, 0, 'Time Stamp', header_format)
             data_worksheet[variable].write(1, 1, 'Latitude', header_format)
