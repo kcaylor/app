@@ -216,7 +216,7 @@
     <td data-order="{{item.time_stamp}}" >{{ moment(item.time_stamp).format('LLL') }}</td>
     <td>{{ item.variable }}</td>
     <td>{{ item.value|round(1) }}</td>
-    <td>{{ item.sensor.unit }} </td>
+    <td>{{ item.sensor['unit'] }} </td>
 </tr>
 {% endfor %}
 </tbody>
