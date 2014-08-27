@@ -139,8 +139,11 @@ class Notebook(db.Document):
         data_worksheet = {}
         for sensor in self.sensors:
             if data(sensor=sensor).count() > 0:
-                thisSensor = sensor.variable
+                thisSensor = sensor.context + sensor.variable
                 worksheet_name = sensor.context + ' ' + sensor.variable
+                if len(worksheet_name) > 30:
+                    worksheet_name = sensor.context + \
+                        ' ' + sensor.variable_short
                 data_worksheet[thisSensor] = \
                     workbook.add_worksheet(worksheet_name)
                 header = '&C&"Arial Bold"%s, %s' % (self.name, worksheet_name)
