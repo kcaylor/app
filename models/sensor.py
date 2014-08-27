@@ -50,18 +50,14 @@ class Sensor(db.Document):
 
     @staticmethod
     def generate_fake(count=100):
-        from random import choice, randint, random
+        from random import randint
         from faker import Faker
-        import struct
         fake = Faker()
-        # fake.seed(3123)
         fake_sensors = []
-        byteorder = '<'
-        fmt = 'f'
         for i in range(count):
             sensor = Sensor(
                 name=fake.domain_word(),
-                sid=i,
+                sid=randint(1, 256),
                 context=fake.word(),
                 variable=fake.word(),
                 info=fake.catch_phrase(),
@@ -71,5 +67,5 @@ class Sensor(db.Document):
                 sensor.save()
                 fake_sensors.append(sensor)
             except:
-                "Sensor save failed"
+                print "Sensor save failed"
         return fake_sensors

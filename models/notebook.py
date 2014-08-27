@@ -66,13 +66,14 @@ class Notebook(db.Document):
         self.observations = Data.objects(notebook=self).count()
         self.save()
 
-    def xls(self):
+    def xls(self, filename=None):
         import xlsxwriter
         from .data import Data
         # Go get all the data for this notebook
         data = Data.objects(notebook=self.id)
         # Initalize the workbook
-        filename = 'tmp/%s.xlsx' % unicode(self.nbk_id)
+        if not filename:
+            filename = 'app/static/tmp/%s.xlsx' % unicode(self.nbk_id)
         workbook = xlsxwriter.Workbook(filename)
         # Set up formatting for cells
         date_format = workbook.add_format(
@@ -83,6 +84,8 @@ class Notebook(db.Document):
             {'num_format': '0.00'}
         )
         value_format.set_align('center')
+        average_format = workbook.add_format()
+        average_format.set_align('right')
         location_format = workbook.add_format(
             {'num_format': '0.000'}
         )
@@ -98,12 +101,15 @@ class Notebook(db.Document):
         info_label_format.set_bold()
         # The first worksheet contains notebook metadata
         info_worksheet = workbook.add_worksheet('Info')
+        header = '&C&"Arial Bold"%s' % self.name
+        info_worksheet.set_header(header)
+        info_worksheet.set_portrait()
         info_worksheet.write(0, 0, 'Notebook Name:', info_label_format)
         info_worksheet.write(0, 1, '%s' % self.name, info_format)
         info_worksheet.write(1, 0, 'Notebook Id:', info_label_format)
         info_worksheet.write(1, 1, '%s' % unicode(self.nbk_id), info_format)
         info_worksheet.write(2, 0, 'Number of Sensors:', info_label_format)
-        info_worksheet.write(2, 1, len(self.sids), info_format)
+        info_worksheet.write(2, 1, len(self.sensors), info_format)
         info_worksheet.write(
             3, 0, 'Number of Observations:', info_label_format
         )
@@ -124,25 +130,35 @@ class Notebook(db.Document):
         info_worksheet.write(9, 1, self.elevation['elevation'], info_format)
         info_worksheet.write(10, 0, 'Pod:', info_label_format)
         info_worksheet.write(10, 1, self.pod.name, info_format)
-        info_worksheet.set_column('A:A', 30)
+        info_worksheet.set_column('A:A', 25)
         info_worksheet.set_column('B:B', 40)
 
         # Write the variable worksheets:
         data_worksheet = {}
-        for sensor in set([item.sensor for item in data]):
-            variable = sensor.context + sensor.variable
+        for sensor in self.sensors:
+            variable = sensor.context + ' ' + sensor.variable
             data_worksheet[variable] = workbook.add_worksheet(variable)
+            header = '&C&"Arial Bold"%s, %s' % (self.name, variable)
+            data_worksheet[variable].set_header(header)
+            data_worksheet[variable].set_portrait()
+            data_worksheet[variable].repeat_rows(0, 1)
             # Add a header row to this data:
-            data_worksheet[variable].set_column('A:A', 30)
-            data_worksheet[variable].write(0, 0, 'Time Stamp', header_format)
-            data_worksheet[variable].write(0, 1, 'Latitude', header_format)
-            data_worksheet[variable].write(0, 2, 'Longitude', header_format)
-            data_worksheet[variable].write(0, 3, 'Value', header_format)
-            row = 1
+            data_worksheet[variable].set_column('A:A', 25)
+            data_worksheet[variable].set_column('B:B', 12)
+            data_worksheet[variable].set_column('C:C', 12)
+            data_worksheet[variable].set_column('D:D', 12)
+            data_header = "%s, [%s]" % (variable, sensor.unit)
+            data_worksheet[variable].write(0, 0, data_header, header_format)
+            data_worksheet[variable].write(1, 0, 'Time Stamp', header_format)
+            data_worksheet[variable].write(1, 1, 'Latitude', header_format)
+            data_worksheet[variable].write(1, 2, 'Longitude', header_format)
+            value_header = 'Value (%s)' % sensor.unit
+            data_worksheet[variable].write(1, 3, value_header, header_format)
+            row = 2
             col = 0
             # Write the data for this variable:
             for time, variable, value in \
-                    [item.display() for item in data(variable=variable)]:
+                    [item.display() for item in data(sensor=sensor)]:
                 data_worksheet[variable].write(
                     row, col, time, date_format
                 )
@@ -156,10 +172,23 @@ class Notebook(db.Document):
                     row, col + 3, value, value_format
                 )
                 row += 1
-            data_worksheet[variable].write(row, 2, 'Average')
+            data_worksheet[variable].write(row, 2, 'Average:', average_format)
             data_worksheet[variable].write(
                 row, 3, "=AVERAGE(D1:D%d)" % int(row), value_format
             )
+            data_worksheet[variable].write(
+                row + 1, 2, 'Maximum:', average_format
+            )
+            data_worksheet[variable].write(
+                row + 1, 3, "=MAX(D1:D%d)" % int(row), value_format
+            )
+            data_worksheet[variable].write(
+                row + 2, 2, 'Minimum:', average_format
+            )
+            data_worksheet[variable].write(
+                row + 2, 3, "=MIN(D1:D%d)" % int(row), value_format
+            )
+
         workbook.close()
 
         # Put the file on Amazon...?
@@ -169,16 +198,14 @@ class Notebook(db.Document):
 
     @staticmethod
     def generate_fake(count=100):
-        from random import choice, randint, sample
+        from random import choice, randint
         from faker import Faker
         from .pod import Pod
-        from .sensor import Sensor
         import uuid
         fake = Faker()
         # fake.seed(3123)
         fake_notebooks = []
         nPods = Pod.objects().count()
-        nSensors = Sensor.objects().count()
         for i in range(count):
             try:
                 if nPods > 0:
@@ -188,12 +215,7 @@ class Notebook(db.Document):
             except:
                 return 'Error: No Pod objects defined'
             try:
-                if nSensors >= 3:
-                    sensors = [Sensor.objects()[i] for i in sorted(
-                        sample(range(nSensors), 3)
-                    )]
-                else:
-                    sensors = Sensor.generate_fake(3)
+                sensors = []
             except:
                 return 'Error: No Sensor objects defined'
             notebook = Notebook(
