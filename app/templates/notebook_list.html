@@ -43,11 +43,8 @@
 </div>
 {% endfor %}
 {% else %}
-<h4> Bummer. </h4>
-You haven't deployed a PulsePod and don't have any Notebooks of your own.
-</div>
-<div> 
-While you wait for yours to arrive, you can still check out all our <a href="{{ url_for('main.public') }}">public</a> data instead!
+<h4> Welcome! </h4>
+You haven't deployed a PulsePod and don't have any Notebooks of your own. But you can still check out all our <strong><a href="{{ url_for('main.public') }}">public</a></strong> data instead! 
 </div>
 {% endif %}
 </div>
