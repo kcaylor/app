@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db, login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
+import uuid
 
 
 class User(UserMixin, db.Document):
@@ -19,11 +20,16 @@ class User(UserMixin, db.Document):
     observations = db.IntField(
         default=0
     )
+    api_key = db.StringField(
+        max_length=64,
+        unique=True,
+        default=str(uuid.uuid4()).replace('-', '')
+    )
     role = db.StringField(
         choices=ROLES,
         default='user')
     meta = {
-        'indexes': ['email', 'username'],
+        'indexes': ['email', 'username', 'api_key'],
         'collection': 'users',
     }
 
@@ -103,6 +109,10 @@ class User(UserMixin, db.Document):
         return False
 
     @staticmethod
+    def verify_api_key(api_key):
+        return User.objects(api_key=api_key).first()
+
+    @staticmethod
     def create_administrator():
         if User.objects(role='admin').count() > 0:
             return "Administrator already exists"
@@ -124,13 +134,14 @@ class User(UserMixin, db.Document):
             confirmed=True,
             username='guest',
             email='guest@pulsepod.io',
-            role='guest'
+            role='guest',
         )
         guest.password = 'pulsepodguest'
         guest.save()
 
     @staticmethod
     def generate_fake(count=10):
+        import uuid
         from faker import Faker
         fake = Faker()
         # fake.seed(3123)

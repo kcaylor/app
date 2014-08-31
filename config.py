@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('APP_SECRET')
+    API_KEY_SALT = os.environ.get('API_KEY_SALT')
     MAILGUN_DOMAIN = os.environ.get('MAILGUN_DOMAIN')
     MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY')
     PULSEPOD_MAIL_SENDER = 'PulsePod Admin <postmaster@pulsepod.io>'
