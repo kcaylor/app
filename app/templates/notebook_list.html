@@ -44,7 +44,15 @@
 {% endfor %}
 {% else %}
 <h4> Welcome! </h4>
-You haven't deployed a PulsePod and don't have any Notebooks of your own. But you can still check out all our <strong><a href="{{ url_for('main.public') }}">public</a></strong> data instead! 
+<div>You haven't deployed a PulsePod and don't have any Notebooks of your own.
+</div> 
+<div>
+But you can still check out all our public data at the link below.
+<div class="notebook">
+    <a href="{{ url_for('main.public') }}">
+    <button>Public Data</button>
+    </a>
+</div>
 </div>
 {% endif %}
 </div>
