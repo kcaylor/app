@@ -3,6 +3,8 @@
 var csrftoken = $('meta[name=csrf-token]').attr('content');
 var nbk_id = $('meta[name=nbk_id]').attr('content');
 var nbk_tags = $('meta[name=nbk_tags]').attr('content');
+var lat = $('meta[name=lat]').attr('content');
+var lng = $('meta[name=lng]').attr('content');
 
 $.ajaxSetup({
     beforeSend: function (xhr, settings) {
@@ -42,6 +44,9 @@ $(".tm-input").tagsManager({
 
 $(document).ready(function () {
     'use strict';
+
+    $('#forecast').load("../ajax/forecast", {'lat': lat, 'lng': lng});
+
     var table = $('#data_table').DataTable({
         "order": [ 1, 'asc' ],
         // "data": nbkData.json,

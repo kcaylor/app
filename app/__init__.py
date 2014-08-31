@@ -42,6 +42,9 @@ def create_app(config_name):
     from .edit import edit as edit_blueprint
     app.register_blueprint(edit_blueprint, url_prefix='/edit')
 
+    from .ajax import ajax as ajax_blueprint
+    app.register_blueprint(ajax_blueprint, url_prefix='/ajax')
+
     # add in view function (context_processors)
     app.jinja_env.globals.update(weather_icon=weather_icon)
 

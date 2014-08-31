@@ -108,7 +108,6 @@ def notebook_info(_id):
         data=data,
         sensors=sensors,
         # json=data.to_json(),
-        forecast=forecast
     )
 
 
