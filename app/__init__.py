@@ -3,7 +3,7 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.mailgun import Mailgun
 from flask.ext.moment import Moment
 from flask.ext.wtf import CsrfProtect
-from forecast import weather_icon
+from utils import weather_icon
 from config import config
 
 from app.shared.models import db, login_manager

@@ -1,6 +1,6 @@
 from flask.ext.login import login_required
 import requests
-from flask import current_app, request, jsonify, render_template
+from flask import current_app, request, render_template
 from . import ajax
 
 
