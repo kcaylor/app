@@ -5,7 +5,6 @@ from . import main
 from app.shared.models.data import Data
 from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
-from app.forecast import get_forecast
 from mongoengine import Q
 
 
@@ -96,9 +95,6 @@ def notebook_info(_id):
     sensors = Sensor.objects(
         sid__in=notebook.sids
     )
-    forecast = get_forecast(
-        lat=notebook.lat(),
-        lng=notebook.lng())
     if len(data) is 0:
         flash('Waiting for initial data transmission', 'warning')
     return render_template(
@@ -107,7 +103,6 @@ def notebook_info(_id):
         notebook=notebook,
         data=data,
         sensors=sensors,
-        # json=data.to_json(),
     )
 
 
