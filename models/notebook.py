@@ -197,20 +197,9 @@ class Notebook(db.Document):
                     row + 1, 3, "=MAX(D1:D%d)" % int(row), value_format
                 )
                 data_worksheet[thisSensor].write(
-            data_worksheet[variable].write(row, 2, 'Average:', average_format)
-            data_worksheet[variable].write(
                     row + 2, 2, 'Minimum:', average_format
-            )
-            data_worksheet[variable].write(
-                row + 1, 2, 'Maximum:', average_format
-            )
-            data_worksheet[variable].write(
-                row + 1, 3, "=MAX(D1:D%d)" % int(row), value_format
-            )
+                )
                 data_worksheet[thisSensor].write(
-                row + 2, 2, 'Minimum:', average_format
-            )
-            data_worksheet[variable].write(
                     row + 2, 3, "=MIN(D1:D%d)" % int(row), value_format
                 )
 
