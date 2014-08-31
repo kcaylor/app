@@ -69,11 +69,13 @@ class Notebook(db.Document):
     def xls(self, filename=None):
         import xlsxwriter
         from .data import Data
+        from flask import current_app as app
+        xlsx_path = app.config['XLSX_PATH']
         # Go get all the data for this notebook
         data = Data.objects(notebook=self.id)
         # Initalize the workbook
         if not filename:
-            filename = 'app/static/tmp/%s.xlsx' % unicode(self.nbk_id)
+            filename = xlsx_path + '%s.xlsx' % unicode(self.nbk_id)
         workbook = xlsxwriter.Workbook(filename)
         # Set up formatting for cells
         date_format = workbook.add_format(
@@ -108,73 +110,96 @@ class Notebook(db.Document):
         info_worksheet.write(0, 1, '%s' % self.name, info_format)
         info_worksheet.write(1, 0, 'Notebook Id:', info_label_format)
         info_worksheet.write(1, 1, '%s' % unicode(self.nbk_id), info_format)
-        info_worksheet.write(2, 0, 'Number of Sensors:', info_label_format)
-        info_worksheet.write(2, 1, len(self.sensors), info_format)
         info_worksheet.write(
-            3, 0, 'Number of Observations:', info_label_format
+            2, 0, 'Number of Observations:', info_label_format
         )
-        info_worksheet.write(3, 1, self.observations, info_format)
-        info_worksheet.write(4, 0, 'Last Data:', info_label_format)
-        info_worksheet.write(4, 1, self.last, date_format)
-        info_worksheet.write(5, 0, 'Country:', info_label_format)
-        info_worksheet.write(5, 1, self.address['country'], info_format)
-        info_worksheet.write(6, 0, 'Address:', info_label_format)
+        info_worksheet.write(2, 1, self.observations, info_format)
+        info_worksheet.write(3, 0, 'Last Data:', info_label_format)
+        info_worksheet.write(3, 1, self.last, date_format)
+        info_worksheet.write(4, 0, 'Country:', info_label_format)
         info_worksheet.write(
-            6, 1, self.address['formatted_address'], info_format
+            4, 1, self.address['country']['full'], info_format
         )
-        info_worksheet.write(7, 0, 'Latitude:', info_label_format)
-        info_worksheet.write(7, 1, self.lat(), info_format)
-        info_worksheet.write(8, 0, 'Longitude:', info_label_format)
-        info_worksheet.write(8, 1, self.lng(), info_format)
-        info_worksheet.write(9, 0, 'Elevation (m):', info_label_format)
-        info_worksheet.write(9, 1, self.elevation['elevation'], info_format)
-        info_worksheet.write(10, 0, 'Pod:', info_label_format)
-        info_worksheet.write(10, 1, self.pod.name, info_format)
+        info_worksheet.write(5, 0, 'Address:', info_label_format)
+        info_worksheet.write(
+            5, 1, self.address['formatted_address'], info_format
+        )
+        info_worksheet.write(6, 0, 'Latitude:', info_label_format)
+        info_worksheet.write(6, 1, self.lat(), info_format)
+        info_worksheet.write(7, 0, 'Longitude:', info_label_format)
+        info_worksheet.write(7, 1, self.lng(), info_format)
+        info_worksheet.write(8, 0, 'Elevation (m):', info_label_format)
+        info_worksheet.write(8, 1, self.elevation['elevation'], info_format)
+        info_worksheet.write(9, 0, 'Pod:', info_label_format)
+        info_worksheet.write(9, 1, self.pod.name, info_format)
         info_worksheet.set_column('A:A', 25)
         info_worksheet.set_column('B:B', 40)
 
         # Write the variable worksheets:
         data_worksheet = {}
         for sensor in self.sensors:
-            variable = sensor.context + ' ' + sensor.variable
-            data_worksheet[variable] = workbook.add_worksheet(variable)
-            header = '&C&"Arial Bold"%s, %s' % (self.name, variable)
-            data_worksheet[variable].set_header(header)
-            data_worksheet[variable].set_portrait()
-            data_worksheet[variable].repeat_rows(0, 1)
-            # Add a header row to this data:
-            data_worksheet[variable].set_column('A:A', 25)
-            data_worksheet[variable].set_column('B:B', 12)
-            data_worksheet[variable].set_column('C:C', 12)
-            data_worksheet[variable].set_column('D:D', 12)
-            data_header = "%s, [%s]" % (variable, sensor.unit)
-            data_worksheet[variable].write(0, 0, data_header, header_format)
-            data_worksheet[variable].write(1, 0, 'Time Stamp', header_format)
-            data_worksheet[variable].write(1, 1, 'Latitude', header_format)
-            data_worksheet[variable].write(1, 2, 'Longitude', header_format)
-            value_header = 'Value (%s)' % sensor.unit
-            data_worksheet[variable].write(1, 3, value_header, header_format)
-            row = 2
-            col = 0
-            # Write the data for this variable:
-            for time, variable, value in \
-                    [item.display() for item in data(sensor=sensor)]:
-                data_worksheet[variable].write(
-                    row, col, time, date_format
+            if data(sensor=sensor).count() > 0:
+                thisSensor = sensor.context + sensor.variable
+                worksheet_name = sensor.context + ' ' + sensor.variable
+                if len(worksheet_name) > 30:
+                    try:
+                        worksheet_name = sensor.context + \
+                            ' ' + sensor.variable_short
+                    except AttributeError:
+                        worksheet_name = worksheet_name[0:30]
+                data_worksheet[thisSensor] = \
+                    workbook.add_worksheet(worksheet_name)
+                header = '&C&"Arial Bold"%s, %s' % (self.name, worksheet_name)
+                data_worksheet[thisSensor].set_header(header)
+                data_worksheet[thisSensor].set_portrait()
+                data_worksheet[thisSensor].repeat_rows(0, 1)
+                # Add a header row to this data:
+                data_worksheet[thisSensor].set_column('A:A', 25)
+                data_worksheet[thisSensor].set_column('B:B', 12)
+                data_worksheet[thisSensor].set_column('C:C', 12)
+                data_worksheet[thisSensor].set_column('D:D', 12)
+                data_header = "%s, [%s]" % (worksheet_name, sensor.unit)
+                data_worksheet[thisSensor].write(0, 0, data_header, header_format)
+                data_worksheet[thisSensor].write(1, 0, 'Time Stamp', header_format)
+                data_worksheet[thisSensor].write(1, 1, 'Latitude', header_format)
+                data_worksheet[thisSensor].write(1, 2, 'Longitude', header_format)
+                value_header = 'Value (%s)' % sensor.unit
+                data_worksheet[thisSensor].write(1, 3, value_header, header_format)
+                row = 2
+                col = 0
+                # Write the data for this variable:
+                for time, variable, value in \
+                        [item.display() for item in data(sensor=sensor)]:
+                    data_worksheet[thisSensor].write(
+                        row, col, time, date_format
+                    )
+                    data_worksheet[thisSensor].write(
+                        row, col + 1, self.lat(), location_format
+                    )
+                    data_worksheet[thisSensor].write(
+                        row, col + 2, self.lng(), location_format
+                    )
+                    if type(value) is int or type(value) is float:
+                        data_worksheet[thisSensor].write(
+                            row, col + 3, value, value_format
+                        )
+                    row += 1
+                data_worksheet[thisSensor].write(
+                    row, 2, 'Average:', average_format
                 )
-                data_worksheet[variable].write(
-                    row, col + 1, self.lat(), location_format
+                data_worksheet[thisSensor].write(
+                    row, 3, "=AVERAGE(D1:D%d)" % int(row), value_format
                 )
-                data_worksheet[variable].write(
-                    row, col + 2, self.lng(), location_format
+                data_worksheet[thisSensor].write(
+                    row + 1, 2, 'Maximum:', average_format
                 )
-                data_worksheet[variable].write(
-                    row, col + 3, value, value_format
+                data_worksheet[thisSensor].write(
+                    row + 1, 3, "=MAX(D1:D%d)" % int(row), value_format
                 )
-                row += 1
+                data_worksheet[thisSensor].write(
             data_worksheet[variable].write(row, 2, 'Average:', average_format)
             data_worksheet[variable].write(
-                row, 3, "=AVERAGE(D1:D%d)" % int(row), value_format
+                    row + 2, 2, 'Minimum:', average_format
             )
             data_worksheet[variable].write(
                 row + 1, 2, 'Maximum:', average_format
@@ -182,12 +207,12 @@ class Notebook(db.Document):
             data_worksheet[variable].write(
                 row + 1, 3, "=MAX(D1:D%d)" % int(row), value_format
             )
-            data_worksheet[variable].write(
+                data_worksheet[thisSensor].write(
                 row + 2, 2, 'Minimum:', average_format
             )
             data_worksheet[variable].write(
-                row + 2, 3, "=MIN(D1:D%d)" % int(row), value_format
-            )
+                    row + 2, 3, "=MIN(D1:D%d)" % int(row), value_format
+                )
 
         workbook.close()
 
@@ -249,7 +274,7 @@ class Notebook(db.Document):
                 address={
                     'formatted_address': fake.street_address(),
                     'street_address': fake.street_address(),
-                    'country': fake.country(),
+                    'country': {'full': fake.country()},
                     'administrative_area_level_1': fake.state(),
                     'administrative_area_level_2': fake.city(),
                 },
