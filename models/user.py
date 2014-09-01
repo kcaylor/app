@@ -3,7 +3,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db, login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
-import uuid
+from datetime import datetime
+
+
+def make_api_key():
+    import uuid
+    return str(uuid.uuid4()).replace('-', '')
 
 
 def make_api_key():
@@ -19,6 +24,8 @@ class User(UserMixin, db.Document):
     username = db.StringField(max_length=64, unique=True)
     email = db.StringField(max_length=64, unique=True)
     password_hash = db.StringField(max_length=120)
+    last_seen = db.DateTimeField()
+    member_since = db.DateTimeField(default=datetime.utcnow())
     notebooks = db.IntField(
         default=0
     )
@@ -84,6 +91,10 @@ class User(UserMixin, db.Document):
         self.save()
         return True
 
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        self.save()
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -110,6 +121,12 @@ class User(UserMixin, db.Document):
 
     def is_active(self):
         return True
+
+    def is_administrator(self):
+        if self.role == 'admin':
+            return True
+        else:
+            return False
 
     def is_anonymous(self):
         return False
