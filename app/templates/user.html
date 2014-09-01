@@ -30,7 +30,7 @@
     Get all your pods (only pods owned by you are returned):
     <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/pods</pre>
     Find all the data near a specific coordinate [longitude, latitude]:
-    <pre> > curl --user {{ user.api_key }}:empty -X GET https://api.pulsepod.io --data where={"loc": {"$near": {"$geometry":{"type": "Point", "coordinates": [-106, 34 ]}}}}</pre>
+    <pre> > curl --user 59894cee901248afaf1d50fce23e302c:empty -X GET https://api.pulsepod.io/data --data 'where={"loc": {"$near": {"$geometry":{"type": "Point", "coordinates": [-121.8, 38.55 ]}}}}'</pre>
 </div>
 {% endblock %}
 
