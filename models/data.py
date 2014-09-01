@@ -97,16 +97,16 @@ class Data(db.Document):
             )
             try:
                 data.save()
-                notebook.observations += 1
-                if data.sensor not in notebook.sensors:
-                    notebook.sensors += data.sensor
-                    notebook.sids += data.sensor.sid
-                notebook.save()
-                sensor.observations += 1
-                sensor.save()
-                notebook.owner.observations += 1
-                notebook.owner.save()
-                fake_data.append(data)
             except:
-                "Data save failed"
+                return "Error: Data save failed"
+            notebook.observations += 1
+            if data.sensor not in notebook.sensors:
+                notebook.sensors.append(data.sensor)
+                notebook.sids.append(data.sensor['sid'])
+            notebook.save()
+            sensor.observations += 1
+            sensor.save()
+            notebook.owner.observations += 1
+            notebook.owner.save()
+            fake_data.append(data)
         return fake_data
