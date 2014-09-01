@@ -1,10 +1,11 @@
 from datetime import datetime
-from flask import render_template, flash, Markup, url_for
+from flask import render_template, flash, Markup, url_for, abort
 from flask.ext.login import login_required, current_user
 from . import main
 from app.shared.models.data import Data
 from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
+from app.shared.models.user import User
 from mongoengine import Q
 
 
@@ -76,6 +77,15 @@ def public():
         current_time=datetime.utcnow(),
         notebooks=notebooks
     )
+
+
+@main.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.objects(username=username).first()
+    if user is None:
+        abort(404)
+    return render_template('user.html', user=user)
 
 
 @main.route('/notebook/<_id>')

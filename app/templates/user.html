@@ -4,7 +4,43 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Hello, {{ name }}!</h1>
+    <h1>{{ user.username }}</h1>
+    <p>
+        {% if user.name %}{{ user.name}}{% endif %}
+    </p>
+    {% if current_user.is_administrator() %}
+        <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+    {% endif %}
+    <p>
+        Member since {{ moment(user.member_since).format('L') }}.
+        Last seen {{ moment(user.last_seen).fromNow() }}.
+    </p>
+    <p>
+        <h4>API Key</h4>
+        <div id='api_key'>{{ user.api_key }}</div>
+    </p>
+    <h4>Access the PulsePod API using your API key</h4>
+    <strong>Using a web browser:</strong>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Get all your data, plus any public data
+        </div>
+        <div class="panel-body">
+            <a href=https://{{ user.api_key}}:empty@api.pulsepod.io/data>https://{{ user.api_key}}:empty@api.pulsepod.io/data</a>
+        </div>
+    </div>
+    
+
+    <strong>From the command line:</strong>
+    <br>
+    Get all your data, plus any public data:
+    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/data</pre>
+    Get all your notebooks, plus any public notebooks:
+    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/notebooks</pre>
+    Get all your pods (only pods owned by you are returned):
+    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/pods</pre>
+    Find all the data near a specific coordinate [longitude, latitude]:
+    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io?where={"loc": {"$near": {"$geometry":{"type": "Point", "coordinates": [-106, 34 ]}}}}</pre>
 </div>
 {% endblock %}
 
