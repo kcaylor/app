@@ -159,12 +159,22 @@ class Notebook(db.Document):
                 data_worksheet[thisSensor].set_column('C:C', 12)
                 data_worksheet[thisSensor].set_column('D:D', 12)
                 data_header = "%s, [%s]" % (worksheet_name, sensor.unit)
-                data_worksheet[thisSensor].write(0, 0, data_header, header_format)
-                data_worksheet[thisSensor].write(1, 0, 'Time Stamp', header_format)
-                data_worksheet[thisSensor].write(1, 1, 'Latitude', header_format)
-                data_worksheet[thisSensor].write(1, 2, 'Longitude', header_format)
+                data_worksheet[thisSensor].write(
+                    0, 0, data_header, header_format
+                )
+                data_worksheet[thisSensor].write(
+                    1, 0, 'Time Stamp', header_format
+                )
+                data_worksheet[thisSensor].write(
+                    1, 1, 'Latitude', header_format
+                )
+                data_worksheet[thisSensor].write(
+                    1, 2, 'Longitude', header_format
+                )
                 value_header = 'Value (%s)' % sensor.unit
-                data_worksheet[thisSensor].write(1, 3, value_header, header_format)
+                data_worksheet[thisSensor].write(
+                    1, 3, value_header, header_format
+                )
                 row = 2
                 col = 0
                 # Write the data for this variable:

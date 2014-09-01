@@ -13,7 +13,9 @@ class Sensor(db.Document):
     name = db.StringField()
     sid = db.IntField(unique=True)
     context = db.StringField()
+    context_short = db.StringField()
     variable = db.StringField()
+    variable_short = db.StringField()
     nbytes = db.IntField(
         choices=list(set(FORMATS.values())),
         default=FORMATS['f']
