@@ -17,6 +17,8 @@ class Data(db.Document):
     sensor = db.ReferenceField('Sensor', db_field='s')
     variable = db.StringField()
     pod_name = db.StringField(db_field='p')
+    owner = db.ReferenceField('User', db_field='owner')
+    public = db.BooleanField(default=True)
 
     meta = {
         'collection': 'data',
@@ -24,6 +26,7 @@ class Data(db.Document):
         'index_background': True,
         'indexes': [
             'notebook',
+            'owner',
             ('notebook', 'sensor'),
             'location',
             ('location', '-time_stamp'),
@@ -40,6 +43,14 @@ class Data(db.Document):
 
     def display(self):
         return [self.time_stamp, self.variable, self.value]
+
+    def authenticate(self, user):
+        if user.role == 'admin':
+            return True
+        elif self.notebook.owner == user:
+            return True
+        else:
+            return False
 
     @staticmethod
     def generate_fake(count=1000):
@@ -80,20 +91,22 @@ class Data(db.Document):
                 value=random() * 100,
                 pod=notebook.pod,
                 sensor=sensor,
-                notebook=notebook
+                notebook=notebook,
+                owner=notebook.owner,
+                public=notebook.public
             )
             try:
                 data.save()
-                notebook.observations += 1
-                if data.sensor not in notebook.sensors:
-                    notebook.sensors += data.sensor
-                    notebook.sids += data.sensor.sid
-                notebook.save()
-                sensor.observations += 1
-                sensor.save()
-                notebook.owner.observations += 1
-                notebook.owner.save()
-                fake_data.append(data)
             except:
-                "Data save failed"
+                return "Error: Data save failed"
+            notebook.observations += 1
+            if data.sensor not in notebook.sensors:
+                notebook.sensors.append(data.sensor)
+                notebook.sids.append(data.sensor['sid'])
+            notebook.save()
+            sensor.observations += 1
+            sensor.save()
+            notebook.owner.observations += 1
+            notebook.owner.save()
+            fake_data.append(data)
         return fake_data

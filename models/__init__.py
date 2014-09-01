@@ -4,6 +4,7 @@ from flask.ext.login import LoginManager
 db = MongoEngine()
 login_manager = LoginManager()
 
+
 from .data import Data
 from .message import Message
 from .notebook import Notebook

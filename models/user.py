@@ -6,6 +6,11 @@ from flask import current_app
 import uuid
 
 
+def make_api_key():
+    import uuid
+    return str(uuid.uuid4()).replace('-', '')
+
+
 class User(UserMixin, db.Document):
 
     ROLES = ['admin', 'user', 'guest']
@@ -23,11 +28,12 @@ class User(UserMixin, db.Document):
     api_key = db.StringField(
         max_length=64,
         unique=True,
-        default=str(uuid.uuid4()).replace('-', '')
+        default=make_api_key()
     )
     role = db.StringField(
         choices=ROLES,
         default='user')
+
     meta = {
         'indexes': ['email', 'username', 'api_key'],
         'collection': 'users',
@@ -121,7 +127,8 @@ class User(UserMixin, db.Document):
             confirmed=True,
             username=os.environ.get('ADMIN_USER'),
             email=os.environ.get('ADMIN_EMAIL'),
-            role='admin'
+            role='admin',
+            api_key=os.environ.get('ADMIN_API_KEY')
         )
         admin.password = os.environ.get('ADMIN_PASSWORD')
         admin.save()
@@ -135,6 +142,7 @@ class User(UserMixin, db.Document):
             username='guest',
             email='guest@pulsepod.io',
             role='guest',
+            api_key=make_api_key()
         )
         guest.password = 'pulsepodguest'
         guest.save()
@@ -151,6 +159,7 @@ class User(UserMixin, db.Document):
                 confirmed=True,
                 username=fake.user_name(),
                 email=fake.safe_email(),
+                api_key=make_api_key()
             )
             #try:
             user.password = fake.md5()
