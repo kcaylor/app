@@ -18,6 +18,8 @@ class Data(db.Document):
     variable = db.StringField()
     pod_name = db.StringField(db_field='p')
     owner = db.ReferenceField('User', db_field='owner')
+    public = db.BooleanField(default=True)
+
     meta = {
         'collection': 'data',
         'ordering': ['-time_stamp'],
@@ -90,7 +92,8 @@ class Data(db.Document):
                 pod=notebook.pod,
                 sensor=sensor,
                 notebook=notebook,
-                owner=notebook.owner
+                owner=notebook.owner,
+                public=notebook.public
             )
             try:
                 data.save()
