@@ -17,13 +17,14 @@ class Data(db.Document):
     sensor = db.ReferenceField('Sensor', db_field='s')
     variable = db.StringField()
     pod_name = db.StringField(db_field='p')
-
+    owner = db.ReferenceField('User', db_field='owner')
     meta = {
         'collection': 'data',
         'ordering': ['-time_stamp'],
         'index_background': True,
         'indexes': [
             'notebook',
+            'owner',
             ('notebook', 'sensor'),
             'location',
             ('location', '-time_stamp'),
@@ -40,6 +41,14 @@ class Data(db.Document):
 
     def display(self):
         return [self.time_stamp, self.variable, self.value]
+
+    def authenticate(self, user):
+        if user.role == 'admin':
+            return True
+        elif self.notebook.owner == user:
+            return True
+        else:
+            return False
 
     @staticmethod
     def generate_fake(count=1000):
@@ -80,7 +89,8 @@ class Data(db.Document):
                 value=random() * 100,
                 pod=notebook.pod,
                 sensor=sensor,
-                notebook=notebook
+                notebook=notebook,
+                owner=notebook.owner
             )
             try:
                 data.save()

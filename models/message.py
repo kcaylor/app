@@ -76,7 +76,7 @@ class Message(db.Document):
     )
     pod = db.ReferenceField('Pod')
     notebook = db.ReferenceField('Notebook')
-
+    owner = db.ReferenceField('User')
     meta = {
         'indexes': [
             'source', 'status', 'message_type', 'pod', 'notebook'],
@@ -116,7 +116,9 @@ class Message(db.Document):
                 source=choice(Message.SOURCES),
                 message=message_str,
                 pod=notebook.pod,
-                notebook=notebook)
+                notebook=notebook,
+                owner=notebook.owner
+            )
             # try:
             message.message_type = message.get_type()
             message.frame_id = message.get_frame_id()
