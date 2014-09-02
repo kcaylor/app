@@ -58,16 +58,16 @@ function plot_data_ajax(nbk_id, sensor_id) {
             //return [data];
         },
         onComplete: function () {
-            var xaxis = new Rickshaw.Graph.Axis.Time({
-                graph: this.graph
-            });
             var yaxis = new Rickshaw.Graph.Axis.Y({
                 graph: this.graph,
-                orientation: 'right',
+                orientation: 'left',
                 tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
                 element: document.getElementById('y_axis'),
             });
             var hoverDetail = new Rickshaw.Graph.HoverDetail({
+                graph: this.graph
+            });
+            var xaxis = new Rickshaw.Graph.Axis.Time({
                 graph: this.graph
             });
             this.graph.render();
