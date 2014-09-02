@@ -8,6 +8,7 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.data import Data
 import calendar
+import datetime
 import json
 
 
@@ -69,7 +70,8 @@ def get_data(nbk_id, sensor_id):
     notebook = Notebook.objects(nbk_id=nbk_id).first()
     data = Data.objects(
         notebook=notebook,
-        sensor=sensor
+        sensor=sensor,
+        time_stamp__gt=datetime.datetime(2014, 1, 1, 0, 0, 0)
     ).order_by(
         'time_stamp'
     ).only(
