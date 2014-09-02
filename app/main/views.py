@@ -6,6 +6,8 @@ from app.shared.models.data import Data
 from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.user import User
+from app.shared.models.pod import Pod
+
 from mongoengine import Q
 
 
@@ -13,11 +15,37 @@ from mongoengine import Q
 # def before_request():
 #     if not current_user.is_authenticated():
 #         return redirect(url_for('auth.login'))
+NBK_PER_PAGE = 5
 
 
 @main.route('/')
 @login_required
 def index():
+    unconfirmed_owned = Q(confirmed=False) & Q(owner=current_user.get_id())
+    unconfirmed_notebooks = Notebook.objects(
+        unconfirmed_owned
+    ).order_by('-last').only(
+        'name',
+        'voltage',
+        'last',
+        'observations',
+        'owner',
+        'public',
+    )
+    for notebook in unconfirmed_notebooks:
+        url = url_for('main.notebook_info', _id=notebook.get_id())
+        message = Markup(
+            "Your new notebook, <a href=%s>%s</a> needs to be confirmed."
+            % (url, notebook.name)
+        )
+        flash(message, 'warning')
+    return render_template('index.html')
+
+
+@main.route('/notebooks')
+@main.route('/notebooks/<int:page>')
+@login_required
+def notebooks(page=1):
     with_obs_owned = Q(observations__gt=0) & Q(owner=current_user.get_id())
     notebooks = Notebook.objects(
         with_obs_owned
@@ -28,7 +56,7 @@ def index():
         'observations',
         'owner',
         'public',
-    )
+    ).paginate(page=page, per_page=NBK_PER_PAGE)
     unconfirmed_owned = Q(confirmed=False) & Q(owner=current_user.get_id())
     unconfirmed_notebooks = Notebook.objects(
         unconfirmed_owned
@@ -48,7 +76,7 @@ def index():
         )
         flash(message, 'warning')
     return render_template(
-        'notebook_list.html',
+        'user_notebook_list.html',
         title="%s's Notebooks" %
         current_user.username if 'username' in dir(current_user) else 'Guest',
         current_time=datetime.utcnow(),
@@ -58,8 +86,9 @@ def index():
 
 
 @main.route('/public')
+@main.route('/public/<int:page>')
 @login_required
-def public():
+def public(page=1):
     with_obs_public = Q(observations__gt=0) & Q(public=True)
     notebooks = Notebook.objects(
         with_obs_public
@@ -70,9 +99,9 @@ def public():
         'observations',
         'owner',
         'public'
-    )
+    ).paginate(page=page, per_page=NBK_PER_PAGE)
     return render_template(
-        'notebook_list.html',
+        'public_notebook_list.html',
         title="Public Notebooks",
         current_time=datetime.utcnow(),
         notebooks=notebooks
@@ -85,7 +114,16 @@ def user(username):
     user = User.objects(username=username).first()
     if user is None:
         abort(404)
-    return render_template('user.html', user=user)
+    notebooks = Notebook.objects(owner=user)
+    pods = Pod.objects(owner=user)
+    data = Data.objects(owner=user)
+    return render_template(
+        'user.html',
+        user=user,
+        pods=pods,
+        notebooks=notebooks,
+        data=data
+    )
 
 
 @main.route('/notebook/<_id>')

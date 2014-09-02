@@ -1,15 +1,4 @@
-{% extends "base.html" %}
-
-{% block title %} PulsePod - Home{% endblock %}
-
-{% block page_content %}
-<div class="page-header">
-<h2>{{ title }}
-</h2>
-</div>
-<div class="notebooks">
-{% if notebooks %}
-{% for notebook in notebooks %}
+{% for notebook in notebooks.items %}
 <div class="notebook">
     <div class="notebook-content">
         <h3>
@@ -42,18 +31,3 @@
     </div>
 </div>
 {% endfor %}
-{% else %}
-<h4> Welcome! </h4>
-<div>You haven't deployed a PulsePod and don't have any Notebooks of your own.
-</div> 
-<div>
-But you can still check out all our public data at the link below.
-<div class="notebook">
-    <a href="{{ url_for('main.public') }}">
-    <button>Public Data</button>
-    </a>
-</div>
-</div>
-{% endif %}
-</div>
-{% endblock %}
