@@ -2,7 +2,15 @@
 
 {% block title %} PulsePod {% endblock %}
 
+{% block scripts %}
+    {{ super() }}
+    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="/static/js/user.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.1/modernizr.min.js"></script>
+{% endblock %}
+
 {% block page_content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="page-header">
     <h1>{{ user.username }}</h1>
     <p>
@@ -15,22 +23,31 @@
         Member since {{ moment(user.member_since).format('L') }}.
         Last seen {{ moment(user.last_seen).fromNow() }}.
     </p>
-    <p>
-        <h4>API Key</h4>
-        <div id='api_key'>{{ user.api_key }}</div>
-    </p>
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <h4>API Key:</h4>
+        </div>
+        <div class="col-md-4 text-center">
+            <h4><mark><span id='api_key'>{{ user.api_key }}</span></mark></h4>
+        </div>
+        <div class="col-md-4 text-center">
+            <a href="javascript:void(0);" onclick="reset_api_key('{{user.id}}')">
+                <button type="button" class="btn btn-warning">Reset API Key</button>
+            </a>
+        </div>
+    </div>  
     <h4>Access the PulsePod API using your API key</h4>
 
     <strong>From the command line:</strong>
     <br>
     Get all your data, plus any public data:
-    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/data</pre>
+    <pre> > curl --user <span class='api_key'>{{ user.api_key }}</span>:empty https://api.pulsepod.io/data</pre>
     Get all your notebooks, plus any public notebooks:
-    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/notebooks</pre>
+    <pre> > curl --user <span class='api_key'>{{ user.api_key }}</span>:empty https://api.pulsepod.io/notebooks</pre>
     Get all your pods (only pods owned by you are returned):
-    <pre> > curl --user {{ user.api_key }}:empty https://api.pulsepod.io/pods</pre>
+    <pre> > curl --user <span class='api_key'>{{ user.api_key }}</span>:empty https://api.pulsepod.io/pods</pre>
     Find all the data near a specific coordinate [longitude, latitude]:
-    <pre> > curl --user 59894cee901248afaf1d50fce23e302c:empty -X GET https://api.pulsepod.io/data --data 'where={"loc": {"$near": {"$geometry":{"type": "Point", "coordinates": [-121.8, 38.55 ]}}}}'</pre>
+    <pre> > curl --user <span class='api_key'>{{ user.api_key }}</span>:empty -X GET https://api.pulsepod.io/data --data 'where={"loc": {"$near": {"$geometry":{"type": "Point", "coordinates": [-121.8, 38.55 ]}}}}'</pre>
 </div>
 {% endblock %}
 

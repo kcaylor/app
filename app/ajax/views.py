@@ -1,7 +1,9 @@
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 import requests
 from flask import current_app, request, render_template
 from . import ajax
+from app.shared.models.user import make_api_key
+from app.shared.models.user import User
 
 
 def get_forecast(lat=None, lng=None, time=None, **flags):
@@ -44,3 +46,12 @@ def forecast():
         'ajax/forecast.html',
         forecast=forecast
     )
+
+
+@ajax.route('/reset_api_key', methods=['GET'])
+@login_required
+def reset_api_key():
+    user = User.objects(id=request.args['id']).first()
+    user.api_key = make_api_key()
+    user.save()
+    return user.api_key
