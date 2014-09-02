@@ -1,0 +1,33 @@
+
+<div id="data_display">
+{% if data %}
+<h4>Notebook Data</h4>
+<!-- Dynamic:
+<table id="data_table_dynamic" class="display"></table>
+ -->
+<table id="data_table" class="display">
+<thead>
+    <tr>
+    <th>Date</th><th>Variable</th><th>Value</th><th>Units</th>
+    </tr>
+</thead>
+<tfoot>
+    <tr>
+    <th>Date</th><th>Variable</th><th>Value</th><th>Units</th>
+    </tr>
+</tfoot>
+<tbody>
+{% for item in data %}
+<tr>
+    <td data-order="{{item.time_stamp}}" >{{ moment(item.time_stamp).format('LLL') }}</td>
+    <td>{{ item.variable }}</td>
+    <td>{{ item.value|round(1) }}</td>
+    <td>{{ item.sensor['unit'] }} </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+No data reported for this deployment
+{% endif %}
+</div>

@@ -36,3 +36,27 @@
         {% endif %}
     </ul>
 {% endmacro %}
+
+
+{% macro render_data(pagination, nbk_id, sensor_id) %}
+  <ul class="pager">
+        {% if pagination.has_next %}
+            <li class="previous">
+                <a href="{{ url_for(endpoint, page=pagination.next_num, nbk_id=nbk_id, sensor_id=sensor_id) }}">&larr; Older</a>
+            </li>
+        {% else %}
+            <li class="previous disabled">
+                <a href="#">&larr; Older</a>
+            </li>
+        {% endif %}
+        {% if pagination.has_prev %}
+            <li class="next">
+                <a href="{{ url_for(endpoint, page=pagination.prev_num, nbk_id=nbk_id, sensor_id=sensor_id) }}">&rarr; Newer </a>
+            </li>
+        {% else %}
+            <li class="next disabled">
+                <a href="#">&rarr; Newer </a>
+            </li>
+        {% endif %}
+    </ul>
+{% endmacro %}

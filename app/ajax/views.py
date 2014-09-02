@@ -1,9 +1,14 @@
 from flask.ext.login import login_required, current_user
 import requests
-from flask import current_app, request, render_template
+from flask import current_app, request, render_template, jsonify, abort
 from . import ajax
 from app.shared.models.user import make_api_key
 from app.shared.models.user import User
+from app.shared.models.sensor import Sensor
+from app.shared.models.notebook import Notebook
+from app.shared.models.data import Data
+import calendar
+import json
 
 
 def get_forecast(lat=None, lng=None, time=None, **flags):
@@ -55,3 +60,59 @@ def reset_api_key():
     user.api_key = make_api_key()
     user.save()
     return user.api_key
+
+
+@ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])
+@login_required
+def get_data(nbk_id, sensor_id):
+    sensor = Sensor.objects(id=sensor_id).first()
+    notebook = Notebook.objects(nbk_id=nbk_id).first()
+    data = Data.objects(
+        notebook=notebook,
+        sensor=sensor
+    ).order_by(
+        'time_stamp'
+    ).only(
+        'time_stamp',
+        'value',
+    )
+    d = {}
+    d['name'] = sensor.context + \
+        ' ' + sensor.variable + ' [' + sensor.unit + ']'
+    d['data'] = []
+    for item in data:
+        point = {}
+        point['x'] = calendar.timegm(item.time_stamp.utctimetuple())
+        point['y'] = item.value
+        d['data'].append(point)
+    print json.dumps(d)
+    return jsonify(d)
+
+
+@ajax.route('/all_data/<nbk_id>', methods=['GET'])
+@login_required
+def all_data(nbk_id):
+    my_response = []
+    notebook = Notebook.objects(nbk_id=nbk_id).first()
+    for sensor in notebook.sensors:
+        d = {}
+        d['name'] = sensor.context + ' ' + sensor.variable
+        d['units'] = sensor.unit
+        d['data'] = []
+        data = Data.objects(
+            notebook=notebook,
+            sensor=sensor
+        ).order_by(
+            'time_stamp'
+        ).only(
+            'time_stamp',
+            'value',
+        )
+        for item in data:
+            point = {}
+            point['x'] = calendar.timegm(item.time_stamp.utctimetuple())
+            point['y'] = item.value
+            d['data'].append(point)
+        my_response.append(d)
+    print json.dumps(my_response)
+    return jsonify(my_response)

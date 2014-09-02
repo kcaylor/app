@@ -1,4 +1,4 @@
-/*global $, document */
+/*global $, document, d3, Rickshaw */
 
 var csrftoken = $('meta[name=csrf-token]').attr('content');
 var nbk_id = $('meta[name=nbk_id]').attr('content');
@@ -29,7 +29,6 @@ $('#notebook_name').editable({
     }
 });
 
-
 $(".tm-input").tagsManager({
     prefilled: nbk_tags,
     AjaxPush: '/edit/nbk_tags',
@@ -38,15 +37,49 @@ $(".tm-input").tagsManager({
 });
 
 
+function clear_chart() {
+    'use strict';
+    $('#legend').empty();
+    $('#chart_container').html('<div id="y_axis"></div><div id="chart"></div><div id="legend_container"><div id="smoother" title="Smoothing"></div><div id="legend"></div></div><div id="slider"></div>');
+}
 
+function plot_data_ajax(nbk_id, sensor_id) {
+    'use strict';
+    clear_chart();
+    var url = '../ajax/get_data/' + nbk_id + '/' + sensor_id;
+    var graph = new Rickshaw.Graph.Ajax({
+        element: document.getElementById("chart"),
+        width: 400,
+        height: 250,
+        renderer: 'line',
+        dataURL: url,
+        onData: function (d) {
+            return [{name: d.name, color: 'steelblue', data: d.data}];
+            //return [data];
+        },
+        onComplete: function () {
+            var xaxis = new Rickshaw.Graph.Axis.Time({
+                graph: this.graph
+            });
+            var yaxis = new Rickshaw.Graph.Axis.Y({
+                graph: this.graph,
+                orientation: 'right',
+                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                element: document.getElementById('y_axis'),
+            });
+            var hoverDetail = new Rickshaw.Graph.HoverDetail({
+                graph: this.graph
+            });
+            this.graph.render();
+        }
+    });
+}
 
-// var nbkData = $('#notebook-data').data();
 
 $(document).ready(function () {
     'use strict';
 
     $('#forecast').load("../ajax/forecast", {'lat': lat, 'lng': lng});
-
     var table = $('#data_table').DataTable({
         "order": [ 1, 'asc' ],
         // "data": nbkData.json,
