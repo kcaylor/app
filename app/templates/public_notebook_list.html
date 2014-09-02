@@ -2,6 +2,8 @@
 
 {% block title %} PulsePod - Public Notebooks{% endblock %}
 
+{% from 'macros/paginate.html' import render_pager as pager %}
+
 {% block page_content %}
 <div class="page-header">
 <h2>{{ title }}</h2>
@@ -9,26 +11,7 @@
 <div class="notebooks">
 {% if notebooks %}
     {% include 'notebook_list_items.html' %}
-    <ul class="pager">
-        {% if notebooks.has_next %}
-            <li class="previous">
-                <a href="{{ url_for('main.public', page=notebooks.next_num) }}">&larr; Older</a>
-            </li>
-        {% else %}
-            <li class="previous disabled">
-                <a href="#">&larr; Older</a>
-            </li>
-        {% endif %}
-        {% if notebooks.has_prev %}
-            <li class="next">
-                <a href="{{ url_for('main.public', page=notebooks.prev_num) }}">&rarr; Newer </a>
-            </li>
-        {% else %}
-            <li class="next disabled">
-                <a href="#">&rarr; Newer </a>
-            </li>
-        {% endif %}
-    </ul>
+    {{ pager(notebooks, 'main.public') }}
 {% else %}
 <h4> Welcome! </h4>
 <div>You haven't deployed a PulsePod and don't have any Notebooks of your own.
