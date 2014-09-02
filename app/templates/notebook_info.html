@@ -100,9 +100,9 @@
         {% for sensor in notebook.sensors %}
             <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}')">
             {% if sensor.variable_short %}
-              {{sensor.variable_short}}
+              {{sensor.context}} {{sensor.variable_short}}
             {% else %}
-              {{sensor.variable}}
+              {{sensor.context}} {{sensor.variable}}
             {% endif %}
             </button>
         {% endfor %}
