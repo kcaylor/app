@@ -40,7 +40,7 @@ $(".tm-input").tagsManager({
 function clear_chart() {
     'use strict';
     $('#legend').empty();
-    $('#chart_container').html('<div id="y_axis"></div><div id="chart"></div><div id="legend_container"><div id="smoother" title="Smoothing"></div><div id="legend"></div></div><div id="slider"></div>');
+    $('#chart_container').html('<div id="y_axis"></div><div id="chart"></div><div id="slider"></div>');
 }
 
 function plot_data_ajax(nbk_id, sensor_id) {
@@ -58,19 +58,25 @@ function plot_data_ajax(nbk_id, sensor_id) {
             //return [data];
         },
         onComplete: function () {
-            var yaxis = new Rickshaw.Graph.Axis.Y({
+            this.graph.render();
+
+            var slider = new Rickshaw.Graph.RangeSlider({
+                graph: this.graph,
+                element: document.getElementById('slider')
+            });
+            var yAxis = new Rickshaw.Graph.Axis.Y({
                 graph: this.graph,
                 orientation: 'left',
                 tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
                 element: document.getElementById('y_axis'),
             });
             var hoverDetail = new Rickshaw.Graph.HoverDetail({
-                graph: this.graph
+                graph: this.graph,
             });
-            var xaxis = new Rickshaw.Graph.Axis.Time({
-                graph: this.graph
+            var xAxis = new Rickshaw.Graph.Axis.Time({
+                graph: this.graph,
+                timeFixture: new Rickshaw.Fixtures.Time.Local()
             });
-            this.graph.render();
         }
     });
 }
