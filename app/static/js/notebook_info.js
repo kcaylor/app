@@ -58,12 +58,12 @@ function plot_data_ajax(nbk_id, sensor_id) {
             //return [data];
         },
         onComplete: function () {
-            this.graph.render();
 
             var slider = new Rickshaw.Graph.RangeSlider({
                 graph: this.graph,
                 element: document.getElementById('slider')
             });
+
             var yAxis = new Rickshaw.Graph.Axis.Y({
                 graph: this.graph,
                 orientation: 'left',
@@ -77,6 +77,9 @@ function plot_data_ajax(nbk_id, sensor_id) {
                 graph: this.graph,
                 timeFixture: new Rickshaw.Fixtures.Time.Local()
             });
+
+            this.graph.render();
+
         }
     });
 }
