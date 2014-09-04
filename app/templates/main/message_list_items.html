@@ -1,0 +1,34 @@
+{% for message in messages.items %}
+<div class="notebook">
+    <div class="notebook-content">
+        <h4>
+            Message: <a href="{{ url_for('main.message_info', _id=message.get_id() ) }}">
+                 {{ message.message_content|truncate(60, true) }}
+            </a>
+            <br>
+            <small>
+                <span class="badge">{{ message.type }}</span>
+            </small>
+            <small>
+                <span class="badge">{{ message.source}}</span>
+            </small>
+            <small>
+            {% if message.status == 'posted' %}
+                <span id="msg_queued" class="label label-success">Posted</span>
+            {% elif message.status  == 'invalid' %}
+                <span id="msg_invalid" class="label label-error">Invalid</span>
+            {% elif message.status == 'queued' %}
+                <span id="msg_queued" class="label label-warning">Queued</span>
+            {% elif message.status == 'unknown' %}
+                <span id="msg_unknown" class="label label-default">Unknown</span>
+            {% endif %}
+            </small>
+        </h4>
+            <span>
+            {% if message.time_stamp %}
+                &nbsp;Recieved {{ moment(message.time_stamp).fromNow(refresh=True) }}
+            {% endif %}
+            </span>
+    </div>
+</div>
+{% endfor %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod - {{message.message_id}}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+
+
+{% block page_content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<h2>{{message.message_id}}</h2>
+
+<table>
+<tr>
+<td>Source</td><td>{{message.source}}</td>
+</tr>
+<tr>
+<td>Content</td><td>{{message.content}}</td>
+</tr>
+<tr>
+<td>Time Stamp</td>{{message.time_stamp}}</td>
+</tr>
+</table>
+
+
+{% endblock %}

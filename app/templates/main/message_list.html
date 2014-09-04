@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod - Messages [ADMIN ONLY]{% endblock %}
+
+{% from 'macros/paginate.html' import render_pager as pager %}
+
+{% block page_content %}
+<div class="page-header">
+<h2>PulsePod Messages</h2>
+</div>
+<div class="messages">
+    {% include 'main/message_list_items.html' %}
+    {{ pager(messages, 'main.messages') }}
+</div>
+{% endblock %}
