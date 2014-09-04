@@ -40,7 +40,7 @@ $(".tm-input").tagsManager({
 function clear_chart() {
     'use strict';
     $('#legend').empty();
-    $('#chart_container').html('<div id="y_axis"></div><div id="chart"></div><div id="slider"></div>');
+    $('#chart_container').html('<div id="y_axis"></div><div id="chart"></div><br><div id="slider"></div>');
 }
 
 function plot_data_ajax(nbk_id, sensor_id) {
@@ -49,8 +49,8 @@ function plot_data_ajax(nbk_id, sensor_id) {
     var url = '../ajax/get_data/' + nbk_id + '/' + sensor_id;
     var graph = new Rickshaw.Graph.Ajax({
         element: document.getElementById("chart"),
-        width: 400,
-        height: 250,
+        width: 500,
+        height: 300,
         renderer: 'line',
         dataURL: url,
         onData: function (d) {
@@ -59,26 +59,28 @@ function plot_data_ajax(nbk_id, sensor_id) {
         },
         onComplete: function () {
 
-            var slider = new Rickshaw.Graph.RangeSlider({
-                graph: this.graph,
-                element: document.getElementById('slider')
-            });
-
             var yAxis = new Rickshaw.Graph.Axis.Y({
                 graph: this.graph,
                 orientation: 'left',
                 tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
                 element: document.getElementById('y_axis'),
             });
+
             var hoverDetail = new Rickshaw.Graph.HoverDetail({
                 graph: this.graph,
             });
+
             var xAxis = new Rickshaw.Graph.Axis.Time({
                 graph: this.graph,
                 timeFixture: new Rickshaw.Fixtures.Time.Local()
             });
 
             this.graph.render();
+
+            var slider = new Rickshaw.Graph.RangeSlider({
+                graph: this.graph,
+                element: document.getElementById('slider')
+            });
 
         }
     });
