@@ -87,6 +87,26 @@ class Message(db.Document):
     }
 
     @staticmethod
+    def send_message(number=None, content=None):
+        from twilio.rest import TwilioRestClient
+        import phonenumbers
+        if number is None:
+            assert 0, "Must provide number"
+        z = phonenumbers.parse(number, None)
+        if not phonenumbers.is_valid_number(z):
+            assert 0, "Dodgy number."
+        if content is None:
+            assert 0, "Message content is empty"
+        account = current_app.config['TWILIO_ACCOUNT_SID']
+        token = current_app.config['TWILIO_AUTH_TOKEN']
+        client = TwilioRestClient(account, token)
+        message = client.messages.create(
+            to=number,
+            from_=current_app.config['TWILIO_NUMBER'],
+            body=content)
+        return message
+
+    @staticmethod
     def generate_fake(count=1, frame_id=None):
         from random import choice, randint, sample
         from faker import Faker

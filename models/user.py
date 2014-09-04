@@ -44,6 +44,8 @@ class User(UserMixin, db.Document):
         choices=ROLES,
         default='user')
 
+    phone_number = db.StringField()
+
     meta = {
         'indexes': ['email', 'username', 'api_key'],
         'collection': 'users',
