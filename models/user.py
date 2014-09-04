@@ -29,6 +29,9 @@ class User(UserMixin, db.Document):
     notebooks = db.IntField(
         default=0
     )
+    pods = db.IntField(
+        default=0
+    )
     observations = db.IntField(
         default=0
     )
