@@ -17,7 +17,7 @@ from mongoengine import Q
 #     if not current_user.is_authenticated():
 #         return redirect(url_for('auth.login'))
 NBK_PER_PAGE = 5
-MSG_PER_PAGE = 5
+MSG_PER_PAGE = 10
 
 
 @main.route('/')
