@@ -100,7 +100,7 @@
       </div>
       <div id="sensor_buttons" class="btn-group btn-xs data-btn">
         {% for sensor in notebook.sensors %}
-            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit|default('-')}})')">
+            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit|default('-')}}|safe)')">
             {% if sensor.variable_short %}
               {{sensor.context}} {{sensor.variable_short}}
             {% else %}
