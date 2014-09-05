@@ -312,7 +312,7 @@ class DeployMessage(Message):
             notebook.pod['name'],
             notebook.address['formatted_address'],
         )
-        link = 'https://app.pulsepod.io/notebooks/%s' % notebook.get_id()
+        link = 'https://app.pulsepod.io/notebook/%s' % notebook.get_id()
         alert2 = ' Data from this pod will now be recorded at %s.' % link
         return (alert1, alert2)
 
