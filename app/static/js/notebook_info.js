@@ -49,7 +49,7 @@ function clear_chart() {
 
 function plot_data_ajax(nbk_id, sensor_id, nbk_name, variable_name) {
     'use strict';
-    $('#chart-title').html(nbk_name + ', observations of ' + variable_name)
+    $('#chart-title').html(nbk_name + ', ' + variable_name);
     clear_chart();
     var url = '../ajax/get_data/' + nbk_id + '/' + sensor_id;
     var graph = new Rickshaw.Graph.Ajax({
