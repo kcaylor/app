@@ -100,7 +100,7 @@
       </div>
       <div id="sensor_buttons" class="btn-group btn-xs data-btn">
         {% for sensor in notebook.sensors %}
-            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}')">
+            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit}})')">
             {% if sensor.variable_short %}
               {{sensor.context}} {{sensor.variable_short}}
             {% else %}
@@ -112,7 +112,7 @@
             </button>
         {% endfor %}
       </div>
-      <h4>Plot of {{notebook.name}}</h4>
+      <h4 id="chart-title">{{notebook.name}} Observations</h4>
       <div class="row centered_chart">
         <div id="chart_container" style="width: 550px; height: 360px">
           <div id="y_axis"></div>
