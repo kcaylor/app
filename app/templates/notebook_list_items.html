@@ -19,6 +19,9 @@
             {% else %}
                 <span id="nbk_public" class="label label-warning">Private</span>
             {% endif %}
+            {% if current_user.is_administrator() %}
+                <span id="owner" class="label label-default">{{ notebook.owner.username }}
+            {% endif %}
             </small>
         </h3>
             <span>
