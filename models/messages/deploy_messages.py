@@ -308,11 +308,9 @@ class DeployMessage(Message):
 
     def create_alert(self, notebook):
         alert1 = 'Hi %s! ' % notebook.owner['username']
-        alert1 += 'You just deployed your pod, %s, near %s in %s, %s.' % (
+        alert1 += 'You just deployed your pod, %s, near %s.' % (
             notebook.pod['name'],
             notebook.address['formatted_address'],
-            notebook.address['administrative_area_level_1'],
-            notebook.address['country']['full']
         )
         link = 'https://app.pulsepod.io/notebooks/%s' % notebook.get_id()
         alert2 = ' Data from this pod will now be recorded at %s.' % link
@@ -320,78 +318,78 @@ class DeployMessage(Message):
 
     def parse(self):
         from ..notebook import Notebook
-        from ..pod import Pod
-        from ..user import User
         import datetime
         if self.status is not 'invalid':
-            if self.status not in ['parsed', 'posted']:
-                try:
-                    location = self.google_geolocate_api()
-                    elevation = self.google_elevation_api(location)
-                    address = self.google_geocoding_api(location)
-                except:
-                    self.message.status = 'invalid'
-                    self.message.save()
-                    assert 0, 'MessageParse: Error in Google API functions'
-                try:
-                    notebook = Notebook(
-                        pod_id=self.pod['pod_id'],
-                        pod=self.pod,
-                        sensors=self.get_sensors(),
-                        sids=[sensor.sid for sensor in self.get_sensors()],
-                        owner=self.pod['owner'],
-                        last=datetime.datetime.utcnow(),
-                        voltage=self.voltage(),
-                        location=location,
-                        elevation=elevation,
-                        address=address,
-                        name=self.default_name(address),
-                        nbk_id=self.new_nbk_id(),
-                        created_at=datetime.datetime.utcnow(),
-                        confirmed=False
-                    )
-                    self.message.status = 'parsed'
-                    self.message.save()
-                except:
-                    assert 0, 'MessageParse: Error creating new notebook'
-                    self.message.status = 'invalid'
-                    self.message.save()
-                try:
-                    notebook.save()
-                    Pod.objects(id=self.pod.id).update_one(
-                        inc__notebooks=1,
-                        set__current_notebook=notebook,
-                        set__number=self.number
-                    )
-                    User.objects(id=self.pod.owner.id).update_one(
-                        inc__notebooks=1
-                    )
-                    self.message.status = 'posted'
-                    self.message.save()
-                    print "Added notebook %s to the database" % \
-                        notebook.__repr__()
-                    print "Incremented notebooks for %s and %s" % \
-                        (self.pod.__repr__(), self.pod.owner.__repr__())
-                    print "Changed current notebook on %s to %s" % \
-                        (self.pod.__repr__(), notebook.__repr__())
-                except:
-                    assert 0, 'MessageParse: Error saving new notebook'
-                if notebook.owner.phone_number:
-                    alerts = self.create_alert(notebook)
-                    for alert in alerts:
-                        self.message.send_message(
-                            number=notebook.owner.phone_number,
-                            content=alert
-                        )
-                elif 'email' in dir(notebook.owner):
-                    print 'sending deploy alert email [NOT FUNCTIONAL]'
-                else:
-                    print "no user data available"
-            else:
-                return "message already parsed"
+            try:
+                location = self.google_geolocate_api()
+                elevation = self.google_elevation_api(location)
+                address = self.google_geocoding_api(location)
+            except:
+                self.message.status = 'invalid'
+                self.message.save()
+                assert 0, 'MessageParse: Error in Google API functions'
+            try:
+                notebook = Notebook(
+                    pod_id=self.pod['pod_id'],
+                    pod=self.pod,
+                    sensors=self.get_sensors(),
+                    sids=[sensor.sid for sensor in self.get_sensors()],
+                    owner=self.pod['owner'],
+                    last=datetime.datetime.utcnow(),
+                    voltage=self.voltage(),
+                    location=location,
+                    elevation=elevation,
+                    address=address,
+                    name=self.default_name(address),
+                    nbk_id=self.new_nbk_id(),
+                    created_at=datetime.datetime.utcnow(),
+                    confirmed=False
+                )
+                self.message.status = 'parsed'
+                self.notebook = notebook
+                self.message.save()
+            except:
+                assert 0, 'MessageParse: Error creating new notebook'
+                self.message.status = 'invalid'
+                self.message.save()
 
     def post(self):
-        pass
+        from ..pod import Pod
+        from ..user import User
+        if self.status is not 'posted':
+            try:
+                self.notebook.save()
+                Pod.objects(id=self.pod.id).update_one(
+                    inc__notebooks=1,
+                    set__current_notebook=self.notebook,
+                    set__number=self.number
+                )
+                User.objects(id=self.pod.owner.id).update_one(
+                    inc__notebooks=1
+                )
+                self.message.status = 'posted'
+                self.message.save()
+                print "Added notebook %s to the database" % \
+                    self.notebook.__repr__()
+                print "Incremented notebooks for %s and %s" % \
+                    (self.pod.__repr__(), self.pod.owner.__repr__())
+                print "Changed current notebook on %s to %s" % \
+                    (self.pod.__repr__(), self.notebook.__repr__())
+            except:
+                assert 0, 'MessageParse: Error saving new notebook'
+            if self.notebook.owner.phone_number:
+                alerts = self.create_alert(self.notebook)
+                for alert in alerts:
+                    self.message.send_message(
+                        number=self.notebook.owner.phone_number,
+                        content=alert
+                    )
+            elif 'email' in dir(self.notebook.owner):
+                print 'sending deploy alert email [NOT FUNCTIONAL]'
+            else:
+                print "no user data available for alerts"
+        else:
+            return "message already posted"
 
 
 class DeployMessageLong(DeployMessage):
