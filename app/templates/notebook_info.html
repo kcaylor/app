@@ -64,8 +64,8 @@
 <!-- Nav tabs -->
 <div>
 <ul class="nav nav-tabs" role="tablist">
-  <li class="active"><a href="#Location" role="tab" data-toggle="tab">Location</a></li>
-  <li><a href="#Data" role="tab" data-toggle="tab">Data</span></a></li>
+<li class="active"><a href="#Data" role="tab" data-toggle="tab">Data</span></a></li>
+  <li><a href="#Location" role="tab" data-toggle="tab">Location</a></li>
   <li><a href="#Pod_Info" role="tab" data-toggle="tab">Pod Info</a></li>
   <li><a href="#Notes" role="tab" data-toggle="tab">Notes</a></li>
   <li><a href="#Downloads" role="tab" data-toggle="tab">Downloads</a></li>
@@ -76,7 +76,7 @@
 
 <!-- Tab panes -->
 <div class="tab-content">
-  <div class="tab-pane active" id="Location">
+  <div class="tab-pane" id="Location">
     <table id="location_table" class="table .table-striped">
         <thead>
         <tr>
@@ -93,18 +93,21 @@
         </tbody>
     </table>
   </div>
-  <div class="tab-pane text-center" id="Data">
+  <div class="tab-pane active text-center" id="Data">
       <div class="alert alert-info alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         Select a sensor to view your data.
       </div>
-      <div id="sensor_buttons" class="btn-group btn-xs">
+      <div id="sensor_buttons" class="btn-group btn-xs data-btn">
         {% for sensor in notebook.sensors %}
             <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}')">
             {% if sensor.variable_short %}
               {{sensor.context}} {{sensor.variable_short}}
             {% else %}
               {{sensor.context}} {{sensor.variable}}
+            {% endif %}
+            {% if current_data[sensor.get_id()] %}
+            ({{ current_data[sensor.get_id()]|round(2) }}&nbsp;{{ sensor.unit }})
             {% endif %}
             </button>
         {% endfor %}

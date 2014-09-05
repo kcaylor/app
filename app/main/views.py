@@ -179,6 +179,15 @@ def notebook_info(_id):
     sensors = Sensor.objects(
         sid__in=notebook.sids
     )
+    current_data = {}
+    for sensor in sensors:
+        current_value = Data.objects(
+            notebook=notebook,
+            sensor=sensor).order_by('-time_stamp').first()
+        if current_value:
+            current_data[sensor.get_id()] = current_value.value
+        else:
+            current_data[sensor.get_id()] = None
     if not data:
         flash('Waiting for initial data transmission', 'warning')
     return render_template(
@@ -187,6 +196,7 @@ def notebook_info(_id):
         notebook=notebook,
         # data=data,  # No need to return data, because AJAX.
         sensors=sensors,
+        current_data=current_data
     )
 
 

@@ -36,6 +36,10 @@ $(".tm-input").tagsManager({
     AjaxPushParameters: { 'nbk_id': nbk_id }
 });
 
+$('.data-btn .btn').click( function() {
+    $(this).addClass('active').siblings().removeClass('active');
+  });
+
 
 function clear_chart() {
     'use strict';
