@@ -21,26 +21,7 @@ MSG_PER_PAGE = 10
 
 
 @main.route('/')
-@login_required
 def index():
-    unconfirmed_owned = Q(confirmed=False) & Q(owner=current_user.get_id())
-    unconfirmed_notebooks = Notebook.objects(
-        unconfirmed_owned
-    ).order_by('-last').only(
-        'name',
-        'voltage',
-        'last',
-        'observations',
-        'owner',
-        'public',
-    )
-    for notebook in unconfirmed_notebooks:
-        url = url_for('main.notebook_info', _id=notebook.get_id())
-        message = Markup(
-            "Your new notebook, <a href=%s>%s</a> needs to be confirmed."
-            % (url, notebook.name)
-        )
-        flash(message, 'warning')
     return render_template('index.html')
 
 
