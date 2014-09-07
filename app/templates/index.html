@@ -7,8 +7,16 @@
 <div class="jumbotron">
   <h1>Hello, {{ current_user.username }}!</h1>
   <p>Welcome to the PulsePod App.</p>
-  <a href="http://www.pulsepod.io" class="btn btn-primary btn-lg" role="button">Learn more</a>
-  <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg" role="button">Sign Up</a>
+  {% if current_user.is_authenticated() %}
+    <a href="{{ url_for('main.notebooks') }}" class="btn btn-primary btn-lg" role="button">Your Notebooks</a>
+    <a href="{{ url_for('main.public') }}" class="btn btn-primary btn-lg" role="button">Public Notebooks</a>
+    <p>
+        <small><a href="http://www.pulsepod.io">About PulsePod</a></small>
+    </p>
+  {% else %}
+    <a href="http://www.pulsepod.io" class="btn btn-primary btn-lg" role="button">Learn more</a>
+    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary btn-lg" role="button">Sign Up</a>  
+  {% endif %}
 </div>
 
 
