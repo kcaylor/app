@@ -21,10 +21,10 @@
 <td>Source</td><td>{{message.source}}</td>
 </tr>
 <tr>
-<td>Content</td><td>{{message.content}}</td>
+<td>Content</td><td>{{message.message_content}}</td>
 </tr>
 <tr>
-<td>Time Stamp</td>{{message.time_stamp}}</td>
+<td>Time Stamp</td>{{ moment(message.time_stamp).format('LLL') }}</td>
 </tr>
 </table>
 
