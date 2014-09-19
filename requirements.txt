@@ -36,6 +36,7 @@ pytz==2014.3
 rednose==0.4.1
 requests==2.3.0
 simplejson==3.3.0
+twilio==3.6.7
 waitress==0.8.9
 webassets==0.9
 wsgiref==0.1.2
