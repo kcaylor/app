@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod - {{pod.name}}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
+
+
+{% block page_content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<h2>{{pod.name}}</h2>
+
+<table>
+<tr>
+<td>Owner</td><td>{{pod.owner.username}}</td>
+</tr>
+<tr>
+<td>Current Mode</td><td>{{pod.mode}}</td>
+</tr>
+<tr>
+<td>Last Message</td>{{ moment(pod.last).format('LLL') }}</td>
+</tr>
+</table>
+
+
+{% endblock %}

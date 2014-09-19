@@ -199,6 +199,12 @@ class AnonymousUser(AnonymousUserMixin):
     def can_edit(self, notebook):
         return False
 
+    def is_authenticated(self):
+        return False
+
+    def ping(self):
+        return
+
     username = 'Guest'
 
 

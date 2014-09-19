@@ -1,5 +1,6 @@
 from flask.ext.login import login_required
 from flask import request
+from app.decorators import admin_required
 from . import edit
 from app.shared.models.notebook import Notebook
 
@@ -12,6 +13,13 @@ def nbk_name():
     notebook.name = request.form["value"]
     notebook.save()
     return str(notebook.name)
+
+
+@edit.route('/nbk_location', methods=['POST'])
+@login_required
+def nbk_location():
+    notebook = Notebook.objects(id=request.form["nbk_id"]).first()
+    return str('okay')
 
 
 @edit.route('/nbk_tags', methods=['POST'])

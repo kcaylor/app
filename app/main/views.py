@@ -18,11 +18,26 @@ from mongoengine import Q
 #         return redirect(url_for('auth.login'))
 NBK_PER_PAGE = 5
 MSG_PER_PAGE = 10
+PODS_PER_PAGE = 10
 
 
 @main.route('/')
 def index():
     return render_template('index.html')
+
+
+@main.route('/pods')
+@main.route('/pods/<int:page>')
+@login_required
+@admin_required
+def pods(page=1):
+    pods = Pod.objects().order_by('-last').paginate(
+        page=page, per_page=PODS_PER_PAGE
+    )
+    return render_template(
+        'main/pod_list.html',
+        pods=pods
+    )
 
 
 @main.route('/messages')
@@ -143,6 +158,18 @@ def message_info(_id):
         'main/message_info.html',
         current_time=datetime.utcnow(),
         message=message
+    )
+
+
+@main.route('/pod/<_id>')
+@login_required
+@admin_required
+def pod_info(_id):
+    pod = Pod.objects(id=_id).first()
+    return render_template(
+        'main/pod_info.html',
+        current_time=datetime.utcnow(),
+        pod=pod
     )
 
 
