@@ -192,16 +192,19 @@ class DeployMessage(Message):
             'mobileCountryCode': self.mcc()
         }
 
-    def google_geolocate_api(self):
+    def google_geolocate_api(self, tower=None):
         import json
         import requests
         towers = []
-        try:
-            towers.append(self.make_tower())
-        except:
-            self.message.status = 'invalid'
-            self.message.save()
-            assert 0, 'error extracting cell information from message content'
+        if not tower:
+            try:
+                towers.append(self.make_tower())
+            except:
+                self.message.status = 'invalid'
+                self.message.save()
+                assert 0, 'error extracting cell information from message content'
+        else:
+            towers.append(tower)
         api_key = current_app.config['GOOGLE_API_KEY']
         if not api_key:
             assert 0, "Must provide api_key"
