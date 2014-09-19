@@ -38,6 +38,7 @@ def make_shell_context():
         Data=Data,
         Sensor=Sensor,
         Notebook=Notebook,
+        Message=Message
     )
 
 manager.add_command("shell", Shell(make_context=make_shell_context))

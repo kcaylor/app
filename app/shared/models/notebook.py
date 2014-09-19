@@ -30,7 +30,6 @@ class Notebook(db.Document):
     address = db.DictField()
     last = db.DateTimeField()
     voltage = db.FloatField(default=3.8)
-    confirmed = db.BooleanField(default=False),
     created_at = db.DateTimeField(
         default=datetime.datetime.utcnow()
     )
@@ -287,6 +286,8 @@ class Notebook(db.Document):
                 notebook.save()
                 pod['current_notebook'] = notebook
                 pod.save()
+                pod.owner.pods += 1
+                pod.owner.save()
                 fake_notebooks.append(notebook)
             except:
                 return "Notebook save failed"

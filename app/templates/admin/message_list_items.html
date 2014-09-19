@@ -2,7 +2,7 @@
 <div class="notebook">
     <div class="notebook-content">
         <h4>
-            Message: <a href="{{ url_for('main.message_info', _id=message.get_id() ) }}">
+            Message: <a href="{{ url_for('admin.message_info', _id=message.get_id() ) }}">
                  {{ message.message_content|truncate(60, true) }}
             </a>
             <br>

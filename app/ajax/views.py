@@ -1,12 +1,14 @@
-from flask.ext.login import login_required, current_user
+from flask.ext.login import login_required
+from app.decorators import admin_required
 import requests
-from flask import current_app, request, render_template, jsonify, abort
+from flask import current_app, request, render_template, jsonify
 from . import ajax
 from app.shared.models.user import make_api_key
 from app.shared.models.user import User
 from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.data import Data
+from app.shared.models.message import Message
 import calendar
 import datetime
 import json
@@ -33,6 +35,64 @@ def get_forecast(lat=None, lng=None, time=None, **flags):
                 return None
     else:
         return None
+
+
+@ajax.route('/message_initialize', methods=['POST'])
+@login_required
+@admin_required
+def message_initialize():
+    message = Message.objects(message_id=request.form['message_id']).first()
+    try:
+        message.init()
+    except:
+        return "Error initializing message"
+    info_string = '<span>' + message.message_content[:2] + '</span>'
+    info_string += '<span>' + message.message_content[2:] + '</span>'
+    info_string += '<br><br>Message type: ' + \
+        str(message.Message.__class__.__name__)
+    info_string += '<br><span>Pod: ' + message.pod.name + '</span>'
+    info_string += '<br>Notebook: ' + message.notebook.name + '</span>'
+    info_string += '<br>Initialized!'
+    return info_string
+
+
+@ajax.route('/message_parse', methods=['POST'])
+@login_required
+@admin_required
+def message_parse():
+    message = Message.objects(message_id=request.form['message_id']).first()
+    try:
+        message.init()
+    except:
+        return "Error initializing message"
+    info_string = '<span>' + message.message_content[:2] + '</span>'
+    info_string += '<span>' + message.message_content[2:] + '</span>'
+    info_string += '<br><br>Message type: ' + \
+        str(message.Message.__class__.__name__)
+    info_string += '<br><span>Pod: ' + message.pod.name + '</span>'
+    info_string += '<br>Notebook: ' + message.notebook.name + '</span>'
+    info_string += '<br>Parsed!'
+    return info_string
+
+
+@ajax.route('/message_post', methods=['POST'])
+@login_required
+@admin_required
+def message_post():
+    message = Message.objects(message_id=request.form['message_id']).first()
+    try:
+        message.init()
+    except:
+        return "Error initializing message"
+    info_string = '<span>' + message.message_content[:2] + '</span>'
+    info_string += '<span>' + message.message_content[2:] + '</span>'
+    info_string += '<br><br>Message type: ' + \
+        str(message.Message.__class__.__name__)
+    info_string += '<br><span>Pod: ' + message.pod.name + '</span>'
+    info_string += '<br>Notebook: ' + message.notebook.name + '</span>'
+    info_string += '<br>Posted!'
+    return info_string
+
 
 
 @ajax.route('/forecast', methods=['POST'])

@@ -84,6 +84,8 @@ class Pod(db.Document):
                     phonenumbers.PhoneNumberFormat.E164),
             )
             try:
+                user.pods += 1
+                user.save()
                 pod.save()
                 fake_pods.append(pod)
             except:

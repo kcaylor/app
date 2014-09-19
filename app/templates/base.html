@@ -41,15 +41,20 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.map') }}">Pod Map</a></li>
             </ul>
-            {% if current_user.is_administrator() %}
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.messages') }}">
-                Messages
-                </a></li>
-            </ul>
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.pods') }}">
                 Pods
+                </a></li>
+            </ul>
+            {% if current_user.is_administrator() %}
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('admin.messages') }}">
+                <span class="label label-danger">Messages</span>
+                </a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('admin.users') }}">
+                <span class="label label-danger">Users</span>
                 </a></li>
             </ul>
             {% endif %}

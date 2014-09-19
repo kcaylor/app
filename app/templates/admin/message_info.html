@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod - {{message.message_id}}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/static/js/admin/message_info.js"></script>
+{% endblock %}
+
+
+{% block page_content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="message_id" content="{{ csrf_token() }}">
+<meta name="message_status" content="{{ message.message_id }}">
+
+<h3>Message {{message.message_id}} from {{message.source|title}}</h3>
+Recieved on {{ moment(message.time_stamp).format('LLL') }}
+<br>
+Message status is <span class="label label-{{ message_status(message.status) }}">{{message.status}}</span>
+
+<h4>Message Content:</h4>
+<div id="message" class="well well-sm">{{message.message_content}}</div></td>
+{% if message.status == 'queued' %}
+<a href="#" id="initButton" onclick="initialize({{message.message_id}})" class="btn btn-{{ message_status(message.status) }} btn-large">Initialize</a>
+<a href="#" id="parseButton" onclick="parse({{message.message_id}})" class="btn btn-default btn-large" disabled>Parse</a>
+<a href="#" id="postButton" onclick="post({{message.message_id}})" class="btn btn-default btn-large" disabled>Post</a>
+{% endif %}
+{% endblock %}
+

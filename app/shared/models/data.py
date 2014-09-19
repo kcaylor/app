@@ -100,6 +100,7 @@ class Data(db.Document):
             except:
                 return "Error: Data save failed"
             notebook.observations += 1
+            notebook.pod.observations += 1
             if data.sensor not in notebook.sensors:
                 notebook.sensors.append(data.sensor)
                 notebook.sids.append(data.sensor['sid'])
@@ -108,5 +109,6 @@ class Data(db.Document):
             sensor.save()
             notebook.owner.observations += 1
             notebook.owner.save()
+            notebook.pod.save()
             fake_data.append(data)
         return fake_data

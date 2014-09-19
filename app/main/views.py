@@ -7,17 +7,10 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.user import User
 from app.shared.models.pod import Pod
-from app.shared.models.message import Message
-from app.decorators import admin_required
 from mongoengine import Q
 
 
-# @main.before_app_request
-# def before_request():
-#     if not current_user.is_authenticated():
-#         return redirect(url_for('auth.login'))
 NBK_PER_PAGE = 5
-MSG_PER_PAGE = 10
 PODS_PER_PAGE = 10
 
 
@@ -29,39 +22,23 @@ def index():
 @main.route('/pods')
 @main.route('/pods/<int:page>')
 @login_required
-@admin_required
 def pods(page=1):
-    pods = Pod.objects().order_by('-last').paginate(
+    if current_user.is_administrator():
+        with_obs_owned = None
+    else:
+        with_obs_owned = Q(observations__gt=0) & Q(owner=current_user.get_id())
+    pods = Pod.objects(
+        with_obs_owned
+    ).order_by('-last').only(
+        'name',
+        'owner',
+        'mode'
+    ).paginate(
         page=page, per_page=PODS_PER_PAGE
     )
     return render_template(
         'main/pod_list.html',
         pods=pods
-    )
-
-
-@main.route('/messages')
-@main.route('/messages/<int:page>')
-@login_required
-@admin_required
-def messages(page=1):
-    messages = Message.objects().order_by('-time_stamp').paginate(
-        page=page, per_page=MSG_PER_PAGE
-    )
-    queued_messages = Message.objects(
-        status='queued'
-    ).order_by('-time_stamp')
-    for message in queued_messages:
-        url = url_for('main.message_info', _id=message.get_id())
-        alert = Markup(
-            "Warning: Message <a href=%s>%s</a> is queued \
-            and has not been processed." % (url, message.message_id)
-        )
-        flash(alert, 'warning')
-    return render_template(
-        'main/message_list.html',
-        current_time=datetime.utcnow(),
-        messages=messages
     )
 
 
@@ -134,7 +111,12 @@ def public(page=1):
 @main.route('/user/<username>')
 @login_required
 def user(username):
-    user = User.objects(username=username).first()
+    # Don't show user information to anyone but the user and the admin:
+    if not current_user.username == username and \
+            not current_user.role == 'admin':
+        abort(404)
+    else:
+        user = User.objects(username=username).first()
     if user is None:
         abort(404)
     notebooks = Notebook.objects(owner=user)
@@ -149,23 +131,14 @@ def user(username):
     )
 
 
-@main.route('/message/<_id>')
-@login_required
-@admin_required
-def message_info(_id):
-    message = Message.objects(id=_id).first()
-    return render_template(
-        'main/message_info.html',
-        current_time=datetime.utcnow(),
-        message=message
-    )
-
-
 @main.route('/pod/<_id>')
 @login_required
-@admin_required
 def pod_info(_id):
     pod = Pod.objects(id=_id).first()
+    # Only let pod owners or administrators look at pods:
+    if not pod.owner.username == current_user.username and \
+            not current_user.role == 'admin':
+        abort(404)
     return render_template(
         'main/pod_info.html',
         current_time=datetime.utcnow(),
@@ -179,6 +152,12 @@ def notebook_info(_id):
     notebook = Notebook.objects(
         id=_id
     ).first()
+    # Check if this notebook is public. If it is, then anyone can see it.
+    if notebook.public is False:
+        # Only let notebook owners or administrators look at this notebook:
+        if not notebook.owner == current_user or \
+                not current_user.role == 'admin':
+            abort(404)
     # Should really do this as an AJAX:
     notebook.xls()
     data = Data.objects(
