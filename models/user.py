@@ -11,6 +11,11 @@ def make_api_key():
     return str(uuid.uuid4()).replace('-', '')
 
 
+def make_api_key():
+    import uuid
+    return str(uuid.uuid4()).replace('-', '')
+
+
 class User(UserMixin, db.Document):
 
     ROLES = ['admin', 'user', 'guest']
@@ -199,6 +204,14 @@ class AnonymousUser(AnonymousUserMixin):
 
     def can_edit(self, notebook):
         return False
+
+    def is_authenticated(self):
+        return False
+
+    def ping(self):
+        return
+
+    username = 'Guest'
 
 
 login_manager.anonymous_user = AnonymousUser
