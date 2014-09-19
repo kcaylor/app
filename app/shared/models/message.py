@@ -108,7 +108,7 @@ class Message(db.Document):
 
     @staticmethod
     def generate_fake(count=1, frame_id=None):
-        from random import choice, randint, sample
+        from random import choice, randint
         from faker import Faker
         from .notebook import Notebook
         fake = Faker()
@@ -119,7 +119,7 @@ class Message(db.Document):
             try:
                 if nNotebooks > 0:
                     notebook = Notebook.objects()[randint(
-                        0, nNotebooks-1)]
+                        0, nNotebooks - 1)]
                 else:
                     notebook = Notebook.generate_fake(1)[0]
             except:
@@ -189,7 +189,6 @@ class Message(db.Document):
         data['source'] = self.source
         data['number'] = self.number
         data['mid'] = self.message_id
-        user = 'gateway'
         url = current_app.config['API_URL'] + '/messages/' + self.source
         print url
         return compute_signature(
@@ -210,6 +209,7 @@ class Message(db.Document):
         MessageObject = NewMessageObject.create(self.get_type())
         MessageObject.init(self)
         self.parse = MessageObject.parse
+        self.post = MessageObject.post
         self.Message = MessageObject
 
 

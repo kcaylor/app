@@ -151,7 +151,7 @@ class Message(object):
         try:
             value = struct.unpack(
                 str(sensor['byteorder'] + sensor['fmt']),
-                self.content[i:i + (2*int(sensor['nbytes']))].decode('hex'))[0]
+                self.content[i:i + (2 * int(sensor['nbytes']))].decode('hex'))[0]
         except:
             raise InvalidMessageException(
                 'Error parsing format string',

@@ -16,3 +16,6 @@ class StatusMessage(Message):
 
     def parse(self):
         pass
+
+    def post(self):
+        pass

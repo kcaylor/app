@@ -14,6 +14,9 @@ class InvalidMessage(Message):
     def create_fake_message(self, frame_id, notebook):
         return 'this is a fake message'
 
+    def post(self):
+        pass
+
     def parse(self):
         self.message.save()
 
