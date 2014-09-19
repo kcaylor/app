@@ -11,6 +11,11 @@ def make_api_key():
     return str(uuid.uuid4()).replace('-', '')
 
 
+def make_api_key():
+    import uuid
+    return str(uuid.uuid4()).replace('-', '')
+
+
 class User(UserMixin, db.Document):
 
     ROLES = ['admin', 'user', 'guest']
@@ -38,6 +43,8 @@ class User(UserMixin, db.Document):
     role = db.StringField(
         choices=ROLES,
         default='user')
+
+    phone_number = db.StringField()
 
     meta = {
         'indexes': ['email', 'username', 'api_key'],
@@ -164,7 +171,6 @@ class User(UserMixin, db.Document):
 
     @staticmethod
     def generate_fake(count=10):
-        import uuid
         from faker import Faker
         fake = Faker()
         # fake.seed(3123)

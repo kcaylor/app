@@ -1,6 +1,27 @@
 from hashlib import sha1
 import base64
 import hmac
+from flask import current_app as app
+from twilio.rest import TwilioRestClient
+import phonenumbers
+
+
+def send_message(number=None, content=None):
+    if number is None:
+        assert 0, "Must provide number"
+    z = phonenumbers.parse(number, None)
+    if not phonenumbers.is_valid_number(z):
+        assert 0, "Dodgy number."
+    if content is None:
+        assert 0, "Message content is empty"
+    account = app.config['TWILIO_ACCOUNT_SID']
+    token = app.config['TWILIO_AUTH_TOKEN']
+    client = TwilioRestClient(account, token)
+    message = client.messages.create(
+        to=number,
+        from_=app.config['TWILIO_NUMBER'],
+        body=content)
+    return message
 
 
 def compute_signature(token, uri, data):

@@ -22,7 +22,7 @@ class DeployMessage(Message):
     def create_fake_message(self, frame_id, notebook):
         deploy_str = self.create_fake_header(frame_id, notebook)
         import struct
-        from random import random, randint, sample
+        from random import random, sample
         from ..sensor import Sensor
         mcc = 310
         mnc = 26
@@ -31,7 +31,7 @@ class DeployMessage(Message):
         n_sensors = 3
         voltage = struct.pack(
             '<f',
-            float(3.6+random()/2)).encode('hex').zfill(
+            float(3.6 + random() / 2)).encode('hex').zfill(
             self.get_length('voltage'))
         sensors = [Sensor.objects()[i] for i in sorted(
             sample(range(Sensor.objects().count()), n_sensors)
@@ -158,17 +158,17 @@ class DeployMessage(Message):
             assert 0, 'message content length=' + str(len(self.content)) + \
                       '. Must be >' + str(i)
             return
-        elif len(self.content) != (i + self.SID_LENGTH*self.n_sensors()):
+        elif len(self.content) != (i + self.SID_LENGTH * self.n_sensors()):
             self.message.status = 'invalid'
             self.message.save()
             assert 0, 'message content length=' + str(len(self.content)) + \
                       '. Must equal ' + \
-                      str(i + self.SID_LENGTH*self.n_sensors())
+                      str(i + self.SID_LENGTH * self.n_sensors())
             return
 
         try:
             for j in range(self.n_sensors()):
-                sid = int(self.content[i:i+self.SID_LENGTH], 16)
+                sid = int(self.content[i:i + self.SID_LENGTH], 16)
                 sensor = Sensor.objects(sid=sid).first()
                 sensors.append(sensor)
                 i += self.SID_LENGTH
@@ -306,6 +306,18 @@ class DeployMessage(Message):
                                 str(address_component['long_name'])
         return address
 
+    def create_alert(self, notebook):
+        alert1 = 'Hi %s! ' % notebook.owner['username']
+        alert1 += 'You just deployed your pod, %s, near %s in %s, %s.' % (
+            notebook.pod['name'],
+            notebook.address['formatted_address'],
+            notebook.address['administrative_area_level_1'],
+            notebook.address['country']['full']
+        )
+        link = 'https://app.pulsepod.io/notebooks/%s' % notebook.get_id()
+        alert2 = ' Data from this pod will now be recorded at %s.' % link
+        return (alert1, alert2)
+
     def parse(self):
         from ..notebook import Notebook
         from ..pod import Pod
@@ -328,13 +340,14 @@ class DeployMessage(Message):
                         sensors=self.get_sensors(),
                         sids=[sensor.sid for sensor in self.get_sensors()],
                         owner=self.pod['owner'],
-                        last=datetime.datetime.now(),
+                        last=datetime.datetime.utcnow(),
                         voltage=self.voltage(),
                         location=location,
                         elevation=elevation,
                         address=address,
                         name=self.default_name(address),
                         nbk_id=self.new_nbk_id(),
+                        created_at=datetime.datetime.utcnow(),
                         confirmed=False
                     )
                     self.message.status = 'parsed'
@@ -349,7 +362,7 @@ class DeployMessage(Message):
                         inc__notebooks=1,
                         set__current_notebook=notebook,
                         set__number=self.number
-                        )
+                    )
                     User.objects(id=self.pod.owner.id).update_one(
                         inc__notebooks=1
                     )
@@ -363,6 +376,17 @@ class DeployMessage(Message):
                         (self.pod.__repr__(), notebook.__repr__())
                 except:
                     assert 0, 'MessageParse: Error saving new notebook'
+                if notebook.owner.phone_number:
+                    alerts = self.create_alert(notebook)
+                    for alert in alerts:
+                        self.message.send_message(
+                            number=notebook.owner.phone_number,
+                            content=alert
+                        )
+                elif 'email' in dir(notebook.owner):
+                    print 'sending deploy alert email [NOT FUNCTIONAL]'
+                else:
+                    print "no user data available"
             else:
                 return "message already parsed"
 
