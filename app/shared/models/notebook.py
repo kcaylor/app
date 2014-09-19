@@ -1,4 +1,5 @@
 from . import db
+import datetime
 
 
 class Notebook(db.Document):
@@ -29,7 +30,10 @@ class Notebook(db.Document):
     address = db.DictField()
     last = db.DateTimeField()
     voltage = db.FloatField(default=3.8)
-    confirmed = db.BooleanField(default=False)
+    confirmed = db.BooleanField(default=False),
+    created_at = db.DateTimeField(
+        default=datetime.datetime.utcnow()
+    )
     observations = db.IntField(
         default=0
     )
