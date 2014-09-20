@@ -20,7 +20,7 @@ MSG_PER_PAGE = 10
 @login_required
 @admin_required
 def users(page=1):
-    users = User.objects().paginate(
+    users = User.objects().order_by('-last_seen').paginate(
         page=page,
         per_page=USERS_PER_PAGE
     )
