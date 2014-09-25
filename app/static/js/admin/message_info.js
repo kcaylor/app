@@ -20,6 +20,9 @@ function initialize(message_id) {
     $('#parseButton').attr('disabled', false);
     $('#parseButton').addClass('btn-info');
     $('#postButton').attr('disabled', true);
+    $('#deleteButton').attr('disabled', false);
+    $('#status').addClass('label-info');
+    $('#status').attr('content', 'initialized');
 }
 
 function parse(message_id) {
@@ -30,6 +33,8 @@ function parse(message_id) {
     $('#parseButton').attr('disabled', true);
     $('#postButton').attr('disabled', false);
     $('#postButton').addClass('btn-info');
+    $('#status').attr('content', 'parsed');
+    $('#status').addClass('label-primary');
 }
 
 function post(message_id) {
@@ -39,5 +44,18 @@ function post(message_id) {
     $('meta[name=message_status]').attr('content', 'posted');
     $('#parseButton').attr('disabled', true);
     $('#postButton').attr('disabled', true);
+    $('#status').attr('content', 'posted');
+    $('#status').addClass('label-success');
+}
+
+function delete_msg(message_id) {
+    'use strict';
+    $('#message').load("../../ajax/message_delete", {'message_id': message_id});
+    $('#initButton').attr('disabled', true);
+    $('meta[name=message_status]').attr('content', 'deleted');
+    $('#parseButton').attr('disabled', true);
+    $('#postButton').attr('disabled', true);
+    $('#status').attr('content', 'deleted');
+    $('#status').addClass('label-danger');
 }
 

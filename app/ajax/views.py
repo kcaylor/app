@@ -102,6 +102,14 @@ def message_post():
     return info_string
 
 
+@ajax.route('/message_delete', methods=['POST'])
+@login_required
+@admin_required
+def message_delete():
+    message = Message.objects(message_id=request.form['message_id']).first()
+    message.delete()
+    return "Message deleted."
+
 
 @ajax.route('/forecast', methods=['POST'])
 @login_required

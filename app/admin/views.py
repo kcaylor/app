@@ -85,15 +85,18 @@ def helper_functions():
         return 'danger'
 
     def message_status(status):
-        if status is 'parsed':
+        print status
+        if status == 'posted':
             return 'success'
-        if status is 'queued':
+        if status == 'queued':
             return 'warning'
-        if status is 'invalid':
+        if status == 'invalid':
             return 'danger'
-        if status is 'unknown':
+        if status == 'unknown':
             return 'default'
-        return 'info'
+        if status == 'parsed':
+            return 'primary'
+        return 'default'
 
     return dict(
         label_voltage=label_voltage,
