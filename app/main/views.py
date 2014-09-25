@@ -141,9 +141,13 @@ def pod_info(_id):
     if ObjectId.is_valid(_id):
         pod = Pod.objects(id=_id).first()
     else:
-        pod = Pod.objects(pod_id=_id).first()
-        if not pod:
-            pod = Pod.objects(name=_id).first()
+        try:
+            pod = Pod.objects(pod_id=_id).first()
+        except:
+            try:
+                pod = Pod.objects(name=_id).first()
+            except:
+                pass
     if not pod:
         abort(404)
     # Only let pod owners or administrators look at pods:
