@@ -13,7 +13,7 @@ from bson.objectid import ObjectId
 from mongoengine import Q
 
 
-NBK_PER_PAGE = 5
+NBK_PER_PAGE = 12
 PODS_PER_PAGE = 12
 
 
