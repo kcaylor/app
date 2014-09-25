@@ -11,7 +11,7 @@ from app.shared.models.message import Message
 from app.decorators import admin_required
 from mongoengine import Q
 
-USERS_PER_PAGE = 10
+USERS_PER_PAGE = 12
 MSG_PER_PAGE = 10
 
 
