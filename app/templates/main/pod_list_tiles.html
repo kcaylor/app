@@ -1,0 +1,44 @@
+<div class="container">
+{% for pod in pods.items %}
+    {%if loop.index0%4 == 0 %}
+        {%if loop.index0==0 %}
+           <div class="row">
+        {% else %}
+            </div><div class="row">
+        {% endif %}
+    {% endif %}
+    <div class="col-sm-3">
+        <h4>
+            <a href="{{ url_for('main.pod_info', _id=pod.get_id() ) }}">
+                 {{ pod.name }}
+            </a>
+            <br>
+            <small>
+                <span class="badge">{{ pod.pod_id }}</span>
+            </small>
+            <small>
+                <span class="badge">{{ pod.owner.username }}</span>
+            </small>
+            <small>
+            {% if pod.status == 'normal' %}
+                <span id="pod_normal" class="label label-success">Normal</span>
+            {% elif pod.status  == 'inactive' %}
+                <span id="pod_inactive" class="label label-error">Inactive</span>
+            {% elif pod.status == 'teenager' %}
+                <span id="pod_teenager" class="label label-warning">Teenager</span>
+            {% elif pod.status == 'asleep' %}
+                <span id="pod_asleep" class="label label-default">Asleep</span>
+            {% endif %}
+            </small>
+        </h4>
+        <span>
+        {% if pod.last %}
+            &nbsp;Last heard from {{ moment(pod.last).fromNow(refresh=True) }}
+        {% endif %}
+        </span>
+    </div>
+    {%if loop.last == True %}
+        </div>
+    {% endif %}
+{% endfor %}
+</div>

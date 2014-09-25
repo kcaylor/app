@@ -30,52 +30,38 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li>
-                <a href="{{ url_for('main.notebooks') }}">Your Notebooks
-                </a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.public') }}">All Notebooks</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.map') }}">Pod Map</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.pods') }}">
-                Pods
-                </a></li>
-            </ul>
-            {% if current_user.is_administrator() %}
-            <ul class="nav navbar-nav">
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<span class="caret"></span></a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="{{ url_for('admin.messages') }}">Messages</a></li>
-                    <li><a href="{{ url_for('admin.users') }}">Users</a></li>
-                  </ul>
-            </li>
-            {% endif %}
-            {% if current_user.is_authenticated() %}
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.user', username=current_user.username) }}">
-                Profile
-                </a></li>
-            </ul>
-            {% endif %}
-            <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_authenticated() %}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    Account <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('auth.change_password') }}">Change Password</a></li>
-                        <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Notebooks<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{{ url_for('main.notebooks') }}">Your Notebooks</a></li>
+                        <li><a href="{{ url_for('main.public') }}">Public Notebooks</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ url_for('main.map') }}">Notebook Map</a></li>
                     </ul>
                 </li>
-                {% else %}
-                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('main.pods') }}">Your Pods</a></li>    
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_authenticated() %}
+                {% if current_user.is_administrator() %}
+                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ url_for('admin.messages') }}">Messages</a></li>
+                            <li><a href="{{ url_for('admin.users') }}">Users</a></li>
+                        </ul>
+                    </li>
                 {% endif %}
+                <li>
+                    <p class="navbar-text navbar-right">Signed in as <a href="{{ url_for('main.user', username=current_user.username) }}" class="navbar-link">{{current_user.username}}</a></p>
+                </li>
+                <li class="divider">&nbsp|&nbsp</li>
+                <li><button class="btn btn-default navbar-btn"><a href="{{ url_for('auth.logout') }}">Sign out</a></button>
+                </li>
+            {% else %}
+                <li><button class="btn btn-default navbar-btn"><a href="{{ url_for('auth.login') }}">Sign In</a></button></li>
+            {% endif %}
             </ul>
         </div>
     </div>

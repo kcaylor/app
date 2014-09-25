@@ -23,9 +23,11 @@
         Member since {{ moment(user.member_since).format('L') }}.
         Last seen {{ moment(user.last_seen).fromNow() }}.
     </p>
+    <button class="btn btn-default"><a href="{{ url_for('auth.change_password') }}">Change Password</a></button>
+    </ul>
     <div class="row">
         <ul class="nav nav-pills nav-justified" role="tablist">
-            <li class="active">
+            <li>
                 <a href="#Notebooks" role="tab" data-toggle="tab">
                     <span class="badge pull-right">{{ user.notebooks }}</span>
                     Notebooks

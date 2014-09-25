@@ -14,7 +14,7 @@ from mongoengine import Q
 
 
 NBK_PER_PAGE = 5
-PODS_PER_PAGE = 10
+PODS_PER_PAGE = 12
 
 
 @main.route('/')
