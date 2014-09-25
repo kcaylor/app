@@ -8,6 +8,7 @@ from app.shared.models.notebook import Notebook
 from app.shared.models.user import User
 from app.shared.models.pod import Pod
 from app.shared.models.message import Message
+from bson.objectid import ObjectId
 
 from mongoengine import Q
 
@@ -136,11 +137,19 @@ def user(username):
 @main.route('/pod/<_id>')
 @login_required
 def pod_info(_id):
-    pod = Pod.objects(id=_id).first()
+    pod = None
+    if ObjectId.is_valid(_id):
+        pod = Pod.objects(id=_id).first()
+    else:
+        pod = Pod.objects(pod_id=_id).first()
+        if not pod:
+            pod = Pod.objects(name=_id).first()
+    if not pod:
+        abort(404)
     # Only let pod owners or administrators look at pods:
     if not pod.owner.username == current_user.username and \
             not current_user.role == 'admin':
-        abort(404)
+        abort(403)
     if current_user.role == 'admin':
         message_list = Message.objects(
             pod=pod
