@@ -121,19 +121,44 @@ class Notebook(db.Document):
         info_worksheet.write(3, 0, 'Last Data:', info_label_format)
         info_worksheet.write(3, 1, self.last, date_format)
         info_worksheet.write(4, 0, 'Country:', info_label_format)
-        info_worksheet.write(
-            4, 1, self.address['country']['full'], info_format
-        )
+        try:
+            info_worksheet.write(
+                4, 1, self.address['country']['full'], info_format
+            )
+        except:
+            info_worksheet.write(
+                4, 1, 'Unknown', info_format
+            )
         info_worksheet.write(5, 0, 'Address:', info_label_format)
-        info_worksheet.write(
-            5, 1, self.address['formatted_address'], info_format
-        )
+        try:
+            info_worksheet.write(
+                5, 1, self.address['formatted_address'], info_format
+            )
+        except:
+            info_worksheet.write(
+                5, 1, 'Unknown', info_format
+            )
         info_worksheet.write(6, 0, 'Latitude:', info_label_format)
-        info_worksheet.write(6, 1, self.lat(), info_format)
+        try:
+            info_worksheet.write(6, 1, self.lat(), info_format)
+        except:
+                info_worksheet.write(6, 1, -9999, info_format)
         info_worksheet.write(7, 0, 'Longitude:', info_label_format)
-        info_worksheet.write(7, 1, self.lng(), info_format)
+        try:
+            info_worksheet.write(7, 1, self.lng(), info_format)
+        except:
+            info_worksheet.write(7, 1, -9999, info_format)
         info_worksheet.write(8, 0, 'Elevation (m):', info_label_format)
-        info_worksheet.write(8, 1, self.elevation['elevation'], info_format)
+        try:
+            info_worksheet.write(
+                8, 1,
+                self.elevation['elevation'], info_format
+            )
+        except:
+            info_worksheet.write(
+                8, 1,
+                -9999, info_format
+            )
         info_worksheet.write(9, 0, 'Pod:', info_label_format)
         info_worksheet.write(9, 1, self.pod.name, info_format)
         info_worksheet.set_column('A:A', 25)

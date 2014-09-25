@@ -156,9 +156,11 @@
   </div>
   <div class="tab-pane" id="Downloads">
     <br>
+    {%if xlsx %}
       <a href="/static/xlsx/{{ notebook.nbk_id}}.xlsx">
         <button type="button" class="btn btn-default navbar-btn">xls</button>
       </a>
+    {% endif %}
       &nbsp;
       <a href="#">
         <button type="button" class="btn btn-default navbar-btn">csv</button>

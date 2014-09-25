@@ -183,7 +183,11 @@ def notebook_info(_id):
                 not current_user.role == 'admin':
             abort(404)
     # Should really do this as an AJAX:
-    notebook.xls()
+    try:
+        notebook.xls()
+        xlsx = True
+    except:
+        xlsx = False
     data = Data.objects(
         notebook=notebook
     ).first()
@@ -207,7 +211,8 @@ def notebook_info(_id):
         notebook=notebook,
         # data=data,  # No need to return data, because AJAX.
         sensors=sensors,
-        current_data=current_data
+        current_data=current_data,
+        xlsx=xlsx
     )
 
 
