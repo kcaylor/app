@@ -135,7 +135,7 @@
       </thead>
         <tbody>
             <tr>
-                <td>{{notebook.pod.name}}</td>
+                <td><a href="{{ url_for('main.pod_info', _id=notebook.pod.get_id()) }}">{{notebook.pod.name}}</a></td>
                 <td>{{notebook.pod.pod_id}}</td>
                 <td>{{notebook.pod.radio|upper}}</td>
                 <td>{{notebook.pod.mode}}</td>
