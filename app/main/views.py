@@ -168,7 +168,7 @@ def notebook_info(_id):
                 not current_user.role == 'admin':
             abort(404)
     # Should really do this as an AJAX:
-    # notebook.xls()
+    notebook.xls()
     data = Data.objects(
         notebook=notebook
     ).first()
