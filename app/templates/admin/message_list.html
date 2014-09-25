@@ -2,14 +2,24 @@
 
 {% block title %} PulsePod - Messages [ADMIN ONLY]{% endblock %}
 
-{% from 'macros/paginate.html' import render_pager as pager %}
+
+{% block head %}
+    {{ super() }}
+    <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    <script src="{{ url_for('static', filename='js/admin/message_list.js') }}"></script>
+{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
 <h2>PulsePod Messages</h2>
 </div>
-<div class="messages">
-    {% include 'admin/message_list_items.html' %}
-    {{ pager(messages, 'admin.messages') }}
-</div>
+
+{% include '/admin/message_table.html' %}
+
 {% endblock %}

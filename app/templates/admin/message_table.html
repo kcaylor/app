@@ -1,0 +1,35 @@
+<div id="data_display">
+{% if message_list %}
+<!-- Dynamic:
+<table id="data_table_dynamic" class="display"></table>
+ -->
+<table id="data_table" class="display" width="100%">
+<thead>
+    <tr>
+    <th>Link</th></th><th>Time Stamp</th><th>ID</th><th>Type</th><th>Pod Name</th><th>Pod Id</th><th>Notebook</th><th>Content</th><th>Status</th>
+    </tr>
+</thead>
+<tfoot>
+    <tr>
+    <th>Time Stamp</th><th>ID</th><th>Type</th><th>Pod Name</th><th>Pod Id</th><th>Notebook</th><th>Content</th><th>Status</th>
+    </tr>
+</tfoot>
+<tbody>
+{% for message in message_list %}
+<tr>
+    <td data-order="{{message.time_stamp}}" >{{ message.time_stamp }}</td>
+    <td><a href="{{ url_for('admin.message_info', _id=message.get_id()) }}">{{ message.message_id }}</a></td>
+    <td>{{ message.message_type }}</td>
+    <td>{{ message.pod.name }} </td>
+    <td>{{ message.pod.pod_id }}</td>
+    <td>{{ message.notebook.name}} </td>
+    <td>{{ message.message_content|truncate(15, True) }}
+    <td>{{ message.status }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+    <h4>No message list provided</h4>
+{% endif %}
+</div>

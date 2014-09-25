@@ -7,6 +7,8 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.user import User
 from app.shared.models.pod import Pod
+from app.shared.models.message import Message
+
 from mongoengine import Q
 
 
@@ -139,10 +141,17 @@ def pod_info(_id):
     if not pod.owner.username == current_user.username and \
             not current_user.role == 'admin':
         abort(404)
+    if current_user.role == 'admin':
+        message_list = Message.objects(
+            pod=pod
+        ).limit(100).order_by('-time_stamp')
+    else:
+        message_list = None
     return render_template(
         'main/pod_info.html',
         current_time=datetime.utcnow(),
-        pod=pod
+        pod=pod,
+        message_list=message_list
     )
 
 
@@ -155,7 +164,7 @@ def notebook_info(_id):
     # Check if this notebook is public. If it is, then anyone can see it.
     if notebook.public is False:
         # Only let notebook owners or administrators look at this notebook:
-        if not notebook.owner == current_user or \
+        if not notebook.owner == current_user and \
                 not current_user.role == 'admin':
             abort(404)
     # Should really do this as an AJAX:

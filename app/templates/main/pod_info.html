@@ -4,10 +4,14 @@
 
 {% block head %}
     {{ super() }}
+    <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet">
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    <script src="{{ url_for('static', filename='js/admin/message_list.js') }}"></script>
 {% endblock %}
 
 
@@ -27,6 +31,12 @@
 <td>Last Message</td>{{ moment(pod.last).format('LLL') }}</td>
 </tr>
 </table>
+
+<div>
+{%if current_user.is_administrator() %}
+<h4>Recent Messages from {{pod.name}}</h4>
+    {% include '/admin/message_table.html' %}
+{% endif %}
 
 
 {% endblock %}

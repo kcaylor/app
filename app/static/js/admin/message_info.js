@@ -1,7 +1,6 @@
 /*global $, document, d3, Rickshaw */
 
 var csrftoken = $('meta[name=csrf-token]').attr('content');
-var message_id = $('meta[name=message_id]').attr('content');
 var message_status = $('meta[name=message_status]').attr('content');
 
 $.ajaxSetup({

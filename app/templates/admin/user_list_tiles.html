@@ -1,0 +1,42 @@
+<div class="container">
+{% for user in users.items %}
+    {%if loop.index0%4 == 0 %}
+        {%if loop.index0==0 %}
+           <div class="row">
+        {% else %}
+            </div><div class="row">
+        {% endif %}
+    {% endif %}
+    <div class="col-sm-3">
+        <h4>
+            <a href="{{ url_for('main.user', username=user.username ) }}">
+             {{ user.username }}
+            </a>
+            <br>
+            <small>
+                <span class="badge">{{ user.pods }}</span>
+            </small>
+            <small>
+                <span class="badge">{{ user.notebooks }}</span>
+            </small>
+            <small>
+            {% if user.role == 'user' %}
+                <span id="user_normal" class="label label-success">User</span>
+            {% elif user.role  == 'admin' %}
+                <span id="user_admin" class="label label-error">Administrator</span>
+            {% elif user.role == 'guest' %}
+                <span id="user_guest" class="label label-warning">Guest</span>
+            {% endif %}
+            </small>
+        </h4>
+        <span>
+            {% if user.last_seen %}
+                &nbsp;Last seen {{ moment(user.last_seen).fromNow(refresh=True) }}
+           {% endif %}
+        </span>
+    </div>
+    {%if loop.last == True %}
+        </div>
+    {% endif %}
+{% endfor %}
+</div>

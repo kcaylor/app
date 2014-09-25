@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import render_template, flash, Markup, url_for
 from flask.ext.login import login_required
 from . import admin
@@ -35,9 +35,13 @@ def users(page=1):
 @login_required
 @admin_required
 def messages(page=1):
-    messages = Message.objects().order_by('-time_stamp').paginate(
-        page=page, per_page=MSG_PER_PAGE
-    )
+    # messages = Message.objects().order_by('-time_stamp').paginate(
+    #     page=page, per_page=MSG_PER_PAGE
+    # )
+    last_week = datetime.now() - timedelta(weeks=1)
+    message_list = Message.objects(
+        time_stamp__gt=last_week
+    ).order_by('-time_stamp').limit(100)
     queued_messages = Message.objects(
         status='queued'
     ).order_by('-time_stamp')
@@ -51,7 +55,8 @@ def messages(page=1):
     return render_template(
         'admin/message_list.html',
         current_time=datetime.utcnow(),
-        messages=messages
+        # messages=messages,
+        message_list=message_list
     )
 
 

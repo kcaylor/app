@@ -24,11 +24,11 @@ Recieved on {{ moment(message.time_stamp).format('LLL') }}
 Message status is <span class="label label-{{ message_status(message.status) }}">{{message.status}}</span>
 
 <h4>Message Content:</h4>
-<div id="message" class="well well-sm">{{message.message_content}}</div></td>
+<div id="message" class="well well-sm">{{message.message_content|truncate(60,True)}}</div></td>
 {% if message.status == 'queued' %}
-<a href="#" id="initButton" onclick="initialize({{message.message_id}})" class="btn btn-{{ message_status(message.status) }} btn-large">Initialize</a>
-<a href="#" id="parseButton" onclick="parse({{message.message_id}})" class="btn btn-default btn-large" disabled>Parse</a>
-<a href="#" id="postButton" onclick="post({{message.message_id}})" class="btn btn-default btn-large" disabled>Post</a>
+<a href="#" id="initButton" onclick="initialize('{{message.message_id}}')" class="btn btn-{{ message_status(message.status) }} btn-large">Initialize</a>
+<a href="#" id="parseButton" onclick="parse('{{message.message_id}}')" class="btn btn-default btn-large" disabled>Parse</a>
+<a href="#" id="postButton" onclick="post('{{message.message_id}}')" class="btn btn-default btn-large" disabled>Post</a>
 {% endif %}
 {% endblock %}
 
