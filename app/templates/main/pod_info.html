@@ -28,8 +28,11 @@
 <td>Current Mode</td><td>{{pod.mode}}</td>
 </tr>
 <tr>
-<td>Last Message</td>{{ moment(pod.last).format('LLL') }}</td>
+<td>Last Message</td><td>{{ moment(pod.last).format('LLL') }}</td>
 </tr>
+<tr>
+<td>Current Notebook</td>
+    <td><a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a></td>
 </table>
 
 <div>
