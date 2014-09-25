@@ -71,6 +71,7 @@ class Notebook(db.Document):
 
     def xls(self, filename=None):
         import xlsxwriter
+        import math
         from .data import Data
         from flask import current_app as app
         xlsx_path = app.config['XLSX_PATH']
@@ -193,9 +194,10 @@ class Notebook(db.Document):
                         row, col + 2, self.lng(), location_format
                     )
                     if type(value) is int or type(value) is float:
-                        data_worksheet[thisSensor].write(
-                            row, col + 3, value, value_format
-                        )
+                        if not math.isinf(value) and not math.isnan(value):
+                            data_worksheet[thisSensor].write(
+                                row, col + 3, value, value_format
+                            )
                     row += 1
                 data_worksheet[thisSensor].write(
                     row, 2, 'Average:', average_format
