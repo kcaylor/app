@@ -160,11 +160,13 @@ def pod_info(_id):
         ).limit(100).order_by('-time_stamp')
     else:
         message_list = None
+    notebooks = Notebook.objects(pod=pod).order_by('-last')
     return render_template(
         'main/pod_info.html',
         current_time=datetime.utcnow(),
         pod=pod,
-        message_list=message_list
+        message_list=message_list,
+        notebooks=notebooks
     )
 
 

@@ -19,8 +19,8 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <h2>{{pod.name}}</h2>
-
-<table>
+<h3>Currently writing to <a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a></h3>
+<table class="table-default">
 <tr>
 <td>Owner</td><td>{{pod.owner.username}}</td>
 </tr>
@@ -30,14 +30,16 @@
 <tr>
 <td>Last Message</td><td>{{ moment(pod.last).format('LLL') }}</td>
 </tr>
-<tr>
-<td>Current Notebook</td>
-    <td><a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a></td>
 </table>
+
+<h3>Previous Notebooks for {{pod.name}}:</h3>
+<div class="notebooks">
+    {% include 'main/notebook_list_tiles.html' %}
+</div>
 
 <div>
 {%if current_user.is_administrator() %}
-<h4>Recent Messages from {{pod.name}}</h4>
+<h3>Recent Messages from {{pod.name}}</h3>
     {% include '/admin/message_table.html' %}
 {% endif %}
 

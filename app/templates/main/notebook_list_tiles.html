@@ -1,0 +1,46 @@
+<div class="container">
+{% for notebook in notebooks %}
+    {%if loop.index0%4 == 0 %}
+        {%if loop.index0==0 %}
+           <div class="row">
+        {% else %}
+            </div><div class="row">
+        {% endif %}
+    {% endif %}
+    <div class="col-sm-3">
+        <h4>
+            <a href="{{ url_for('main.notebook_info', _id=notebook.get_id() ) }}">
+                {{ notebook.name }}
+            </a>
+            <br>
+            <small>
+                <span class="badge">{{ notebook.observations }}</span>
+            </small>
+            <small>
+            <span class="label label-{{ label_voltage(notebook.voltage) }}"> 
+                <span class="glyphicon glyphicon-flash"></span>
+                &nbsp;{{ notebook.voltage|round(1)|replace('None', 'unknown') }}
+            </span>&nbsp;
+            {% if notebook.public %}
+                <span id="nbk_public" class="label label-success">Public</span>
+            {% else %}
+                <span id="nbk_public" class="label label-warning">Private</span>
+            {% endif %}
+            {% if current_user.is_administrator() %}
+                <span id="owner" class="label label-default">{{ notebook.owner.username }}
+            {% endif %}
+            </small>
+        </h4>
+            <span>
+            {% if notebook.last %}
+                &nbsp;Last updated {{ moment(notebook.last).fromNow(refresh=True) }}
+            {% else %}
+                &nbsp;Waiting for first update
+            {% endif %}
+            </span>
+    </div>
+    {%if loop.last == True %}
+        </div>
+    {% endif %}
+{% endfor %}
+</div>
