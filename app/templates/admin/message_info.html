@@ -25,9 +25,9 @@ Message status is <span id="status" class="label label-{{ message_status(message
 
 <h4>Message Content:</h4>
 <div id="message" class="well well-sm">{{message.message_content|truncate(60,True)}}</div></td>
-{% if message.status == 'queued' %}
 <a href="#" id="initButton" onclick="initialize('{{message.message_id}}')" class="btn btn-{{ message_status(message.status) }} btn-large">Initialize</a>
 <a href="#" id="parseButton" onclick="parse('{{message.message_id}}')" class="btn btn-default btn-large" disabled>Parse</a>
+{% if not message.status == 'posted' %}
 <a href="#" id="postButton" onclick="post('{{message.message_id}}')" class="btn btn-default btn-large" disabled>Post</a>
 <a href="#" id="deleteButton" onclick="delete_msg('{{message.message_id}}')" class="btn btn-right btn-default btn-large btn-danger" disabled>Delete</a>
 {% endif %}
