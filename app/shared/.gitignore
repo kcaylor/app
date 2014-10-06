@@ -8,6 +8,7 @@ venv
 # Utility scripts for Kelly (and Gist):
 migration*
 names.py
+config.codekit
 
 Procfile.local
 .DS_Store
