@@ -27,7 +27,7 @@
                 <span id="nbk_public" class="label label-warning">Private</span>
             {% endif %}
             {% if current_user.is_administrator() %}
-                <span id="owner" class="label label-default">{{ notebook.owner.username }}
+                <span id="owner" class="label label-default">{{ notebook.owner.username }}</span>
             {% endif %}
             </small>
         </h4>
@@ -38,6 +38,9 @@
                 &nbsp;Waiting for first update
             {% endif %}
             </span>
+            {% if notebook.observations < 10 %}
+                <br><button type="submit" class="btn btn-danger disabled">Delete</button>
+            {% endif %}
     </div>
     {%if loop.last == True %}
         </div>

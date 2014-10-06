@@ -20,17 +20,23 @@
 
 <h2>{{pod.name}}</h2>
 <h3>Currently writing to <a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a></h3>
-<table class="table-default">
-<tr>
-<td>Owner</td><td>{{pod.owner.username}}</td>
-</tr>
-<tr>
-<td>Current Mode</td><td>{{pod.mode}}</td>
-</tr>
-<tr>
-<td>Last Message</td><td>{{ moment(pod.last).format('LLL') }}</td>
-</tr>
-</table>
+{%if current_user.is_administrator() %}
+<form class="form-inline" role="form">
+    <div class="form-group">
+        <label class="sr-only" for="exampleInputEmail2">Email address</label>
+        <select class="form-control">
+        <option>{{pod.owner.username}}</option>
+        <option>the</option>
+        <option>owner</option>
+        </select>
+        <button type="submit" class="btn btn-primary disabled">Change Owner</button>
+    </div>
+</form>
+{% endif %}
+
+<h4>Current Mode is {{pod.mode}}.</h4>
+<h4>Last Message recieved {{ moment(pod.last).format('LLL') }}</h4>
+
 
 <h3>Previous Notebooks for {{pod.name}}:</h3>
 <div class="notebooks">
