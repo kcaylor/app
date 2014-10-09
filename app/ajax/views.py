@@ -118,11 +118,10 @@ def message_delete():
 @ajax.route('/notebook_delete', methods=['POST'])
 @login_required
 def notebook_delete():
-    pod = Pod.objects(id=request.form['pod_id']).first()
     notebook = Notebook.objects(id=request.form['notebook_id']).first()
     if current_user.username == notebook.owner.username or \
         current_user.is_administrator():
-        if not pod.current_notebook == notebook:
+        if not notebook.pod.current_notebook == notebook:
             notebook.delete()
             return "Notebook deleted."
         else:
