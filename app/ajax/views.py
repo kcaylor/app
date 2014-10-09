@@ -120,7 +120,8 @@ def message_delete():
 def notebook_delete():
     pod = Pod.objects(id=request.form['pod_id']).first()
     notebook = Notebook.objects(id=request.form['notebook_id']).first()
-    if current_user.username == notebook.owner.username:
+    if current_user.username == notebook.owner.username or \
+        current_user.is_administrator():
         if not pod.current_notebook == notebook:
             notebook.delete()
             return "Notebook deleted."
