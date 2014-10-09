@@ -1,7 +1,7 @@
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
 from app.decorators import admin_required
 import requests
-from flask import current_app, request, render_template, jsonify
+from flask import current_app, request, render_template, jsonify, abort
 from . import ajax
 from app.shared.models.user import make_api_key
 from app.shared.models.user import User
@@ -114,6 +114,20 @@ def message_delete():
     message.delete()
     return "Message deleted."
 
+
+@ajax.route('/notebook_delete', methods=['POST'])
+@login_required
+def notebook_delete():
+    pod = Pod.objects(id=request.form['pod_id']).first()
+    notebook = Notebook.objects(id=request.form['notebook_id']).first()
+    if current_user.username == notebook.owner.username:
+        if not pod.current_notebook == notebook:
+            notebook.delete()
+            return "Notebook deleted."
+        else:
+            pass
+    else:
+        abort(403)
 
 @ajax.route('/forecast', methods=['POST'])
 @login_required

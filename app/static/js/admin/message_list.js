@@ -1,7 +1,7 @@
 /*global $, document, d3, Rickshaw */
 
 var csrftoken = $('meta[name=csrf-token]').attr('content');
-var count = $('meta[name=message=count]').attr('content');
+var count = $('meta[name=message_count]').attr('content');
 
 $.ajaxSetup({
     beforeSend: function (xhr, settings) {

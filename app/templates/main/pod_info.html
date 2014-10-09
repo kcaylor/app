@@ -11,19 +11,27 @@
     {{ super() }}
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    {%if current_user.is_administrator() %}
     <script src="{{ url_for('static', filename='js/admin/message_list.js') }}"></script>
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/notebook_list.js')}}"></script>
 {% endblock %}
 
 
 {% block page_content %}
 <meta name="csrf-token" content="{{ csrf_token() }}">
+{%if current_user.is_administrator() %}
+<meta name="message_count" content="{{ message_list|count }}">
+{% endif %}
 
 <h2>{{pod.name}}</h2>
-<h3>Currently writing to <a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a></h3>
+<div class="well well-lg">
+This pod is currently in {{pod.mode}} mode and is writing to <a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a>. Its most recent message was sent on {{ moment(pod.last).format('LLL') }}
+</div>
 {%if current_user.is_administrator() %}
+Current Owner of {{pod.name}}:
 <form class="form-inline" role="form">
     <div class="form-group">
-        <label class="sr-only" for="exampleInputEmail2">Email address</label>
         <select class="form-control">
         <option>{{pod.owner.username}}</option>
         <option>the</option>
@@ -33,20 +41,19 @@
     </div>
 </form>
 {% endif %}
-
-<h4>Current Mode is {{pod.mode}}.</h4>
-<h4>Last Message recieved {{ moment(pod.last).format('LLL') }}</h4>
-
-
-<h3>Previous Notebooks for {{pod.name}}:</h3>
+<div>
+Previously, {{pod.name}} has written to the following notebooks:
+</div>
 <div class="notebooks">
     {% include 'main/notebook_list_tiles.html' %}
 </div>
 
 <div>
 {%if current_user.is_administrator() %}
-<h3>Recent Messages from {{pod.name}}</h3>
+<div>
+Recently, {{pod.name}} has sent the following messages:
     {% include '/admin/message_table.html' %}
+</div>
 {% endif %}
 
 

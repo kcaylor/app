@@ -7,7 +7,7 @@
             </div><div class="row">
         {% endif %}
     {% endif %}
-    <div class="col-sm-3">
+    <div id="{{notebook.get_id()}}" class="col-sm-3">
         <h4>
             <a href="{{ url_for('main.notebook_info', _id=notebook.get_id() ) }}">
                 {{ notebook.name }}
@@ -38,8 +38,8 @@
                 &nbsp;Waiting for first update
             {% endif %}
             </span>
-            {% if notebook.observations < 10 %}
-                <br><button type="submit" class="btn btn-danger disabled">Delete</button>
+            {% if notebook.observations < 10 and not notebook.pod.current_notebook.get_id() == notebook.get_id() %}
+                <br><a href="#" id="deleteButton" onclick="delete_notebook('{{notebook.get_id()}}')" class="btn btn-right btn-default btn-large btn-danger">Delete</a>
             {% endif %}
     </div>
     {%if loop.last == True %}
