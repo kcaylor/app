@@ -13,6 +13,7 @@ class Config:
     PULSEPOD_ADMIN = os.environ.get('PULSEPOD_ADMIN')
     FORECAST_API_KEY = os.environ.get('FORECAST_API_KEY')
     FORECAST_URL = 'https://api.forecast.io/forecast/'
+    GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
     # STORMPATH_API_KEY_ID = os.environ.get('STORMPATH_API_KEY_ID')
     # STORMPATH_API_KEY_SECRET = os.environ.get('STORMPATH_API_KEY_SECRET')
     # STORMPATH_APPLICATION = os.environ.get('STORMPATH_APPLICATION')
