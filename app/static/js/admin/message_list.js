@@ -12,20 +12,7 @@ $.ajaxSetup({
     }
 });
 
-var table = $('#data_table').DataTable({
-        "order": [ 1, 'asc' ],
-        "processing": true,
-        "serverSide": true,
-        "ajax": "ajax/get_messages",
-        "post": true,
-        "deferLoading": count
-        // "data": nbkData.json,
-        // "columns": [
-        //     { "title" : "Date"},
-        //     { "title" : "Sensor", "class": "center"},
-        //     { "title" : "Value", "class": "center"}
-        // ]
-    });
+
 
 $(document).ready(function () {
     'use strict';
