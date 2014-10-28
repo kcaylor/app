@@ -45,6 +45,9 @@ def messages(page=1):
     queued_messages = Message.objects(
         status='queued'
     ).order_by('-time_stamp')
+    invalid_messages = Message.objects(
+        status='invalid'
+    ).order_by('-time_stamp')
     for message in queued_messages:
         url = url_for('admin.message_info', _id=message.get_id())
         alert = Markup(

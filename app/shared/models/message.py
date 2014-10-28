@@ -130,6 +130,10 @@ class Message(db.Document):
                 frame = frame_id
             Obj = NewMessageObject.create(Message.FRAMES[frame])
             message_str = Obj.create_fake_message(frame, notebook)
+            if frame == 9999:
+                status='invalid'
+            else:
+                status='posted'
             message = Message(
                 message_id=str(fake.random_int(min=100000, max=100000000)),
                 number=notebook.pod.number,
@@ -137,7 +141,8 @@ class Message(db.Document):
                 message=message_str,
                 pod=notebook.pod,
                 notebook=notebook,
-                owner=notebook.owner
+                owner=notebook.owner,
+                status=status
             )
             # try:
             message.message_type = message.get_type()

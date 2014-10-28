@@ -20,6 +20,7 @@ function delete_notebook(notebook_id) {
         success: function (response) {
             // data is ur summary
             console.log('response')
+            $('#' + notebook_id).fadeOut();
             $('#' + notebook_id).remove();
         }
     });

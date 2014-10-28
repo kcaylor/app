@@ -37,6 +37,22 @@ def get_forecast(lat=None, lng=None, time=None, **flags):
         return None
 
 
+def init_message_html(message=None):
+    if message:
+        info_string = '<span class="text-primary">' + \
+            '<strong>' + message.message_content[:2] + '</strong></span>'
+        info_string += '<span class="text-danger">' + \
+            '<strong>' + message.message_content[2:6] + '</strong></span>'
+        info_string += '<span>' + message.message_content[6:] + '</span>'
+        info_string += '<br><br><span class="text-primary">Message type: ' + \
+            str(message.Message.__class__.__name__) + "</span>"
+        info_string += '<br><span class="text-danger">Pod: ' + \
+            message.pod.name + '</span>'
+        info_string += '<br>Notebook: ' + message.notebook.name + '</span>'
+        return info_string
+    else:
+        return 0
+
 @ajax.route('/message_initialize', methods=['POST'])
 @login_required
 @admin_required
@@ -46,16 +62,10 @@ def message_initialize():
         message.init()
     except:
         return "Error initializing message"
-    info_string = '<span class="text-primary">' + \
-        '<strong>' + message.message_content[:2] + '</strong></span>'
-    info_string += '<span class="text-danger">' + \
-        '<strong>' + message.message_content[2:6] + '</strong></span>'
-    info_string += '<span>' + message.message_content[6:] + '</span>'
-    info_string += '<br><br><span class="text-primary">Message type: ' + \
-        str(message.Message.__class__.__name__) + "</span>"
-    info_string += '<br><span class="text-danger">Pod: ' + \
-        message.pod.name + '</span>'
-    info_string += '<br>Notebook: ' + message.notebook.name + '</span>'
+    try:
+        info_string = init_message_html(message)
+    except:
+        return "Error creating message html"
     info_string += '<br>Initialized!'
     return info_string
 
@@ -70,19 +80,13 @@ def message_parse():
     except:
         return "Error initializing message"
     try:
+        info_string = init_message_html(message)
+    except:
+        return "Error creating message html"
+    try:
         message.parse()
     except:
         return "Error parsing message"
-    info_string = '<span class="text-primary">' + \
-        '<strong>' + message.message_content[:2] + '</strong></span>'
-    info_string += '<span class="text-danger">' + \
-        '<strong>' + message.message_content[2:6] + '</strong></span>'
-    info_string += '<span>' + message.message_content[6:] + '</span>'
-    info_string += '<br><br><span class="text-primary">Message type: ' + \
-        str(message.Message.__class__.__name__) + "</span>"
-    info_string += '<br><span class="text-danger">Pod: ' + \
-        message.pod.name + '</span>'
-    info_string += '<br>Notebook: ' + message.notebook.name + '</span>'
     info_string += '<br>Parsed!'
     return info_string
 

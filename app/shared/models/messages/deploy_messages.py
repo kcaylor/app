@@ -406,3 +406,5 @@ class DeployMessageLong(DeployMessage):
             )['length'] = 8
         (item for item in self.format if item["name"] == 'lac').next(
             )['length'] = 8
+
+
