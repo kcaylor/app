@@ -6,6 +6,7 @@ venv
 .env_prod_heroku
 
 # Utility scripts for Kelly (and Gist):
+config.codekit
 
 Procfile.local
 .DS_Store
