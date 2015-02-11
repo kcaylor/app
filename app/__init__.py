@@ -20,6 +20,22 @@ login_manager.login_message = \
 login_manager.login_message_category = "info"
 
 
+def make_db_connection(config=None):
+    if config:
+        url = ''.join([
+            'mongodb://',
+            config['MONGODB_SETTINGS']['USERNAME'], ':',
+            config['MONGODB_SETTINGS']['PASSWORD'], '@',
+            config['MONGODB_SETTINGS']['HOST'], ':',
+            str(config['MONGODB_SETTINGS']['PORT']), '/',
+            config['MONGODB_SETTINGS']['DB']
+        ])
+    else:
+        pass
+
+    return url
+
+
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -50,5 +66,7 @@ def create_app(config_name):
 
     # add in view function (context_processors)
     app.jinja_env.globals.update(weather_icon=weather_icon)
+
+    app.conn_url = make_db_connection(config=app.config)
 
     return app

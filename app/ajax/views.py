@@ -53,6 +53,7 @@ def init_message_html(message=None):
     else:
         return 0
 
+
 @ajax.route('/message_initialize', methods=['POST'])
 @login_required
 @admin_required

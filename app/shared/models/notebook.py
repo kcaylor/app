@@ -69,6 +69,29 @@ class Notebook(db.Document):
         self.observations = Data.objects(notebook=self).count()
         self.save()
 
+    def get_forecast(self, time=None):
+        app = current_app._get_current_object()
+        if not app.config['FORECAST_URL'] \
+                or not app.config['FORECAST_API_KEY']:
+            return {'error': 'invalid forecast.io settings'}
+        if self.lat() and self.lng():
+            url = app.config['FORECAST_URL'] + \
+                app.config['FORECAST_API_KEY'] + '/' + \
+                str(self.lat()) + ',' + str(self.lng())
+            if time:
+                url = url + ',' + str(time)
+            url = url + '?units=si&exclude=hourly'
+            try:
+                forecast = requests.get(url=url)
+                if forecast.status_code is requests.codes.ok:
+                    return forecast.json()
+                else:
+                    return None
+            except:
+                    return None
+        else:
+            return None
+
     def xls(self, filename=None):
         import xlsxwriter
         import math
