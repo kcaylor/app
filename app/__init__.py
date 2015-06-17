@@ -5,6 +5,7 @@ from flask.ext.moment import Moment
 from flask.ext.wtf import CsrfProtect
 from utils import weather_icon
 from config import config
+from pymongo import ReadPreference
 
 from app.shared.models import db, login_manager
 
@@ -45,6 +46,7 @@ def create_app(config_name):
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
+    db.read_preference = ReadPreference.PRIMARY_PREFERRED
     login_manager.init_app(app)
     csrf.init_app(app)
 
@@ -66,7 +68,5 @@ def create_app(config_name):
 
     # add in view function (context_processors)
     app.jinja_env.globals.update(weather_icon=weather_icon)
-
-    app.conn_url = make_db_connection(config=app.config)
 
     return app

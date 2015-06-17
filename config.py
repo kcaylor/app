@@ -3,6 +3,26 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+def mongo_url(db_settings=None, replica_set=None):
+
+    if db_settings['USERNAME'] is '':
+        return 'mongodb://' + db_settings['HOST'] + \
+            ':' + str(db_settings['PORT']) + \
+            '/' + db_settings['DB']
+    elif replica_set is None:
+        return 'mongodb://' + db_settings['USERNAME'] + \
+            ':' + db_settings['PASSWORD'] + \
+            '@' + db_settings['HOST'] + \
+            ':' + str(db_settings['PORT']) + \
+            '/' + db_settings['DB']
+    else:
+        return 'mongodb://' + db_settings['USERNAME'] + \
+            ':' + db_settings['PASSWORD'] + \
+            '@' + db_settings['HOST'] + \
+            '/' + db_settings['DB'] + \
+            '?replicaSet=' + replica_set
+
+
 class Config:
     SECRET_KEY = os.environ.get('APP_SECRET')
     API_KEY_SALT = os.environ.get('API_KEY_SALT')
@@ -26,36 +46,41 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    MONGODB_SETTINGS = {
+    DB_SETTINGS = {
         "DB": os.environ.get('MONGODB_DEV_DATABASE'),
         "USERNAME": os.environ.get('MONGODB_DEV_USER'),
         "PASSWORD": os.environ.get('MONGODB_DEV_PASSWORD'),
         "HOST": os.environ.get('MONGODB_DEV_HOST'),
         "PORT": int(os.environ.get('MONGODB_DEV_PORT'))
     }
+    MONGODB_HOST = mongo_url(db_settings=DB_SETTINGS)
 
 
 class TestingConfig(Config):
     TESTING = True
-    WTF_CSRF_ENABLED=False
-    MONGODB_SETTINGS = {
+    WTF_CSRF_ENABLED = False
+    DB_SETTINGS = {
         "DB": 'testing',
         "USERNAME": '',
         "PASSWORD": '',
         "HOST": 'localhost',
         "PORT": 27017
     }
+    MONGODB_HOST = mongo_url(db_settings=DB_SETTINGS)
 
 
 class ProductionConfig(Config):
-    MONGODB_SETTINGS = {
+    # Production settings must include replica sets.
+    DB_SETTINGS = {
         "DB": os.environ.get('MONGODB_DATABASE'),
         "USERNAME": os.environ.get('MONGODB_USER'),
         "PASSWORD": os.environ.get('MONGODB_PASSWORD'),
         "HOST": os.environ.get('MONGODB_HOST'),
-        "PORT": int(os.environ.get('MONGODB_PORT'))
     }
+    REPLICA_SET = os.environ.get('MONGODB_REPLICA_SET')
     XLSX_PATH = '/app/app/static/xlsx/'
+    MONGODB_HOST = mongo_url(db_settings=DB_SETTINGS, replica_set=REPLICA_SET)
+
 
 config = {
     'development': DevelopmentConfig,
