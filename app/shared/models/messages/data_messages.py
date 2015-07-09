@@ -133,6 +133,36 @@ class DataMessage(Message):
             self.sensor_list = sensor_list
             self.nobs_dict = nobs_dict
 
+    def slack(self):
+        from app import mqtt_q, slack
+        # from ..notebook import Notebook
+        # from ..sensor import Sensor
+        # from ..pod import Pod
+        # from ..user import User
+        msg = ''
+        msg += 'New data recieved for _{notebook}_\n\n'.format(
+            notebook=self.notebook.name)
+        # for data in self.data_list:
+        #     msg += "*{context} {sensor}* was {value} at {time}\n".format(
+        #         context=data.sensor.context,
+        #         sensor=data.sensor.variable,
+        #         value=data.value,
+        #         time=data.time_stamp
+        #     )
+        # msg += "\nIncremented observations to "
+        msg += "_{pod}_, _{notebook}_, and _{owner}_ by {nobs}\n".format(
+            pod=self.pod.name,
+            notebook=self.notebook.name,
+            owner=self.notebook.owner.username,
+            nobs=self.total_nobs)
+        mqtt_q.enqueue(
+            slack.chat.post_message,
+            "#api",
+            msg,
+            username='api.pulsepod',
+            icon_emoji=':rabbit:'
+        )
+
     def post(self):
         from ..notebook import Notebook
         from ..sensor import Sensor
@@ -159,8 +189,6 @@ class DataMessage(Message):
             Sensor.objects(id=sensor.id).update_one(
                 inc__observations=nobs
             )
-            print "Added %d observations to %s" % \
-                (nobs, sensor.__repr__())
         # Update notebooks, pods, and user:
         Notebook.objects(id=self.notebook.id).update_one(
             inc__observations=self.total_nobs,
@@ -180,16 +208,6 @@ class DataMessage(Message):
         self.message.status = 'posted'
         self.message.save()
         [data_item.save() for data_item in self.data_list]
-        for data_item in self.data_list:
-            print "Added %s from %s with %s" % \
-                (data_item.__repr__(),
-                 data_item.sensor.__repr__(),
-                 self.notebook.__repr__())
-        print "Incremented %s, %s, and %s with %d observations" % \
-            (self.pod.__repr__(),
-             self.notebook.__repr__(),
-             self.notebook.owner.__repr__(),
-             self.total_nobs)
 
     def patch(self):
         pass

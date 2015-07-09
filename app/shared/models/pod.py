@@ -9,6 +9,8 @@ class Pod(db.Document):
     RADIOS = ['gsm', 'cdma', 'wcdma', 'wifi', 'irridium']
 
     name = db.StringField()
+    created = db.DateTimeField(default=datetime.datetime.now())
+    updated = db.DateTimeField(default=datetime.datetime.now())
     owner = db.ReferenceField('User')
     pod_id = db.IntField()
     qr = db.StringField(
@@ -40,7 +42,8 @@ class Pod(db.Document):
     about = db.StringField(
         default='No additional information available for this pod'
     )
-
+    # updated = db.DateTimeField()
+    # created = db.DateTimeField()
     meta = {
         'collection': 'pods',
         'indexes': [
@@ -57,7 +60,7 @@ class Pod(db.Document):
 
     @staticmethod
     def generate_fake(count=100):
-        from random import choice, randint, sample
+        from random import choice, randint
         from faker import Faker
         from .user import User
         import phonenumbers
@@ -67,7 +70,7 @@ class Pod(db.Document):
         fake_pods = []
         for i in range(count):
             if nusers > 0:
-                user = User.objects()[randint(0, nusers-1)]
+                user = User.objects()[randint(0, nusers - 1)]
             else:
                 user = User.generate_fake(1)[0]
             pod = Pod(
@@ -80,12 +83,12 @@ class Pod(db.Document):
                 radio='gsm',
                 mode=choice(['normal', 'teenager', 'asleep', 'inactive']),
                 number=phonenumbers.format_number(
-                    phonenumbers.parse(fake.phone_number(), 'US'),
+                    phonenumbers.parse(
+                        '1' + ''.join([str(randint(0, 9)) for x in range(7)]),
+                        'US'),
                     phonenumbers.PhoneNumberFormat.E164),
             )
             try:
-                user.pods += 1
-                user.save()
                 pod.save()
                 fake_pods.append(pod)
             except:
@@ -93,47 +96,4 @@ class Pod(db.Document):
         return fake_pods
 
     def create_qr(self):
-        # Set up the file names
-        tmp_file = 'tmp.svg'
-        pod_qr_file = '%s.svg' % self.name
-        try:
-            # Now we can generate the bitly url:
-            c = bitly_api.Connection(
-                access_token=current_app.config['BITLY_API_TOKEN']
-            )
-            bitly_link = c.shorten(url)['url']
-
-            # Update the link title to this pod name:
-            c.user_link_edit(bitly_link, 'title', str(self.name))
-            # Add this link to the PulsePod bundle:
-            a = c.bundle_bundles_by_user()['bundles']
-            bundle_link = a[next(index for (index, d) in enumerate(a)
-                                 if d["title"] == "PulsePods")]['bundle_link']
-            c.bundle_link_add(bundle_link, bitly_link)
-        except:
-            return "Error creating Bitly link"
-
-        try:
-            # Make the QR Code:
-            img = qrcode.make(
-                bitly_link,
-                image_factory=qrcode.image.svg.SvgPathImage)
-            f = open(tmp_file, 'w')
-            img.save(f)
-            f.close()
-        except:
-            return "Error in making QR code file"
-
-        try:
-            # UPLOAD THE QRFILE TO S3:
-            conn = S3Connection(current_app.config['AWS_ACCESS_KEY_ID'],
-                                current_app.config['AWS_SECRET_ACCESS_KEY'])
-            bucket = conn.get_bucket('pulsepodqrsvgs')
-            k = Key(bucket)
-            k.key = pod_qr_file
-            k.set_contents_from_filename(tmp_file)
-            bucket.set_acl('public-read', pod_qr_file)
-        except:
-            return "Error writing file to Amazon S3"
-
-        return "QR file successfully created"
+        raise NotImplementedError

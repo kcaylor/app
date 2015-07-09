@@ -82,7 +82,7 @@ class DeployMessage(Message):
             self.message.save()
             assert 0, "Uh-oh. No message content."
 
-    def lac(self):
+    def lac(self, tower_number=1):
         (start, end) = self.get_position('lac')
         if self.content:
             try:
@@ -95,7 +95,7 @@ class DeployMessage(Message):
             self.message.save()
             assert 0, "Uh-oh. No message content."
 
-    def cell_id(self):
+    def cell_id(self, tower_number=1):
         (start, end) = self.get_position('cell_id')
         if self.content:
             try:
@@ -110,6 +110,9 @@ class DeployMessage(Message):
             self.message.status = 'invalid'
             self.message.save()
             assert 0, "Uh-oh. No message content."
+
+    def tower_length(self):
+        return self.get_length('cell_id') + self.get_length('lac')
 
     def voltage(self):
         import struct
@@ -202,9 +205,9 @@ class DeployMessage(Message):
             except:
                 self.message.status = 'invalid'
                 self.message.save()
-                assert 0, 'error extracting cell information from message content'
+                assert 0, 'error extracting cell info from message content'
         else:
-            towers.append(tower)
+            [towers.append(this_tower) for this_tower in tower]
         api_key = current_app.config['GOOGLE_API_KEY']
         if not api_key:
             assert 0, "Must provide api_key"
@@ -259,6 +262,26 @@ class DeployMessage(Message):
                 return 0
         else:
             return 0
+
+    def slack(self):
+        from app import mqtt_q, slack
+        msg = ''
+        msg += 'Deployed {pod} (SN:{pod_id}) owned by {owner}.\n'.format(
+            pod=self.pod.name,
+            pod_id=self.pod.pod_id,
+            owner=self.pod.owner.username)
+        msg += '"{notebook}" is now recording {sensors}.\n'.format(
+            sensors=', '.join([str(x.name) for x in self.notebook.sensors]),
+            notebook=self.notebook.name)
+        msg += 'Current pod voltage is {voltage}.\n'.format(
+            voltage=self.notebook.voltage)
+        mqtt_q.enqueue(
+            slack.chat.post_message,
+            "#api",
+            msg,
+            username='api.pulsepod',
+            icon_emoji=':pig:'
+        )
 
     def google_geocoding_api(self, loc):
         import requests
@@ -359,6 +382,8 @@ class DeployMessage(Message):
     def post(self):
         from ..pod import Pod
         from ..user import User
+        from app import mqtt_q, slack
+        slack_post = ''
         if self.status is not 'posted':
             try:
                 self.notebook.save()
@@ -372,12 +397,19 @@ class DeployMessage(Message):
                 )
                 self.message.status = 'posted'
                 self.message.save()
-                print "Added notebook %s to the database" % \
+                slack_post += "Added notebook %s to the database\n" % \
                     self.notebook.__repr__()
-                print "Incremented notebooks for %s and %s" % \
+                slack_post += "Incremented notebooks for %s and %s\n" % \
                     (self.pod.__repr__(), self.pod.owner.__repr__())
-                print "Changed current notebook on %s to %s" % \
+                slack_post += "Changed current notebook on %s to %s\n" % \
                     (self.pod.__repr__(), self.notebook.__repr__())
+                mqtt_q.enqueue(
+                    slack.chat.post_message,
+                    "#oplog",
+                    slack_post,
+                    username='api.pulsepod',
+                    icon_emoji=':computer:'
+                )
             except:
                 assert 0, 'MessageParse: Error saving new notebook'
             if self.notebook.owner.phone_number:
@@ -401,10 +433,55 @@ class DeployMessageLong(DeployMessage):
         super(DeployMessageLong, self).__init__()
         self.type = 'deploy_long'
         self.frame = self.__class__.__name__
-        # Modify the format:
-        (item for item in self.format if item["name"] == 'cell_id').next(
-            )['length'] = 8
-        (item for item in self.format if item["name"] == 'lac').next(
-            )['length'] = 8
+        self.format = []
+        self.format.extend([
+            {'name': 'frame_id', 'length': 2},
+            {'name': 'pod_id', 'length': 4},
+            {'name': 'mcc', 'length': 3},
+            {'name': 'mnc', 'length': 3},
+            {'name': 'voltage', 'length': 8},
+            {'name': 'n_towers', 'length': 1},
+            {'name': 'n_sensors', 'length': 2},
+            {'name': 'lac', 'length': 4},
+            {'name': 'cell_id', 'length': 8},
+            # {'name': 'rx_level', 'length': 2},  # Not implemented!
+            {'name': 'sid', 'length': 2}
+        ])
 
+    def tower_length(self):
+        return self.get_length('cell_id') + \
+            self.get_length('lac') + self.get_length('rx_level')
 
+    def create_fake_message(self, frame_id, notebook):
+        deploy_str = self.create_fake_header(frame_id, notebook)
+        import struct
+        from random import random, sample
+        from ..sensor import Sensor
+        mcc = 310
+        mnc = 26
+        lac = 802
+        cell_id = 10693
+        n_sensors = 3
+        n_towers = 1
+        rx_level = 99
+        voltage = struct.pack(
+            '<f',
+            float(3.6 + random() / 2)).encode('hex').zfill(
+            self.get_length('voltage'))
+        sensors = [Sensor.objects()[i] for i in sorted(
+            sample(range(Sensor.objects().count()), n_sensors)
+        )]
+        deploy_str += ('%i' % int(mcc)).zfill(self.get_length('mcc'))
+        deploy_str += ('%i' % int(mnc)).zfill(self.get_length('mnc'))
+        deploy_str += voltage
+        deploy_str += ('%x' % int(n_towers)).zfill(
+            self.get_length('n_towers'))
+        deploy_str += ('%x' % int(n_sensors)).zfill(
+            self.get_length('n_sensors'))
+        deploy_str += ('%x' % int(lac)).zfill(self.get_length('lac'))
+        deploy_str += ('%x' % int(cell_id)).zfill(
+            self.get_length('cell_id'))
+        deploy_str += ''.join(
+            [('%x' % int(x)).zfill(self.SID_LENGTH) for x in
+                [str(sensor.sid) for sensor in sensors]])
+        return deploy_str

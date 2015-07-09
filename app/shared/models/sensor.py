@@ -1,4 +1,5 @@
 from . import db
+from datetime import datetime
 
 
 class Sensor(db.Document):
@@ -11,6 +12,8 @@ class Sensor(db.Document):
         'd': 8}
 
     name = db.StringField()
+    created = db.DateTimeField(default=datetime.now())
+    updated = db.DateTimeField(default=datetime.now())
     sid = db.IntField(unique=True)
     context = db.StringField()
     context_short = db.StringField()
@@ -39,7 +42,8 @@ class Sensor(db.Document):
     observations = db.IntField(
         default=0
     )
-
+    # updated = db.DateTimeField()
+    # created = db.DateTimeField()
     meta = {
         'collection': 'sensors'
     }
@@ -56,10 +60,11 @@ class Sensor(db.Document):
         from faker import Faker
         fake = Faker()
         fake_sensors = []
-        for i in range(count):
+        i = 0
+        while i < count:
             sensor = Sensor(
                 name=fake.domain_word(),
-                sid=randint(1, 256),
+                sid=randint(1, 1024),
                 context=fake.word(),
                 variable=fake.word(),
                 info=fake.catch_phrase(),
@@ -68,6 +73,7 @@ class Sensor(db.Document):
             try:
                 sensor.save()
                 fake_sensors.append(sensor)
+                i += 1
             except:
-                print "Sensor save failed"
+                pass
         return fake_sensors

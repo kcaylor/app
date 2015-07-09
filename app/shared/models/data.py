@@ -11,6 +11,8 @@ class Data(db.Document):
         db_field='v',
         default=None)
     location = db.PointField(db_field='loc')
+    created = db.DateTimeField(default=datetime.datetime.now())
+    updated = db.DateTimeField(default=datetime.datetime.now())
     # Define links to Pod, Notebook, and Sensor collections:
     notebook = db.ReferenceField('Notebook', db_field='nbk')
     pod = db.ReferenceField('Pod', db_field='pod')
@@ -19,7 +21,8 @@ class Data(db.Document):
     pod_name = db.StringField(db_field='p')
     owner = db.ReferenceField('User', db_field='owner')
     public = db.BooleanField(default=True)
-
+    # updated = db.DateTimeField()
+    # created = db.DateTimeField()
     meta = {
         'collection': 'data',
         'ordering': ['-time_stamp'],
@@ -100,7 +103,6 @@ class Data(db.Document):
             except:
                 return "Error: Data save failed"
             notebook.observations += 1
-            notebook.pod.observations += 1
             if data.sensor not in notebook.sensors:
                 notebook.sensors.append(data.sensor)
                 notebook.sids.append(data.sensor['sid'])
@@ -109,6 +111,5 @@ class Data(db.Document):
             sensor.save()
             notebook.owner.observations += 1
             notebook.owner.save()
-            notebook.pod.save()
             fake_data.append(data)
         return fake_data

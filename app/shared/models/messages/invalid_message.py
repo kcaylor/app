@@ -20,6 +20,9 @@ class InvalidMessage(Message):
     def parse(self):
         self.message.save()
 
+    def slack(self):
+        pass
+
 
 class UnknownMessage(InvalidMessage):
 

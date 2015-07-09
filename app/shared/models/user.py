@@ -21,6 +21,8 @@ class User(UserMixin, db.Document):
     ROLES = ['admin', 'user', 'guest']
 
     confirmed = db.BooleanField(default=False)
+    created = db.DateTimeField(default=datetime.now())
+    updated = db.DateTimeField(default=datetime.now())
     username = db.StringField(max_length=64, unique=True)
     email = db.StringField(max_length=64, unique=True)
     password_hash = db.StringField(max_length=120)
@@ -45,7 +47,8 @@ class User(UserMixin, db.Document):
         default='user')
 
     phone_number = db.StringField()
-
+    # updated = db.DateTimeField()
+    # created = db.DateTimeField()
     meta = {
         'indexes': ['email', 'username', 'api_key'],
         'collection': 'users',
@@ -110,7 +113,7 @@ class User(UserMixin, db.Document):
             self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
-        return check_password_hash(str(self.password_hash), password)
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -175,19 +178,21 @@ class User(UserMixin, db.Document):
         fake = Faker()
         # fake.seed(3123)
         fake_users = []
-        for i in range(count):
+        i = 0
+        while i < count:
             user = User(
                 confirmed=True,
                 username=fake.user_name(),
                 email=fake.safe_email(),
                 api_key=make_api_key()
             )
-            #try:
-            user.password = fake.md5()
-            user.save()
-            fake_users.append(user)
-            #except:
-            #    print "Unable to save user"
+            try:
+                user.password = fake.md5()
+                user.save()
+                fake_users.append(user)
+                i += 1
+            except:
+                pass
         return fake_users
 
 

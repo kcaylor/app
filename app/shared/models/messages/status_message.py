@@ -19,3 +19,6 @@ class StatusMessage(Message):
 
     def post(self):
         pass
+
+    def slack(self):
+        pass

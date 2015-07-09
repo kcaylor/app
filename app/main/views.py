@@ -186,7 +186,7 @@ def notebook_info(_id):
     # try:
     #    notebook.xls()
     #    xlsx = True
-    #except:
+    # except:
     #    xlsx = False
     xlsx = False
     data = Data.objects(

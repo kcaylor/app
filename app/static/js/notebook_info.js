@@ -15,6 +15,22 @@ $.ajaxSetup({
     }
 });
 
+function set_nbk_event_variable(nbk_id, event_var, sid) {
+    'use strict';
+    $.ajax({
+        type: "GET",
+        url: '../ajax/set_nbk_event_variable',
+        data: "id=" + nbk_id + "&event_variable=" + event_var,
+        success: function (response) {
+            // data is ur summary
+            $('#event-alert').fadeOut(500, function () {
+                $(this).remove();
+            });
+            $("#label_" + sid).html(event_var);
+        }
+    });
+}
+
 $.fn.editable.defaults.mode = 'inline';
 
 $('#notebook_name').editable({

@@ -162,6 +162,15 @@ def reset_api_key():
     return user.api_key
 
 
+@ajax.route('/set_nbk_event_variable', methods=['GET'])
+@login_required
+def set_nbk_event_variable():
+    notebook = Notebook.objects(id=request.args['id']).first()
+    notebook.event_variable = request.args['event_variable']
+    notebook.save()
+    return notebook.event_variable
+
+
 @ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])
 @login_required
 def get_data(nbk_id, sensor_id):
