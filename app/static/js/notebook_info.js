@@ -99,6 +99,7 @@ function plot_data_ajax(nbk_id, sensor_id, nbk_name, variable_name) {
         width: 500,
         height: 300,
         renderer: 'line',
+        min: 'auto',
         dataURL: url,
         onData: function (d) {
             return [{name: d.name, color: 'steelblue', data: d.data}];
