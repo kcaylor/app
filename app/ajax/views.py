@@ -167,10 +167,7 @@ def reset_api_key():
 @login_required
 def set_nbk_event_sensor():
     # We use the current event resolution and the passed event sensor
-    # to set this notebook's event_sensor field. Then we need to update all
-    # the data for this notebook's events to specify that they came from
-    # the new event_sensor. Future data from the notebook will then post
-    # events as coming from the new event_sensor.
+    # to set this notebook's event_sensor field.
     notebook = Notebook.objects(id=request.args['id']).first()
     # The current events are being logged into this sensor:
     this_event = Sensor.objects(id=request.args['sid']).first()
@@ -180,19 +177,16 @@ def set_nbk_event_sensor():
     name = request.args['event_sensor'].lower() + '_' + resolution
     # Find this new event_sensor in the database:
     event_sensor = Sensor.objects(name=name).first()
-    # event_idx = notebook.sensors.index(event_sensor)
-    # notebook.sensors[event_idx] = new_sensor
     # Assign the notebook event_sensor to this sensor:
     notebook.event_sensor = event_sensor
-    # sid_idx = notebook.sids.index(event_sensor.sid)
-    # notebook.sids[sid_idx] = new_sensor.sid
     # Save the notebook so that this info is permanent:
     notebook.save()
-    # Return what we need to make the page right:
-    return json.dumps({
+    response = {
         'variable': event_sensor.context + ' ' + event_sensor.variable,
         'unit': event_sensor.unit
-    })
+    }
+    # Return what we need to make the page right:
+    return jsonify(**response)
 
 
 @ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])

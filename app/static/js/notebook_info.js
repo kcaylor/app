@@ -23,26 +23,31 @@ function set_nbk_event_sensor(nbk_id, event_var, sid) {
     $('#event-alert').removeClass('alert-warning')
     $.ajax({
         type: "GET",
+        // contentType: "application/json",
+        // dataType: 'jsonp',
+        // jsonpCallback: 'callback',
         url: '../ajax/set_nbk_event_sensor',
         data: "id=" + nbk_id + "&event_sensor=" + event_var + "&sid=" + sid,
         success: function (response) {
             // data is ur summary
+            console.log(JSON.stringify(response));
             $('#event-alert').addClass('alert-success')
             $('#event-alert').removeClass('alert-info')
             $('#event-alert').html(
-                'Success! Your notebook is now measuring ' + event_var
+                'Success! This notebook is now measuring ' + event_var
             )
-            $('#event-alert').fadeOut(2000, function () {
+            $('#event-alert').fadeOut(2500, function () {
                 $(this).remove();
             });
             $("#label_" + sid).html(response.variable);
-            $("#data_" + sid).html(response.unit);
+            $("#data_" + sid).html('('+response.unit+')');
         },
-        error: function() {
+        error: function(e) {
+            console.log(e.message);
             $('#event-alert').addClass('alert-danger')
             $('#event-alert').removeClass('alert-info')
             $('#event-alert').html('Oops. We failed to set the event sensor.')
-            $('#event-alert').fadeOut(500, function () {
+            $('#event-alert').fadeOut(2500, function () {
                 $(this).remove();
             });
         }
