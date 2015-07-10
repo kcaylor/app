@@ -44,6 +44,8 @@ class Message(db.Document):
         required=True,
         db_field='message',
     )
+    created = db.DateTimeField(default=datetime.datetime.now())
+    updated = db.DateTimeField(default=datetime.datetime.now())
     status = db.StringField(
         choices=STATUS,
         default='queued'
