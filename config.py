@@ -3,24 +3,31 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-def mongo_url(db_settings=None, replica_set=None):
-
-    if db_settings['USERNAME'] is '':
-        return 'mongodb://' + db_settings['HOST'] + \
-            ':' + str(db_settings['PORT']) + \
-            '/' + db_settings['DB']
-    elif replica_set is None:
-        return 'mongodb://' + db_settings['USERNAME'] + \
-            ':' + db_settings['PASSWORD'] + \
-            '@' + db_settings['HOST'] + \
-            ':' + str(db_settings['PORT']) + \
-            '/' + db_settings['DB']
+def make_mongo_uri(
+        host='localhost',
+        port=27017,
+        database='default',
+        replica_set=None,
+        username=None,
+        password=None):
+    uri = 'mongodb://'
+    if username is not None and password is not None:
+        uri += username + ':' + password + '@'
+    if ',' in host:
+        host = host.split(',')
+    if not isinstance(host, basestring):
+        if port is not None:
+            host = [x + ':' + str(port) for x in host]
+        uri += ",".join(host)
     else:
-        return 'mongodb://' + db_settings['USERNAME'] + \
-            ':' + db_settings['PASSWORD'] + \
-            '@' + db_settings['HOST'] + \
-            '/' + db_settings['DB'] + \
-            '?replicaSet=' + replica_set
+        uri += host
+        if port is not None:
+            uri += ':' + str(port)
+    if database is not None:
+        uri += '/' + database
+    if replica_set is not None:
+        uri += '?replicaSet=' + replica_set
+    return uri
 
 
 class Config:
@@ -46,41 +53,68 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    DB_SETTINGS = {
-        "DB": os.environ.get('MONGODB_DEV_DATABASE'),
-        "USERNAME": os.environ.get('MONGODB_DEV_USER'),
-        "PASSWORD": os.environ.get('MONGODB_DEV_PASSWORD'),
-        "HOST": os.environ.get('MONGODB_DEV_HOST'),
-        "PORT": int(os.environ.get('MONGODB_DEV_PORT'))
+    PYMONGO_HOST = make_mongo_uri(
+        host=os.environ.get('MONGO_DEV_HOST'),
+        port=int(os.environ.get('MONGO_DEV_PORT')),
+        database=os.environ.get('MONGO_DEV_DBNAME'),
+        username=os.environ.get('MONGO_DEV_USERNAME'),
+        password=os.environ.get('MONGO_DEV_PASSWORD'),
+    )
+    MONGODB_SETTINGS = {
+        # "DB": os.environ.get('MONGO_DEV_DBNAME'),
+        # "USERNAME": os.environ.get('MONGO_DEV_USERNAME'),
+        # "PASSWORD": os.environ.get('MONGO_DEV_PASSWORD'),
+        # "HOST": os.environ.get('MONGO_DEV_HOST'),
+        # "PORT": int(os.environ.get('MONGO_DEV_PORT'))
+        "HOST": make_mongo_uri(
+            host=os.environ.get('MONGO_DEV_HOST'),
+            port=int(os.environ.get('MONGO_DEV_PORT')),
+            database=os.environ.get('MONGO_DEV_DBNAME'),
+            username=os.environ.get('MONGO_DEV_USERNAME'),
+            password=os.environ.get('MONGO_DEV_PASSWORD'),
+        )
     }
-    MONGODB_HOST = mongo_url(db_settings=DB_SETTINGS)
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
-    DB_SETTINGS = {
+    MONGODB_SETTINGS = {
         "DB": 'testing',
-        "USERNAME": '',
-        "PASSWORD": '',
         "HOST": 'localhost',
         "PORT": 27017
     }
-    MONGODB_HOST = mongo_url(db_settings=DB_SETTINGS)
 
 
 class ProductionConfig(Config):
-    # Production settings must include replica sets.
-    DB_SETTINGS = {
-        "DB": os.environ.get('MONGODB_DATABASE'),
-        "USERNAME": os.environ.get('MONGODB_USER'),
-        "PASSWORD": os.environ.get('MONGODB_PASSWORD'),
-        "HOST": os.environ.get('MONGODB_HOST'),
-    }
-    REPLICA_SET = os.environ.get('MONGODB_REPLICA_SET')
     XLSX_PATH = '/app/app/static/xlsx/'
-    MONGODB_HOST = mongo_url(db_settings=DB_SETTINGS, replica_set=REPLICA_SET)
-
+    # Production settings must include replica sets.
+    MONGO_URI = make_mongo_uri(
+        host=os.environ.get('MONGO_HOST'),
+        port=None,  # port is defined in MONGO_HOST for replica sets
+        database=os.environ.get('MONGO_DBNAME'),
+        username=os.environ.get('MONGO_USERNAME'),
+        password=os.environ.get('MONGO_PASSWORD'),
+        replica_set=os.environ.get('MONGO_REPLICASET')
+    )
+    PYMONGO_HOST = make_mongo_uri(
+        host=os.environ.get('MONGO_HOST'),
+        port=None,  # port is defined in MONGO_HOST for replica sets
+        database=os.environ.get('MONGO_DBNAME'),
+        username=os.environ.get('MONGO_USERNAME'),
+        password=os.environ.get('MONGO_PASSWORD'),
+        replica_set=os.environ.get('MONGO_REPLICASET')
+    )
+    MONGODB_SETTINGS = {
+        "HOST": make_mongo_uri(
+            host=os.environ.get('MONGO_HOST'),
+            port=None,  # port is defined in MONGO_HOST for replica sets
+            database=os.environ.get('MONGO_DBNAME'),
+            username=os.environ.get('MONGO_USERNAME'),
+            password=os.environ.get('MONGO_PASSWORD'),
+            replica_set=os.environ.get('MONGO_REPLICASET')
+        )
+    }
 
 config = {
     'development': DevelopmentConfig,

@@ -1,8 +1,6 @@
 from . import db
 import datetime
 
-EVENT_VARIABLES = ['Rainfall', 'Flow', 'None']
-
 
 class Notebook(db.Document):
 
@@ -34,9 +32,7 @@ class Notebook(db.Document):
     last = db.DateTimeField()
     voltage = db.FloatField(default=3.8)
     confirmed = db.BooleanField(default=False)
-    event_variable = db.StringField(
-        default='None',
-        choices=EVENT_VARIABLES)
+    event_sensor = db.ReferenceField('Sensor')
     created_at = db.DateTimeField(
         default=datetime.datetime.utcnow()
     )

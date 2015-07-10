@@ -125,7 +125,7 @@ def message_delete():
 def notebook_delete():
     notebook = Notebook.objects(id=request.form['notebook_id']).first()
     if current_user.username == notebook.owner.username or \
-        current_user.is_administrator():
+            current_user.is_administrator():
         if not notebook.pod.current_notebook == notebook:
             notebook.delete()
             return "Notebook deleted."
@@ -133,6 +133,7 @@ def notebook_delete():
             pass
     else:
         abort(403)
+
 
 @ajax.route('/forecast', methods=['POST'])
 @login_required
@@ -162,13 +163,36 @@ def reset_api_key():
     return user.api_key
 
 
-@ajax.route('/set_nbk_event_variable', methods=['GET'])
+@ajax.route('/set_nbk_event_sensor', methods=['GET'])
 @login_required
-def set_nbk_event_variable():
+def set_nbk_event_sensor():
+    # We use the current event resolution and the passed event sensor
+    # to set this notebook's event_sensor field. Then we need to update all
+    # the data for this notebook's events to specify that they came from
+    # the new event_sensor. Future data from the notebook will then post
+    # events as coming from the new event_sensor.
     notebook = Notebook.objects(id=request.args['id']).first()
-    notebook.event_variable = request.args['event_variable']
+    # The current events are being logged into this sensor:
+    this_event = Sensor.objects(id=request.args['sid']).first()
+    # Find the event resolution (a bit of a hack):
+    [event, resolution] = this_event.name.split('-')
+    # Set the new event_sensor's name using the passed argument
+    name = request.args['event_sensor'].lower() + '_' + resolution
+    # Find this new event_sensor in the database:
+    event_sensor = Sensor.objects(name=name).first()
+    # event_idx = notebook.sensors.index(event_sensor)
+    # notebook.sensors[event_idx] = new_sensor
+    # Assign the notebook event_sensor to this sensor:
+    notebook.event_sensor = event_sensor
+    # sid_idx = notebook.sids.index(event_sensor.sid)
+    # notebook.sids[sid_idx] = new_sensor.sid
+    # Save the notebook so that this info is permanent:
     notebook.save()
-    return notebook.event_variable
+    # Return what we need to make the page right:
+    return json.dumps({
+        'variable': event_sensor.context + ' ' + event_sensor.variable,
+        'unit': event_sensor.unit
+    })
 
 
 @ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])

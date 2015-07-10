@@ -58,22 +58,17 @@
   </h4>
 {% endif %}
  </div>
-
-{% if current_user.can_edit(notebook) %}
-  {% if notebook.event_variable == 'None' %}
+{% if current_user.can_edit(notebook) and notebook.event_sensor.name is not defined %}
     {% for sensor in sensors %}
-      {% if sensor.variable == 'Counts' %} 
-        {% if current_data[sensor.get_id()] %}
-          <div id='event-alert' class="alert alert-danger alert-dismissible" role="alert">
+      {% if sensor.variable == 'Counts' and current_data[sensor.get_id()] is defined %}
+          <div id='event-alert' class="alert alert-warning alert-dismissible" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-           Hi! It looks like you've connected an event sensor. Is it measuring <a href="javascript:void(0);" onclick="set_nbk_event_variable('{{notebook.id}}','Rainfall','{{sensor.get_id()}}')"><button type="button" class="btn btn-success">Rainfall</button></a> or is it measuring 
-            <a href="javascript:void(0);" onclick="set_nbk_event_variable('{{notebook.id}}','Flow','{{sensor.get_id()}}')"><button type="button" class="btn btn-success">Flow</button></a>
+           Hi! It looks like you've connected an event sensor. Is it measuring <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.id}}','Rainfall','{{sensor.get_id()}}')"><button type="button" class="btn btn-success">Rainfall</button></a> or is it measuring 
+            <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.id}}','Flow','{{sensor.get_id()}}')"><button type="button" class="btn btn-success">Flow</button></a>?
           </div>
           <br>
-        {% endif %}
       {% endif %}
     {% endfor %}
-  {% endif %}
 {% endif %}
 
 <div id="forecast" class="container">
@@ -118,24 +113,31 @@
       </div>
       <div id="sensor_buttons" class="btn-group btn-xs data-btn">
         {% for sensor in notebook.sensors %}
-            <!-- Handle Event Sensors Differently. -->
-        
-            <!-- All other sensors handled the same way -->
-            <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit|default('-')}})')">
-            <div id="label_{{sensor.id}}">{% if sensor.variable_short %}
-              {{sensor.context}} {{sensor.variable_short}}
+            {% if 'event' in sensor.name and notebook.event_sensor.name is defined %}
+              <!-- Handle Event Sensors Differently. -->
+              <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{notebook.event_sensor.context}} {{notebook.event_sensor.variable}} ({{notebook.event_sensor.unit|default('-')}})')">
+              <div id="label_{{sensor.id}}">
+                {{notebook.event_sensor.context}} {{notebook.event_sensor.variable}}
+              </div>
             {% else %}
-              {%if sensor.variable == 'Counts' %}
-                {% if notebook.current_variable not 'None' %}
-                  {{ notebook.current_variable }}
+            <!-- All other sensors handled the same way -->
+              <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit|default('-')}})')">
+                <div id="label_{{sensor.id}}">{% if sensor.variable_short %}
+                  {{sensor.context}} {{sensor.variable_short}}
+                {% else %}
+                  {{sensor.context}} {{sensor.variable}}
                 {% endif %}
-              {{sensor.context}} {{sensor.variable}}
-              }
+                </div>
             {% endif %}
-            </div>
             {% if current_data[sensor.get_id()] %}
               <div id="data_{{sensor.id}}">
-              ({{ current_data[sensor.get_id()]|round(2) }}&nbsp;{{ sensor.unit|safe }})
+              ({{ current_data[sensor.get_id()]|round(2) }}&nbsp;
+                {% if 'event' in sensor.name and notebook.event_sensor.name is defined %}
+                  {{ notebook.event_sensor.unit|safe }}
+                {% else %}
+                  {{ sensor.unit|safe }}
+                {% endif %}
+                )
               </div>
             {% endif %}
             </button>

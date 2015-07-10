@@ -15,18 +15,36 @@ $.ajaxSetup({
     }
 });
 
-function set_nbk_event_variable(nbk_id, event_var, sid) {
+function set_nbk_event_sensor(nbk_id, event_var, sid) {
     'use strict';
+    $('#event-alert').html(
+        "Okay, setting this notebook's event sensor to measure " + event_var)
+    $('#event-alert').addClass('alert-info')
+    $('#event-alert').removeClass('alert-warning')
     $.ajax({
         type: "GET",
-        url: '../ajax/set_nbk_event_variable',
-        data: "id=" + nbk_id + "&event_variable=" + event_var,
+        url: '../ajax/set_nbk_event_sensor',
+        data: "id=" + nbk_id + "&event_sensor=" + event_var + "&sid=" + sid,
         success: function (response) {
             // data is ur summary
+            $('#event-alert').addClass('alert-success')
+            $('#event-alert').removeClass('alert-info')
+            $('#event-alert').html(
+                'Success! Your notebook is now measuring ' + event_var
+            )
+            $('#event-alert').fadeOut(2000, function () {
+                $(this).remove();
+            });
+            $("#label_" + sid).html(response.variable);
+            $("#data_" + sid).html(response.unit);
+        },
+        error: function() {
+            $('#event-alert').addClass('alert-danger')
+            $('#event-alert').removeClass('alert-info')
+            $('#event-alert').html('Oops. We failed to set the event sensor.')
             $('#event-alert').fadeOut(500, function () {
                 $(this).remove();
             });
-            $("#label_" + sid).html(event_var);
         }
     });
 }

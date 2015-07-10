@@ -21,22 +21,6 @@ login_manager.login_message = \
 login_manager.login_message_category = "info"
 
 
-def make_db_connection(config=None):
-    if config:
-        url = ''.join([
-            'mongodb://',
-            config['MONGODB_SETTINGS']['USERNAME'], ':',
-            config['MONGODB_SETTINGS']['PASSWORD'], '@',
-            config['MONGODB_SETTINGS']['HOST'], ':',
-            str(config['MONGODB_SETTINGS']['PORT']), '/',
-            config['MONGODB_SETTINGS']['DB']
-        ])
-    else:
-        pass
-
-    return url
-
-
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -45,8 +29,17 @@ def create_app(config_name):
     boostrap.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
-    db.init_app(app)
-    db.read_preference = ReadPreference.PRIMARY_PREFERRED
+    # Initialize MongoEngine (for all the mongo goodness)
+    from mongoengine import connect
+    host = config[config_name]().MONGODB_SETTINGS['HOST']
+    connect(
+        db='pulsepod-restore',
+        host=host
+    )
+    if config_name is 'testing':
+        db.init_app(app)
+        db.read_preference = ReadPreference.PRIMARY_PREFERRED
+
     login_manager.init_app(app)
     csrf.init_app(app)
 
