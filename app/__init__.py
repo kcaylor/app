@@ -6,13 +6,23 @@ from flask.ext.wtf import CsrfProtect
 from utils import weather_icon
 from config import config
 from pymongo import ReadPreference
+from slacker import Slacker
+import os
 
 from app.shared.models import db, login_manager
 
+slack = Slacker(os.getenv('SLACK_API_TOKEN'))
 boostrap = Bootstrap()
 mail = Mailgun()
 moment = Moment()
 csrf = CsrfProtect()
+
+# Create an rq queue from rq and worker.py:
+from rq import Queue
+from worker import conn
+
+# Set up the worker queues:
+mqtt_q = Queue(connection=conn)  # This is the queue for MQTT pubs
 
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'

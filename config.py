@@ -41,6 +41,10 @@ class Config:
     FORECAST_API_KEY = os.environ.get('FORECAST_API_KEY')
     FORECAST_URL = 'https://api.forecast.io/forecast/'
     GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
+    TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+    TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+    TWILIO_URL = 'https://api.twilio.com/2010-04-01/Accounts/'
+    TWILIO_NUMBER = os.getenv('TWILIO_NUMBER')
     # STORMPATH_API_KEY_ID = os.environ.get('STORMPATH_API_KEY_ID')
     # STORMPATH_API_KEY_SECRET = os.environ.get('STORMPATH_API_KEY_SECRET')
     # STORMPATH_APPLICATION = os.environ.get('STORMPATH_APPLICATION')

@@ -415,7 +415,8 @@ class DeployMessage(Message):
             if self.notebook.owner.phone_number:
                 alerts = self.create_alert(self.notebook)
                 for alert in alerts:
-                    self.message.send_message(
+                    mqtt_q.enqueue(
+                        self.message.send_message,
                         number=self.notebook.owner.phone_number,
                         content=alert
                     )
