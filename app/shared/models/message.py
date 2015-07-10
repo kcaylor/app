@@ -52,7 +52,7 @@ class Message(db.Document):
         max_length=40,
         db_field='mid',
         required=True,
-        unique=True
+        unique=False
     )
     number = db.StringField(
         max_length=20,
