@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %} PulsePod Gateway Test {% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link href="/static/css/bootstrap-switch.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/static/js/bootstrap-switch.js"></script>
+    <script src="/static/js/admin/gateway_test.js"></script>
+{% endblock %}
+
+
+{% block page_content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+<h3>SMSSync Gateway Tests</h3>
+
+The buttons below will allow you to send a test message to our various SMSSync gateways.
+
+<div>
+If successful, you will see the resulting messages from each gateway.
+</div>
+
+<div>
+This costs us $0.08 each try, so don't go crazy.
+</div>
+
+
+{% for gateway in gateways %}
+<div class="gateway">
+    <div class="gateway-content">
+        <span id="{{gateway.country}}Test"><h3>{{ gateway.country }} Gateway </h3> </span><span><input id="{{ gateway.country }}Toggle" type="checkbox" class="my-toggle-checkbox" data-size="large" data-on-color="success" data-number="{{gateway.number}}" data-on-text="ON" data-off-color="default" data-off-text="OFF" unchecked ></span>
+    </div>
+</div>
+{% endfor %}
+
+<div>                                
+<br>  
+<a href="javascript:void(0);" onclick="test_gateway('{{ gateways_json }}')"><button type="button" class="btn btn-warning">Test the Gateways</button></a>
+</div>
+
+{% for gateway in gateways %}
+    <div class="results">
+        <div class="results-content" id="{{gateway.country}}TestResult">
+        
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

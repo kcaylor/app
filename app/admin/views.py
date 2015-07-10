@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from flask import render_template, flash, Markup, url_for
+from flask import render_template, flash, Markup, url_for, jsonify
 from flask.ext.login import login_required
 from . import admin
 from app.shared.models.data import Data
@@ -10,6 +10,7 @@ from app.shared.models.pod import Pod
 from app.shared.models.message import Message
 from app.decorators import admin_required
 from mongoengine import Q
+import json
 
 USERS_PER_PAGE = 12
 MSG_PER_PAGE = 10
@@ -72,6 +73,27 @@ def message_info(_id):
         'admin/message_info.html',
         current_time=datetime.utcnow(),
         message=message
+    )
+
+
+@admin.route('/gateway_test')
+@login_required
+@admin_required
+def gateway_test():
+    gateways = [
+        {
+            'country': 'Kenya',
+            'number': '+2540773858828'
+        },
+        {
+            'country': 'Zambia',
+            'number': '+260971534809',
+        },
+    ]
+    return render_template(
+        'admin/gateway_test.html',
+        gateways=gateways,
+        gateways_json=json.dumps(gateways)
     )
 
 

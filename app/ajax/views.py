@@ -124,6 +124,7 @@ def message_delete():
 
 @ajax.route('/notebook_delete', methods=['POST'])
 @login_required
+@admin_required
 def notebook_delete():
     notebook = Notebook.objects(id=request.form['notebook_id']).first()
     if current_user.username == notebook.owner.username or \
@@ -135,6 +136,45 @@ def notebook_delete():
             pass
     else:
         abort(403)
+
+
+@ajax.route('/gateway_test', methods=['POST'])
+@login_required
+@admin_required
+def gateway_test():
+    # Build a twilio client
+    from twilio.rest import TwilioRestClient
+    number = request.form['number']
+    if '+' not in number:
+        number = '+' + number
+    print number
+    print current_app.config['TWILIO_NUMBER']
+    content = 'PulsePod APP Gateway Test Message'
+    account = current_app.config['TWILIO_ACCOUNT_SID']
+    token = current_app.config['TWILIO_AUTH_TOKEN']
+    client = TwilioRestClient(account, token)
+    message = client.messages.create(
+        to=number,
+        from_=current_app.config['TWILIO_NUMBER'],
+        body=content)
+    response = {
+        'sid': message.sid,
+        'content': message.body,
+        'status': message.status
+    }
+    return jsonify(**response)
+
+
+@ajax.route('/gateway_test_check', methods=['POST'])
+@login_required
+@admin_required
+def gateway_test_check():
+    from twilio.rest import TwilioRestClient
+    account = current_app.config['TWILIO_ACCOUNT_SID']
+    token = current_app.config['TWILIO_AUTH_TOKEN']
+    client = TwilioRestClient(account, token)
+    message = client.messages.get(request.form['sid'])
+    return message.status
 
 
 @ajax.route('/forecast', methods=['POST'])
