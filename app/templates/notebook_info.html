@@ -63,8 +63,8 @@
       {% if sensor.variable == 'Counts' and current_data[sensor.get_id()] is defined %}
           <div id='event-alert' class="alert alert-warning alert-dismissible" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-           Hi! It looks like you've connected an event sensor. Is it measuring <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.id}}','Rainfall','{{sensor.get_id()}}')"><button type="button" class="btn btn-success">Rainfall</button></a> or is it measuring 
-            <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.id}}','Flow','{{sensor.get_id()}}')"><button type="button" class="btn btn-success">Flow</button></a>?
+           Hi! It looks like you've connected an event sensor. Is it measuring <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.nbk_id}}','Rainfall','{{sensor.get_id()}}','{{notebook.name}}')"><button type="button" class="btn btn-success">Rainfall</button></a> or is it measuring 
+            <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.nbk_id}}','Flow','{{sensor.get_id()}}','{{notebook.name}}')"><button type="button" class="btn btn-success">Flow</button></a>?
           </div>
           <br>
       {% endif %}
@@ -107,7 +107,7 @@
     </table>
   </div>
   <div class="tab-pane active text-center" id="Data">
-      <div class="alert alert-info alert-dismissible" role="alert">
+      <div class="alert alert-info" role="alert">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         Select a sensor to view your data.
       </div>
@@ -115,13 +115,13 @@
         {% for sensor in notebook.sensors %}
             {% if 'event' in sensor.name and notebook.event_sensor.name is defined %}
               <!-- Handle Event Sensors Differently. -->
-              <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{notebook.event_sensor.context}} {{notebook.event_sensor.variable}} ({{notebook.event_sensor.unit|default('-')}})')">
+              <button id="plot_{{sensor.id}}" type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{notebook.event_sensor.context}} {{notebook.event_sensor.variable}} ({{notebook.event_sensor.unit|default('-')}})')">
               <div id="label_{{sensor.id}}">
                 {{notebook.event_sensor.context}} {{notebook.event_sensor.variable}}
               </div>
             {% else %}
             <!-- All other sensors handled the same way -->
-              <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit|default('-')}})')">
+              <button id="plot_{{sensor.id}}" type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="{{sensor.context}} {{sensor.variable}}" onclick="plot_data_ajax('{{notebook.nbk_id}}','{{sensor.id}}','{{ notebook.name }}','{{sensor.context}} {{sensor.variable}} ({{sensor.unit|default('-')}})')">
                 <div id="label_{{sensor.id}}">{% if sensor.variable_short %}
                   {{sensor.context}} {{sensor.variable_short}}
                 {% else %}

@@ -15,7 +15,7 @@ $.ajaxSetup({
     }
 });
 
-function set_nbk_event_sensor(nbk_id, event_var, sid) {
+function set_nbk_event_sensor(nbk_id, event_var, sid, nbk_name) {
     'use strict';
     $('#event-alert').html(
         "Okay, setting this notebook's event sensor to measure " + event_var)
@@ -27,7 +27,7 @@ function set_nbk_event_sensor(nbk_id, event_var, sid) {
         // dataType: 'jsonp',
         // jsonpCallback: 'callback',
         url: '../ajax/set_nbk_event_sensor',
-        data: "id=" + nbk_id + "&event_sensor=" + event_var + "&sid=" + sid,
+        data: "nbk_id=" + nbk_id + "&event_sensor=" + event_var + "&sid=" + sid,
         success: function (response) {
             // data is ur summary
             console.log(JSON.stringify(response));
@@ -41,6 +41,9 @@ function set_nbk_event_sensor(nbk_id, event_var, sid) {
             });
             $("#label_" + sid).html(response.variable);
             $("#data_" + sid).html('('+response.unit+')');
+            var title = response.variable + ' (' + response.unit + ')'
+            $("#plot_" + sid).attr(
+                "onclick","plot_data_ajax('"+nbk_id+"', '"+sid+"', '"+nbk_name+"', '"+title+"')");
         },
         error: function(e) {
             console.log(e.message);

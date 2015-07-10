@@ -168,7 +168,7 @@ def reset_api_key():
 def set_nbk_event_sensor():
     # We use the current event resolution and the passed event sensor
     # to set this notebook's event_sensor field.
-    notebook = Notebook.objects(id=request.args['id']).first()
+    notebook = Notebook.objects(nbk_id=request.args['nbk_id']).first()
     # The current events are being logged into this sensor:
     this_event = Sensor.objects(id=request.args['sid']).first()
     # Find the event resolution (a bit of a hack):
