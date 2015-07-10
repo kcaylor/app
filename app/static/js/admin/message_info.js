@@ -61,6 +61,7 @@ function delete_msg(message_id) {
     $('#parseButton').attr('disabled', true);
     $('#postButton').attr('disabled', true);
     $('#status').attr('deleted');
+    $('#status').html('deleted');
     $('#status').removeClass('label-primary');
     $('#status').removeClass('label-info');
     $('#status').removeClass('label-warning');
