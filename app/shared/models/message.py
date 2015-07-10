@@ -132,7 +132,7 @@ class Message(db.Document):
                 frame = frame_id
             Obj = NewMessageObject.create(Message.FRAMES[frame])
             message_str = Obj.create_fake_message(frame, notebook)
-            if frame == 9999:
+            if frame ==  9999:
                 status='invalid'
             else:
                 status='posted'

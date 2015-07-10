@@ -156,6 +156,29 @@ class Message(object):
         # dbtime is (e.g.) "Tue, 17 Sep 2013 01:33:56 GMT"
         return time.strftime("%a, %d %b %Y %H:%M:%S GMT", t)
 
+    def get_datetime(self, i):
+        import datetime
+        # parse unixtime to long int, then convert to database time
+        try:
+            unixtime = struct.unpack(
+                '<L',
+                self.content[i:i + self.TIME_LENGTH].decode('hex'))[0]
+        except:
+            raise InvalidMessageException(
+                'Error decoding timestamp',
+                status_code=400)
+        t = time.gmtime(unixtime)
+        dt = datetime.datetime(
+            year=t.tm_year,
+            month=t.tm_mon,
+            day=t.tm_mday,
+            hour=t.tm_hour,
+            minute=t.tm_min,
+            second=t.tm_sec
+        )
+        # dbtime is (e.g.) "Tue, 17 Sep 2013 01:33:56 GMT"
+        return dt
+
     def get_value(self, i, sensor):
         import struct
         # parse value based on format string

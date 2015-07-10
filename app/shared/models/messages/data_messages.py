@@ -102,7 +102,9 @@ class DataMessage(Message):
 
                 while nobs > 0:
                     try:
-                        time_stamp = self.get_time(i)  # Get timestamp
+                        # Using datetime now, so call get_datetime.
+                        # time_stamp = self.get_time(i)  # Get timestamp
+                        time_stamp = self.get_datetime(i)
                     except:
                         self.message.status = 'invalid'
                         self.message.save()
@@ -127,6 +129,9 @@ class DataMessage(Message):
                         location=self.notebook.location,
                         variable=variable_name
                     )
+                    # TODO: test the time stamp here before adding to
+                    # the data list. That way we keep good stuff and
+                    # only throw out bad.
                     data_list.append(data)
                     nobs -= 1
             self.data_list = data_list
