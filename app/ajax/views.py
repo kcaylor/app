@@ -43,7 +43,7 @@ def init_message_html(message=None):
             '<strong>' + message.message_content[:2] + '</strong></span>'
         info_string += '<span class="text-danger">' + \
             '<strong>' + message.message_content[2:6] + '</strong></span>'
-        info_string += '<span>' + message.message_content[6:] + '</span>'
+        info_string += '<span>' + message.message_content[6:60] + '...</span>'
         info_string += '<br><br><span class="text-primary">Message type: ' + \
             str(message.Message.__class__.__name__) + "</span>"
         info_string += '<br><span class="text-danger">Pod: ' + \
@@ -58,7 +58,7 @@ def init_message_html(message=None):
 @login_required
 @admin_required
 def message_initialize():
-    message = Message.objects(message_id=request.form['message_id']).first()
+    message = Message.objects(id=request.form['message_id']).first()
     try:
         message.init()
     except:
@@ -75,7 +75,7 @@ def message_initialize():
 @login_required
 @admin_required
 def message_parse():
-    message = Message.objects(message_id=request.form['message_id']).first()
+    message = Message.objects(id=request.form['message_id']).first()
     try:
         message.init()
     except:
@@ -96,13 +96,15 @@ def message_parse():
 @login_required
 @admin_required
 def message_post():
-    message = Message.objects(message_id=request.form['message_id']).first()
+    message = Message.objects(id=request.form['message_id']).first()
+    message.init()
+    message.parse()
     try:
-        message.init()
+        message.post()
     except:
-        return "Error initializing message"
+        return "Error posting message"
     info_string = '<span>' + message.message_content[:2] + '</span>'
-    info_string += '<span>' + message.message_content[2:] + '</span>'
+    info_string += '<span>' + message.message_content[2:60] + '...</span>'
     info_string += '<br><br>Message type: ' + \
         str(message.Message.__class__.__name__)
     info_string += '<br><span>Pod: ' + message.pod.name + '</span>'
@@ -115,7 +117,7 @@ def message_post():
 @login_required
 @admin_required
 def message_delete():
-    message = Message.objects(message_id=request.form['message_id']).first()
+    message = Message.objects(id=request.form['message_id']).first()
     message.delete()
     return "Message deleted."
 
