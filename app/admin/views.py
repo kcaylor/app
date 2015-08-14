@@ -84,11 +84,19 @@ def gateway_test():
         {
             'country': 'Kenya',
             '_id': 'Kenya01',
+            'description': 'Kenya Airtel Gateway',
             'number': '+2540773858828'
+        },
+        {
+            'country': 'Kenya',
+            '_id': 'Kenya02',
+            'description': 'Kenya Safaricom Gateway',
+            'number': '+254711757217'
         },
         {
             'country': 'Zambia',
             '_id': 'Zambia01',
+            'description': 'Zambia Gateway',
             'number': '+260971534809',
         },
     ]
