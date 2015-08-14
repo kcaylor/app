@@ -83,10 +83,12 @@ def gateway_test():
     gateways = [
         {
             'country': 'Kenya',
+            '_id': 'Kenya01',
             'number': '+2540773858828'
         },
         {
             'country': 'Zambia',
+            '_id': 'Zambia01',
             'number': '+260971534809',
         },
     ]

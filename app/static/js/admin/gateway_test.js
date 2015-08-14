@@ -17,9 +17,9 @@ function test_gateway(gateways) {
     var arrayLength = obj.length;
     for (var i = 0; i < arrayLength; i++) {
         console.log("gateway: "+obj[i].number);
-        if ($(".bootstrap-switch-id-"+obj[i].country+"Toggle").hasClass(
+        if ($(".bootstrap-switch-id-"+obj[i]._id+"Toggle").hasClass(
         "bootstrap-switch-on")) {
-            console.log("testing the "+obj[i].country+" gateway");
+            console.log("testing the "+obj[i]._id+" gateway");
             $.ajax({
                 type: "POST",
                 url: '../ajax/gateway_test',

@@ -35,7 +35,7 @@ This costs us $0.08 each try, so don't go crazy.
 {% for gateway in gateways %}
 <div class="gateway">
     <div class="gateway-content">
-        <span id="{{gateway.country}}Test"><h3>{{ gateway.country }} Gateway </h3> </span><span><input id="{{ gateway.country }}Toggle" type="checkbox" class="my-toggle-checkbox" data-size="large" data-on-color="success" data-number="{{gateway.number}}" data-on-text="ON" data-off-color="default" data-off-text="OFF" unchecked ></span>
+        <span id="{{gateway._id}}Test"><h3>{{ gateway.country }} Gateway </h3> </span><span><input id="{{ gateway._id }}Toggle" type="checkbox" class="my-toggle-checkbox" data-size="large" data-on-color="success" data-number="{{gateway.number}}" data-on-text="ON" data-off-color="default" data-off-text="OFF" unchecked ></span>
     </div>
 </div>
 {% endfor %}

@@ -5,24 +5,22 @@ import datetime
 class Data(db.Document):
 
     time_stamp = db.DateTimeField(
-        db_field='t',
+        db_field='time_stamp',
         default=datetime.datetime.now())
     value = db.FloatField(
-        db_field='v',
+        db_field='value',
         default=None)
-    location = db.PointField(db_field='loc')
+    location = db.PointField(db_field='location')
     created = db.DateTimeField(default=datetime.datetime.now())
     updated = db.DateTimeField(default=datetime.datetime.now())
     # Define links to Pod, Notebook, and Sensor collections:
-    notebook = db.ReferenceField('Notebook', db_field='nbk')
+    notebook = db.ReferenceField('Notebook', db_field='notebook')
     pod = db.ReferenceField('Pod', db_field='pod')
-    sensor = db.ReferenceField('Sensor', db_field='s')
+    sensor = db.ReferenceField('Sensor', db_field='sensor')
     variable = db.StringField()
-    pod_name = db.StringField(db_field='p')
+    pod_name = db.StringField(db_field='pod_name')
     owner = db.ReferenceField('User', db_field='owner')
     public = db.BooleanField(default=True)
-    # updated = db.DateTimeField()
-    # created = db.DateTimeField()
     meta = {
         'collection': 'data',
         'ordering': ['-time_stamp'],
