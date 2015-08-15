@@ -149,7 +149,7 @@ def gateway_test():
         number = '+' + number
     print number
     print current_app.config['TWILIO_NUMBER']
-    content = 'PulsePod APP Gateway Test Message'
+    content = request.form['description'] + ' Test Message'
     account = current_app.config['TWILIO_ACCOUNT_SID']
     token = current_app.config['TWILIO_AUTH_TOKEN']
     client = TwilioRestClient(account, token)

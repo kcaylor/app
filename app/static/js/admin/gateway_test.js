@@ -23,7 +23,8 @@ function test_gateway(gateways) {
             $.ajax({
                 type: "POST",
                 url: '../ajax/gateway_test',
-                data: "country=" + obj[i].country + "&number=" + obj[i].number,
+                data: "country=" + obj[i].country + "&number=" + obj[i].number + 
+                "&description=" + obj[i].description,
                 success: function (response) {
                      // data is ur summary
                      console.log(JSON.stringify(response));

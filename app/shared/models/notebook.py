@@ -15,7 +15,12 @@ class Notebook(db.Document):
     created = db.DateTimeField(default=datetime.datetime.now())
     updated = db.DateTimeField(default=datetime.datetime.now())
     pod = db.ReferenceField('Pod')
-    elevation = db.DictField()
+    elevation = db.DictField(
+        default={
+            'resolution': 100.0,
+            'elevation': 0.0
+        }
+    )
     sensors = db.ListField(
         db.ReferenceField('Sensor')
     )
