@@ -35,7 +35,8 @@ def pods(page=1):
     ).order_by('-last').only(
         'name',
         'owner',
-        'mode'
+        'mode',
+        'last'
     ).paginate(
         page=page, per_page=PODS_PER_PAGE
     )
