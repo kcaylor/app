@@ -225,6 +225,7 @@ def map():
         'name',
         'location',
         'nbk_id',
+        'last'
     )
     return render_template(
         'map.html',
