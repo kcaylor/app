@@ -221,7 +221,7 @@ def notebook_info(_id):
 @main.route('/map')
 @login_required
 def map():
-    notebooks = Notebook.objects(observations__gt=0).order_by('-last').only(
+    notebooks = Notebook.objects(observations__gt=10).order_by('-last').only(
         'name',
         'location',
         'nbk_id',
@@ -248,7 +248,25 @@ def helper_functions():
             return 'warning'
         return 'danger'
 
+    def map_marker(last=None):
+        import datetime
+        # Active notebooks have sent data in the past week
+        if last > datetime.datetime.now() - datetime.timedelta(days=7):
+            return 'activeMarker'
+        else:
+            return 'inactiveMarker'
+
+    def data_renderer(variable_name=None):
+        if not variable_name:
+            return 'line'
+        if 'Counts' in variable_name:
+            return 'bar'
+        else:
+            return 'line'
+
     return dict(
         format_price=format_price,
-        label_voltage=label_voltage
+        label_voltage=label_voltage,
+        map_marker=map_marker,
+        data_renderer=data_renderer
     )

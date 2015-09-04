@@ -42,10 +42,11 @@
   <h2>
       <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}" 
          data-title="Change this notebook name">{{notebook.name}}</a>
-  </h2>
 {% else %}
-  <h2>{{notebook.name}}</h2>
+  <h2>{{notebook.name}}
 {% endif %}
+  <small>(last seen {{ moment(notebook.last).fromNow(refresh=True) }})</small></h2>
+
 
 
 {% if current_user.can_edit(notebook) %}

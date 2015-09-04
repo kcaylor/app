@@ -89,6 +89,14 @@ function clear_chart() {
     $('#chart_container').html('<div id="y_axis"></div><div id="chart"></div><br><div id="slider"></div>');
 }
 
+function chooseRenderer(variable_name) {
+    if (variable_name.indexOf('Rainfall') > -1 || variable_name.indexOf('Flow') > -1 ) {
+        return 'bar';
+    } else {
+        return 'line';
+    }
+}
+
 function plot_data_ajax(nbk_id, sensor_id, nbk_name, variable_name) {
     'use strict';
     $('#chart-title').html(nbk_name + ', ' + variable_name);
@@ -98,7 +106,7 @@ function plot_data_ajax(nbk_id, sensor_id, nbk_name, variable_name) {
         element: document.getElementById("chart"),
         width: 500,
         height: 300,
-        renderer: 'line',
+        renderer: chooseRenderer(variable_name),
         min: 'auto',
         dataURL: url,
         onData: function (d) {
