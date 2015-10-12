@@ -24,7 +24,7 @@
 <meta name="message_count" content="{{ message_list|count }}">
 {% endif %}
 
-<h2>{{pod.name}}</h2>
+<h2>{{pod.name}} <span class="badge">#{{ pod.pod_id }}</span></h2>
 <div class="well well-lg">
 This pod is currently in {{pod.mode}} mode and is writing to <a href="{{url_for('main.notebook_info',_id=pod.current_notebook.get_id())}}">{{pod.current_notebook.name}}</a>. Its most recent message was sent on {{ moment(pod.last).format('LLL') }}
 </div>
