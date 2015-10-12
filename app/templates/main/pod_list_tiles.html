@@ -10,12 +10,9 @@
     <div class="col-sm-3">
         <h4>
             <a href="{{ url_for('main.pod_info', _id=pod.get_id() ) }}">
-                 {{ pod.name }}
+                 {{ pod.name }} <span class="badge">#{{ pod.pod_id }}</span>
             </a>
             <br>
-            <small>
-                <span class="badge">{{ pod.pod_id }}</span>
-            </small>
             <small>
                 <span class="badge">{{ pod.owner.username }}</span>
             </small>

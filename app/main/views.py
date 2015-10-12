@@ -36,7 +36,8 @@ def pods(page=1):
         'name',
         'owner',
         'mode',
-        'last'
+        'last',
+        'pod_id'
     ).paginate(
         page=page, per_page=PODS_PER_PAGE
     )
