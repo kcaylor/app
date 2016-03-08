@@ -25,3 +25,19 @@ function delete_notebook(notebook_id) {
         }
     });
 }
+
+function merge_notebook(notebook_id) {
+    'use strict';
+    $.ajax({
+        type: "POST",
+        url: '../../ajax/notebook_merge',
+        data: {'notebook_id': notebook_id},
+        success: function (response) {
+            // response should include current notebook id and count.
+            console.log(response)
+            $('#' + notebook_id).fadeOut();
+            $('#' + notebook_id).remove();
+            // Update the current notebook number of records.
+        }
+    });
+}

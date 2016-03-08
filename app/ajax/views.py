@@ -138,6 +138,29 @@ def notebook_delete():
         abort(403)
 
 
+@ajax.route('/notebook_merge', methods=['POST'])
+@login_required
+@admin_required
+def notebook_merge():
+    notebook = Notebook.objects(id=request.form['notebook_id']).first()
+    if current_user.username == notebook.owner.username or \
+            current_user.is_administrator():
+        if not notebook.pod.current_notebook == notebook:
+            n_merged_data = Data.objects(notebook=notebook).count()
+            Data.objects(notebook=notebook).update(
+                set__notebook=notebook.pod.current_notebook)
+            notebook.pod.current_notebook.observations += n_merged_data
+            notebook.pod.current_notebook.save()
+            notebook.observations = 0
+            notebook.save()
+            return "{value}".format(
+                value=notebook.pod.current_notebook.observations)
+        else:
+            pass
+    else:
+        abort(403)
+
+
 @ajax.route('/gateway_test', methods=['POST'])
 @login_required
 @admin_required

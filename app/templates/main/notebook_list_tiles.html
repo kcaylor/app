@@ -41,6 +41,9 @@
             {% if notebook.observations < 20 and not notebook.pod.current_notebook.get_id() == notebook.get_id() %}
                 <br><a href="#" id="deleteButton" onclick="delete_notebook('{{notebook.get_id()}}')" class="btn btn-right btn-default btn-large btn-danger">Delete</a>
             {% endif %}
+            {% if notebook.observations >= 20 and not notebook.pod.current_notebook.get_id() == notebook.get_id() %}
+            <br><a href="#" id="mergeButton" onclick="merge_notebook('{{notebook.get_id()}}')" class="btn btn-right btn-default btn-small btn-warning">Merge to Current</a>
+            {% endif %}
     </div>
     {%if loop.last == True %}
         </div>
