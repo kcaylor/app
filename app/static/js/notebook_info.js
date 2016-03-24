@@ -59,18 +59,6 @@ function set_nbk_event_sensor(nbk_id, event_var, sid, nbk_name) {
 
 $.fn.editable.defaults.mode = 'inline';
 
-$('#notebook_name').editable({
-    placement: "right",
-    inputclass: "notebook_name",
-    error: function (errors) {
-    },
-    display: function (value, response) {
-        'use strict';
-        //render response into element
-        $(this).html(response);
-    }
-});
-
 $(".tm-input").tagsManager({
     prefilled: nbk_tags,
     AjaxPush: '/edit/nbk_tags',
@@ -142,10 +130,45 @@ function plot_data_ajax(nbk_id, sensor_id, nbk_name, variable_name) {
     });
 }
 
+function create_notebook_xls(nbk_id, user_id) {
+    'use strict';
+    var l = Ladda.create(document.querySelector( '#xlsButton' ));
+    // $('#xlsButton').html('Working...');
+    l.start();
+    $.ajax({
+        type: "POST",
+        url: '../../ajax/create_notebook_xls',
+        data: {'nbk_id': nbk_id},
+        success: function (response) {
+            // response should include current notebook id and count.
+            console.log(response)
+            l.stop();
+            $('#xlsButton').prop("href", "/static/xlsx/" + nbk_id + ".xlsx");
+            $('#xlsButton').html("Download .xls");
+            $('#xlsButton').prop("onclick", "");
+        },
+        error: function (response) {
+            l.stop();
+            $('#xlsButton').html("Oops! It didn't work.");
+            $('#xlsButton').prop("onclick", "");
+        }
+    });
+}
+
 
 $(document).ready(function () {
     'use strict';
-
+    $('#notebook_name').editable({
+        placement: "right",
+        inputclass: "notebook_name",
+        error: function (errors) {
+        },
+        display: function (value, response) {
+            'use strict';
+            //render response into element
+            $(this).html(response);
+        }
+    });
     $('#forecast').load("../ajax/forecast", {'lat': lat, 'lng': lng});
     var table = $('#data_table').DataTable({
         "order": [ 1, 'asc' ],

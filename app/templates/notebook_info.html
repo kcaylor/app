@@ -5,7 +5,7 @@
 {% block head %}
     {{ super() }}
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
     <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="/static/css/jquery-ui-1.10.0.custom.css">
     <link href="/static/css/weather-icons.min.css" rel="stylesheet">
@@ -13,13 +13,17 @@
     <link href="/static/css/pod_info.css" rel="stylesheet">
     <link href="/static/css/rickshaw.min.css" rel="stylesheet">
     <link href="/static/css/chart.css" rel="stylesheet">
+    <link href="/static/css/ladda.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.5/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+    <script src="/static/js/spin.min.js"</script>
+    <script src="/static/js/ladda.jquery.min.js"</script>
+    <script src="/static/js/ladda.min.js"</script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
     <script src="/static/js/tagmanager.js"></script>
     <script src="/static/js/notebook_info.js"></script>
@@ -188,6 +192,8 @@
   </div>
   <div class="tab-pane" id="Downloads">
     <br>
+      <a href=# id="xlsButton" onclick="create_notebook_xls('{{notebook.get_id()}}')" class="btn btn-primary btn-s ladda-button" data-style="expand-right" data-color="green" data-size="s"><span class="ladda-label">Generate .xls file</span>
+      </a>
     {%if xlsx %}
       <a href="/static/xlsx/{{ notebook.nbk_id}}.xlsx">
         <button type="button" class="btn btn-default navbar-btn">xls</button>

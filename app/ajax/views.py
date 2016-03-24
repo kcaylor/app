@@ -1,3 +1,4 @@
+"""Ajax views for pulsepod app."""
 from flask.ext.login import login_required, current_user
 from app.decorators import admin_required
 import requests
@@ -15,6 +16,7 @@ import json
 
 
 def get_forecast(lat=None, lng=None, time=None, **flags):
+    """Get the forecast for this notebook."""
     app = current_app._get_current_object()
     if not app.config['FORECAST_URL'] or not app.config['FORECAST_API_KEY']:
         return {'error': 'invalid forecast.io settings'}
@@ -38,6 +40,7 @@ def get_forecast(lat=None, lng=None, time=None, **flags):
 
 
 def init_message_html(message=None):
+    """Initialize the message html."""
     if message:
         info_string = '<span class="text-primary">' + \
             '<strong>' + message.message_content[:2] + '</strong></span>'
@@ -58,6 +61,7 @@ def init_message_html(message=None):
 @login_required
 @admin_required
 def message_initialize():
+    """Initialize the message."""
     message = Message.objects(id=request.form['message_id']).first()
     try:
         message.init()
@@ -75,6 +79,7 @@ def message_initialize():
 @login_required
 @admin_required
 def message_parse():
+    """Parse the message html."""
     message = Message.objects(id=request.form['message_id']).first()
     try:
         message.init()
@@ -96,6 +101,7 @@ def message_parse():
 @login_required
 @admin_required
 def message_post():
+    """Post the message html."""
     message = Message.objects(id=request.form['message_id']).first()
     message.init()
     message.parse()
@@ -117,6 +123,7 @@ def message_post():
 @login_required
 @admin_required
 def message_delete():
+    """Delete the message html."""
     message = Message.objects(id=request.form['message_id']).first()
     message.delete()
     return "Message deleted."
@@ -126,6 +133,7 @@ def message_delete():
 @login_required
 @admin_required
 def notebook_delete():
+    """Delete the notebook."""
     notebook = Notebook.objects(id=request.form['notebook_id']).first()
     if current_user.username == notebook.owner.username or \
             current_user.is_administrator():
@@ -142,6 +150,7 @@ def notebook_delete():
 @login_required
 @admin_required
 def notebook_merge():
+    """Merge the notebook."""
     notebook = Notebook.objects(id=request.form['notebook_id']).first()
     if current_user.username == notebook.owner.username or \
             current_user.is_administrator():
@@ -165,6 +174,7 @@ def notebook_merge():
 @login_required
 @admin_required
 def gateway_test():
+    """Test the gateway."""
     # Build a twilio client
     from twilio.rest import TwilioRestClient
     number = request.form['number']
@@ -192,6 +202,7 @@ def gateway_test():
 @login_required
 @admin_required
 def gateway_test_check():
+    """Check to see that the gateway has been tested."""
     from twilio.rest import TwilioRestClient
     account = current_app.config['TWILIO_ACCOUNT_SID']
     token = current_app.config['TWILIO_AUTH_TOKEN']
@@ -252,6 +263,27 @@ def set_nbk_event_sensor():
     }
     # Return what we need to make the page right:
     return jsonify(**response)
+
+
+@ajax.route('/create_notebook_xls', methods=['POST'])
+@login_required
+def create_notebook_xls():
+    nbk_id = request.form["nbk_id"]
+    notebook = Notebook.objects(id=nbk_id).first()
+    if not notebook:
+        return {
+            'status': 'error',
+            'message': 'Notebook not found.'
+        }
+    email = current_user.email
+    if not email:
+        message = 'You must register and have a verified email to export data.'
+        return {
+            'status': 'error',
+            'message': message
+        }
+    notebook.xls()
+    return "Finished"
 
 
 @ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])

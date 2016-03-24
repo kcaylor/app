@@ -140,7 +140,7 @@ class Message(db.Document):
                 message_id=str(fake.random_int(min=100000, max=100000000)),
                 number=notebook.pod.number,
                 source=choice(Message.SOURCES),
-                message=message_str,
+                message_content=message_str,
                 pod=notebook.pod,
                 notebook=notebook,
                 owner=notebook.owner,

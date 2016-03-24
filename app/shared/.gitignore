@@ -9,6 +9,7 @@ venv
 migration*
 names.py
 config.codekit
+kenya_notebook_export.py
 
 Procfile.local
 .DS_Store
