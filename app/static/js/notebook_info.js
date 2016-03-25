@@ -152,7 +152,7 @@ function update_xls_progress(status_url, l, nbk_id) {
                 // show result
                 l.stop()
                 $('#xlsButton').prop("href", "/static/xlsx/" + nbk_id + ".xlsx");
-                $('#xlsButton').html("Download .xls");
+                $('#xlsButton').html('<span class="ladda-label">Download .xls file</span>');
                 $('#xlsButton').prop("onclick", "");
                 console.log(data['state'])
             }

@@ -64,6 +64,15 @@
   </h4>
 {% endif %}
  </div>
+
+ <div>
+  <br>
+    <a href=# id="xlsButton" onclick="create_notebook_xls('{{notebook.get_id()}}')" class="btn btn-primary btn-s ladda-button" data-style="expand-right" data-color="green" data-size="s"><span class="ladda-label">Generate .xls file</span>
+    </a>
+  <br>
+  &nbsp;
+</div>
+
 {% if current_user.can_edit(notebook) and notebook.event_sensor.name is not defined %}
     {% for sensor in sensors %}
       {% if sensor.variable == 'Counts' and current_data[sensor.get_id()] is defined %}
@@ -87,7 +96,7 @@
   <li><a href="#Location" role="tab" data-toggle="tab">Location</a></li>
   <li><a href="#Pod_Info" role="tab" data-toggle="tab">Pod Info</a></li>
   <li><a href="#Notes" role="tab" data-toggle="tab">Notes</a></li>
-  <li><a href="#Downloads" role="tab" data-toggle="tab">Downloads</a></li>
+  <!-- <li><a href="#Downloads" role="tab" data-toggle="tab">Downloads</a></li> -->
 </ul>
 </div>
 
@@ -191,21 +200,13 @@
     <br>
     <br>
   </div>
-  <div class="tab-pane" id="Downloads">
+<!--  <div class="tab-pane" id="Downloads">
     <br>
       <a href=# id="xlsButton" onclick="create_notebook_xls('{{notebook.get_id()}}')" class="btn btn-primary btn-s ladda-button" data-style="expand-right" data-color="green" data-size="s"><span class="ladda-label">Generate .xls file</span>
       </a>
     <br>
-    {%if xlsx %}
-      <a href="/static/xlsx/{{ notebook.nbk_id}}.xlsx">
-        <button type="button" class="btn btn-default navbar-btn">xls</button>
-      </a>
-    {% endif %}
-      &nbsp;
-      <a href="#">
-        <button type="button" class="btn btn-default navbar-btn">csv</button>
-      </a>
   </div>
+-->
 </div>
 
 
