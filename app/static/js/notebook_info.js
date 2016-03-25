@@ -130,6 +130,17 @@ function plot_data_ajax(nbk_id, sensor_id, nbk_name, variable_name) {
     });
 }
 
+function check_status(queue, job_id) {
+    'use strict';
+    $.ajax({
+        type: "GET",
+        url: '../../ajax/check_job/xlsx/' + response.job_id,
+        success: function (response) {
+            console.log(response.job_status)
+        }
+    });
+}
+
 function create_notebook_xls(nbk_id, user_id) {
     'use strict';
     var l = Ladda.create(document.querySelector( '#xlsButton' ));
@@ -140,7 +151,6 @@ function create_notebook_xls(nbk_id, user_id) {
         url: '../../ajax/create_notebook_xls',
         data: {'nbk_id': nbk_id},
         success: function (response) {
-            // response should include current notebook id and count.
             console.log(response)
             l.stop();
             $('#xlsButton').prop("href", "/static/xlsx/" + nbk_id + ".xlsx");

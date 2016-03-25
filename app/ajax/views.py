@@ -10,6 +10,7 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.data import Data
 from app.shared.models.message import Message
+from app import xlsx_q
 import calendar
 import datetime
 import json
@@ -265,6 +266,22 @@ def set_nbk_event_sensor():
     return jsonify(**response)
 
 
+@ajax.route('/check_job/<queue>/<job_id>', methods=['GET'])
+@login_required
+def check_job(queue, job_id):
+    from app import mqtt_q, xlsx_q
+    if queue == 'mqtt':
+        this_q = mqtt_q
+    elif queue == 'xlsx':
+        this_q = xlsx_q
+    if job_id:
+        job = this_q.fetch_job(job_id)
+    return json.dumps({
+        'job_id': job.id,
+        'job_status': job.get_status()
+    })
+
+
 @ajax.route('/create_notebook_xls', methods=['POST'])
 @login_required
 def create_notebook_xls():
@@ -278,12 +295,18 @@ def create_notebook_xls():
     email = current_user.email
     if not email:
         message = 'You must register and have a verified email to export data.'
-        return {
+        return json.dumps({
             'status': 'error',
             'message': message
-        }
-    notebook.xls()
-    return "Finished"
+        })
+    filename = current_app.config['XLSX_PATH'] + '%s.xlsx' % str(notebook.id)
+    job = xlsx_q(notebook.xls(filename=filename))
+    # We need to pass this job id back, so that the js can
+    # keep checking the job status.
+    return json.dumps({
+        'job_id': job.id,
+        'job_status': job.get_status()
+    })
 
 
 @ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])

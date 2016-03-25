@@ -23,6 +23,7 @@ from worker import conn
 
 # Set up the worker queues:
 mqtt_q = Queue(connection=conn)  # This is the queue for MQTT pubs
+xlsx_q = Queue(connection=conn)  # This is the queue for xlxs jobs
 
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'

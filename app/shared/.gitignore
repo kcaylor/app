@@ -10,6 +10,7 @@ migration*
 names.py
 config.codekit
 kenya_notebook_export.py
+requirements_old.txt
 
 Procfile.local
 .DS_Store
