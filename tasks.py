@@ -38,7 +38,7 @@ def create_notebook(self, nbk_id=None):
     this_app = create_app(os.getenv('FLASK_CONFIG') or 'default')
     with this_app.app_context():
         notebook = Notebook.objects(id=nbk_id).first()
-        filename = current_app.config['XLSX_PATH'] + '%s.xlsx' % str(notebook.id)
+        filename = current_app.config['XLSX_PATH'] + '%s.xlsx' % str(nbk_id)
         self.update_state(state='PROGESS')
         notebook.xls(filename=filename)
-        return {'status': 'Task completed!'}
+        return {'status': 'Task completed!', 'filename': filename}

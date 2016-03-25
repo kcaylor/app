@@ -52,7 +52,7 @@ class Config:
     # STORMPATH_API_KEY_ID = os.environ.get('STORMPATH_API_KEY_ID')
     # STORMPATH_API_KEY_SECRET = os.environ.get('STORMPATH_API_KEY_SECRET')
     # STORMPATH_APPLICATION = os.environ.get('STORMPATH_APPLICATION')
-    XLSX_PATH = 'app/static/xlsx/'
+    XLSX_PATH = os.getenv('XLSX_PATH')
 
     @staticmethod
     def init_app(app):
@@ -82,6 +82,7 @@ class DevelopmentConfig(Config):
             password=os.environ.get('MONGO_DEV_PASSWORD'),
         )
     }
+    XLSX_PATH = '/Users/kellycaylor/Documents/dev/app/app/static/xlsx/'
 
 
 class TestingConfig(Config):
@@ -92,6 +93,7 @@ class TestingConfig(Config):
         "HOST": 'localhost',
         "PORT": 27017
     }
+    XLSX_PATH = '/Users/kellycaylor/Documents/dev/app/app/static/xlsx/'
 
 
 class ProductionConfig(Config):

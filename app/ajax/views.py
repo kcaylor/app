@@ -310,23 +310,6 @@ def taskstatus(task_id):
     return jsonify(response)
 
 
-@ajax.route('/check_job/<queue>/<job_id>', methods=['GET'])
-@login_required
-def check_job(queue, job_id):
-    """Check on a job in a rq queue."""
-    from app import mqtt_q, xlsx_q
-    if queue == 'mqtt':
-        this_q = mqtt_q
-    elif queue == 'xlsx':
-        this_q = xlsx_q
-    if job_id:
-        job = this_q.fetch_job(job_id)
-    return json.dumps({
-        'job_id': job.id,
-        'job_status': job.get_status()
-    })
-
-
 @ajax.route('/create_notebook_xls', methods=['POST'])
 @login_required
 def create_notebook_xls():
