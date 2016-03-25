@@ -45,6 +45,10 @@ class Config:
     TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
     TWILIO_URL = 'https://api.twilio.com/2010-04-01/Accounts/'
     TWILIO_NUMBER = os.getenv('TWILIO_NUMBER')
+    # REDIS_URL = os.environ.get('REDIS_DEV_URL')
+    # BROKER_URL = REDIS_URL
+    # CELERY_RESULT_BACKEND = REDIS_URL
+
     # STORMPATH_API_KEY_ID = os.environ.get('STORMPATH_API_KEY_ID')
     # STORMPATH_API_KEY_SECRET = os.environ.get('STORMPATH_API_KEY_SECRET')
     # STORMPATH_APPLICATION = os.environ.get('STORMPATH_APPLICATION')
@@ -119,6 +123,9 @@ class ProductionConfig(Config):
             replica_set=os.environ.get('MONGO_REPLICASET')
         )
     }
+    # REDIS_URL = os.environ.get('REDIS_PROD_URL')
+    # BROKER_URL = REDIS_URL
+    # CELERY_RESULT_BACKEND = REDIS_URL
 
 config = {
     'development': DevelopmentConfig,

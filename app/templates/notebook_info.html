@@ -14,6 +14,7 @@
     <link href="/static/css/rickshaw.min.css" rel="stylesheet">
     <link href="/static/css/chart.css" rel="stylesheet">
     <link href="/static/css/ladda.min.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/nanobar/0.2.1/nanobar.min.js"></script>
 {% endblock %}
 
 {% block scripts %}
@@ -194,6 +195,7 @@
     <br>
       <a href=# id="xlsButton" onclick="create_notebook_xls('{{notebook.get_id()}}')" class="btn btn-primary btn-s ladda-button" data-style="expand-right" data-color="green" data-size="s"><span class="ladda-label">Generate .xls file</span>
       </a>
+    <br>
     {%if xlsx %}
       <a href="/static/xlsx/{{ notebook.nbk_id}}.xlsx">
         <button type="button" class="btn btn-default navbar-btn">xls</button>

@@ -2,7 +2,8 @@
 from flask.ext.login import login_required, current_user
 from app.decorators import admin_required
 import requests
-from flask import current_app, request, render_template, jsonify, abort
+from flask import current_app, request
+from flask import render_template, jsonify, abort, url_for
 from . import ajax
 from app.shared.models.user import make_api_key
 from app.shared.models.user import User
@@ -10,7 +11,7 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.data import Data
 from app.shared.models.message import Message
-from app import xlsx_q
+from tasks import long_task, create_notebook
 import calendar
 import datetime
 import json
@@ -215,6 +216,7 @@ def gateway_test_check():
 @ajax.route('/forecast', methods=['POST'])
 @login_required
 def forecast():
+    """Retrieve a forecast for a specific lat/lon."""
     try:
         lat = request.form["lat"]
         lng = request.form["lng"]
@@ -234,6 +236,7 @@ def forecast():
 @ajax.route('/reset_api_key', methods=['GET'])
 @login_required
 def reset_api_key():
+    """Reset the user API key."""
     user = User.objects(id=request.args['id']).first()
     user.api_key = make_api_key()
     user.save()
@@ -243,6 +246,7 @@ def reset_api_key():
 @ajax.route('/set_nbk_event_sensor', methods=['GET'])
 @login_required
 def set_nbk_event_sensor():
+    """Set the current notebook's event sensor."""
     # We use the current event resolution and the passed event sensor
     # to set this notebook's event_sensor field.
     notebook = Notebook.objects(nbk_id=request.args['nbk_id']).first()
@@ -266,9 +270,50 @@ def set_nbk_event_sensor():
     return jsonify(**response)
 
 
+@ajax.route('/longtask', methods=['POST'])
+def longtask():
+    """Run an arbitrary long task."""
+    task = long_task.apply_async()
+    return jsonify({}), 202, {'Location': url_for('.taskstatus',
+                                                  task_id=task.id)}
+
+
+@ajax.route('/status/<task_id>')
+def taskstatus(task_id):
+    """Get the task status for <task_id>."""
+    task = long_task.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        # job did not start yet
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 1),
+            'status': task.info.get('status', '')
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # something went wrong in the background job
+        response = {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'status': str(task.info),  # this is the exception raised
+        }
+    return jsonify(response)
+
+
 @ajax.route('/check_job/<queue>/<job_id>', methods=['GET'])
 @login_required
 def check_job(queue, job_id):
+    """Check on a job in a rq queue."""
     from app import mqtt_q, xlsx_q
     if queue == 'mqtt':
         this_q = mqtt_q
@@ -285,33 +330,17 @@ def check_job(queue, job_id):
 @ajax.route('/create_notebook_xls', methods=['POST'])
 @login_required
 def create_notebook_xls():
+    """Inititate xlsx notebook generation."""
     nbk_id = request.form["nbk_id"]
-    notebook = Notebook.objects(id=nbk_id).first()
-    if not notebook:
-        return {
-            'status': 'error',
-            'message': 'Notebook not found.'
-        }
-    email = current_user.email
-    if not email:
-        message = 'You must register and have a verified email to export data.'
-        return json.dumps({
-            'status': 'error',
-            'message': message
-        })
-    filename = current_app.config['XLSX_PATH'] + '%s.xlsx' % str(notebook.id)
-    job = xlsx_q(notebook.xls(filename=filename))
-    # We need to pass this job id back, so that the js can
-    # keep checking the job status.
-    return json.dumps({
-        'job_id': job.id,
-        'job_status': job.get_status()
-    })
+    task = create_notebook.delay(nbk_id=nbk_id)
+    return jsonify({}), 202, {'Location': url_for('.taskstatus',
+                                                  task_id=task.id)}
 
 
 @ajax.route('/get_data/<nbk_id>/<sensor_id>', methods=['GET'])
 @login_required
 def get_data(nbk_id, sensor_id):
+    """Get data for <nbk_id> and <sensor_id>, returned as json."""
     sensor = Sensor.objects(id=sensor_id).first()
     notebook = Notebook.objects(nbk_id=nbk_id).first()
     data = Data.objects(
@@ -340,6 +369,7 @@ def get_data(nbk_id, sensor_id):
 @ajax.route('/all_data/<nbk_id>', methods=['GET'])
 @login_required
 def all_data(nbk_id):
+    """Get all data for <nbk_id>, returned as json."""
     my_response = []
     notebook = Notebook.objects(nbk_id=nbk_id).first()
     for sensor in notebook.sensors:

@@ -141,6 +141,31 @@ function check_status(queue, job_id) {
     });
 }
 
+
+function update_xls_progress(status_url, l, nbk_id) {
+        // send GET request to status URL
+        console.log('updating status...')
+        $.getJSON(status_url, function(data) {
+            // update UI
+            console.log(data)
+            if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+                // show result
+                l.stop()
+                $('#xlsButton').prop("href", "/static/xlsx/" + nbk_id + ".xlsx");
+                $('#xlsButton').html("Download .xls");
+                $('#xlsButton').prop("onclick", "");
+                console.log(data['state'])
+            }
+            else {
+                // rerun in 2 seconds
+                console.log(data['state'])
+                setTimeout(function() {
+                    update_xls_progress(status_url, l, nbk_id);
+                }, 2000);
+            }
+        });
+    }
+
 function create_notebook_xls(nbk_id, user_id) {
     'use strict';
     var l = Ladda.create(document.querySelector( '#xlsButton' ));
@@ -150,12 +175,10 @@ function create_notebook_xls(nbk_id, user_id) {
         type: "POST",
         url: '../../ajax/create_notebook_xls',
         data: {'nbk_id': nbk_id},
-        success: function (response) {
-            console.log(response)
-            l.stop();
-            $('#xlsButton').prop("href", "/static/xlsx/" + nbk_id + ".xlsx");
-            $('#xlsButton').html("Download .xls");
-            $('#xlsButton').prop("onclick", "");
+        success: function (data, status, request) {
+            console.log('hello');
+            console.log(request.getResponseHeader('Location'));
+            update_xls_progress(request.getResponseHeader('Location'), l, nbk_id);
         },
         error: function (response) {
             l.stop();
