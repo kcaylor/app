@@ -7,6 +7,11 @@ celery = Celery(__name__)
 celery.config_from_object("celery_settings")
 
 
+def upload_status(amount, total):
+    """Callback function for boto S3 upload."""
+    pass
+
+
 @celery.task(bind=True)
 def create_xls_notebook(self, nbk_id=None):
     """Background process that creates an xlsx file from notebook data."""
@@ -31,7 +36,7 @@ def create_xls_notebook(self, nbk_id=None):
         from app.shared.models.notebook import Notebook
         notebook = Notebook.objects(id=nbk_id).first()
         tmp_file = notebook.xls()
-        key.set_contents_from_filename(tmp_file)
+        key.set_contents_from_filename(tmp_file, cb=upload_status)
         url = key.generate_url(expires_in=0, query_auth=False)
         bucket.set_acl('public-read', s3_filename)
         self.update_state(state='PROGESS', meta={'url': url, 'nbk_id': nbk_id})

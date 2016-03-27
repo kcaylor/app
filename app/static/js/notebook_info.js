@@ -144,10 +144,8 @@ function check_status(queue, job_id) {
 
 function update_xls_progress(status_url, l, nbk_id) {
         // send GET request to status URL
-        console.log('updating status...')
         $.getJSON(status_url, function(data) {
             // update UI
-            console.log(data)
             if (data['state'] == 'FAILURE') {
                 l.stop()
                 $('#xlsButton').html('<span class="ladda-label">Error creating .xlsx file</span>');
@@ -160,12 +158,9 @@ function update_xls_progress(status_url, l, nbk_id) {
                 $('#xlsButton').prop("href", data['url']);
                 $('#xlsButton').html('<span class="ladda-label">Download .xls file</span>');
                 $('#xlsButton').prop("onclick", "");
-                console.log(data['state'])
             }
             else {
                 // rerun in 2 seconds
-                console.log(data['state'])
-                console.log(data)
                 setTimeout(function() {
                     update_xls_progress(status_url, l, nbk_id);
                 }, 2000);
@@ -176,7 +171,6 @@ function update_xls_progress(status_url, l, nbk_id) {
 function create_notebook_xls(nbk_id, user_id) {
     'use strict';
     var l = Ladda.create(document.querySelector( '#xlsButton' ));
-    console.log(nbk_id)
     // $('#xlsButton').html('Working...');
     l.start();
     $.ajax({
@@ -184,8 +178,6 @@ function create_notebook_xls(nbk_id, user_id) {
         url: '../../ajax/create_notebook_xls',
         data: {'nbk_id': nbk_id},
         success: function (data, status, request) {
-            console.log('hello');
-            console.log(request.getResponseHeader('Location'));
             update_xls_progress(request.getResponseHeader('Location'), l, nbk_id);
         },
         error: function (response) {
