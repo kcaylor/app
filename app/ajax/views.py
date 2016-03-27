@@ -11,7 +11,7 @@ from app.shared.models.sensor import Sensor
 from app.shared.models.notebook import Notebook
 from app.shared.models.data import Data
 from app.shared.models.message import Message
-from tasks import long_task, create_notebook
+from tasks import create_xls_notebook
 import calendar
 import datetime
 import json
@@ -270,18 +270,10 @@ def set_nbk_event_sensor():
     return jsonify(**response)
 
 
-@ajax.route('/longtask', methods=['POST'])
-def longtask():
-    """Run an arbitrary long task."""
-    task = long_task.apply_async()
-    return jsonify({}), 202, {'Location': url_for('.taskstatus',
-                                                  task_id=task.id)}
-
-
 @ajax.route('/status/<task_id>')
 def taskstatus(task_id):
     """Get the task status for <task_id>."""
-    task = long_task.AsyncResult(task_id)
+    task = create_xls_notebook.AsyncResult(task_id)
     if task.state == 'PENDING':
         # job did not start yet
         response = {
@@ -312,7 +304,7 @@ def taskstatus(task_id):
 def create_notebook_xls():
     """Inititate xlsx notebook generation."""
     nbk_id = request.form["nbk_id"]
-    task = create_notebook.delay(nbk_id=nbk_id)
+    task = create_xls_notebook.delay(nbk_id=nbk_id)
     return jsonify({}), 202, {'Location': url_for('.taskstatus',
                                                   task_id=task.id)}
 

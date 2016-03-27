@@ -8,6 +8,10 @@ venv
 # Utility scripts for Kelly (and Gist):
 config.codekit
 
+# Local xlsx exports
+*.xslx
+*.xls
+
 Procfile.local
 .DS_Store
 
@@ -38,7 +42,6 @@ tests/
 cover/
 share/
 man/
-tmp/
 bower_components/
 app/static/xlsx/*.xlsx
 

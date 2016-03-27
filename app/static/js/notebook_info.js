@@ -148,7 +148,13 @@ function update_xls_progress(status_url, l, nbk_id) {
         $.getJSON(status_url, function(data) {
             // update UI
             console.log(data)
-            if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
+            if (data['state'] == 'FAILURE') {
+                l.stop()
+                $('#xlsButton').html('<span class="ladda-label">Error creating .xlsx file</span>');
+                $('#xlsButton').prop("onclick", "");
+                $('#xlsButton').attr("data-color","red");
+            }
+            else if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                 // show result
                 l.stop()
                 $('#xlsButton').prop("href", data['url']);
@@ -170,6 +176,7 @@ function update_xls_progress(status_url, l, nbk_id) {
 function create_notebook_xls(nbk_id, user_id) {
     'use strict';
     var l = Ladda.create(document.querySelector( '#xlsButton' ));
+    console.log(nbk_id)
     // $('#xlsButton').html('Working...');
     l.start();
     $.ajax({
@@ -185,6 +192,7 @@ function create_notebook_xls(nbk_id, user_id) {
             l.stop();
             $('#xlsButton').html("Oops! It didn't work.");
             $('#xlsButton').prop("onclick", "");
+            $('#xlsButton').attr("data-color","red");
         }
     });
 }
