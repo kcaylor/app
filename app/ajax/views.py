@@ -283,7 +283,9 @@ def taskstatus(task_id):
     elif task.state != 'FAILURE':
         response = {
             'state': task.state,
-            'url': task.info.get('url', 0)
+            'url': task.info.get('url', 0),
+            'so_far': task.info.get('s3_size', 0),
+            'total': task.info.get('tmp_size', 1)
             # 'current': task.info.get('current', 0),
             # 'total': task.info.get('total', 1),
             # 'status': task.info.get('status', '')

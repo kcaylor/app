@@ -11,6 +11,7 @@ config.codekit
 # Local xlsx exports
 *.xslx
 *.xls
+tmp/*.xlsx
 
 Procfile.local
 .DS_Store

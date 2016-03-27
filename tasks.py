@@ -2,9 +2,12 @@
 from celery import Celery
 from app import create_app
 import os
+import time
+import requests
 
 celery = Celery(__name__)
 celery.config_from_object("celery_settings")
+celery.control.purge()  # Purge the job queue on startup.
 
 
 def upload_status(amount, total):
@@ -36,8 +39,25 @@ def create_xls_notebook(self, nbk_id=None):
         from app.shared.models.notebook import Notebook
         notebook = Notebook.objects(id=nbk_id).first()
         tmp_file = notebook.xls()
+        tmp_size = float(os.path.getsize(tmp_file))
         key.set_contents_from_filename(tmp_file, cb=upload_status)
         url = key.generate_url(expires_in=0, query_auth=False)
         bucket.set_acl('public-read', s3_filename)
         self.update_state(state='PROGESS', meta={'url': url, 'nbk_id': nbk_id})
+        for i in range(10):
+            resp = requests.head(url)
+            size = float(resp.headers['content-length'])
+            self.update_state(
+                state='PROGESS',
+                meta={
+                    'url': url,
+                    'nbk_id': nbk_id,
+                    's3_size': size,
+                    'tmp_size': tmp_size
+                }
+            )
+            if size >= tmp_size * .95:
+                break
+            else:
+                time.sleep(1)  # wait one second for upload to continue.
         return {'status': 'Task completed!', 'url': url}
