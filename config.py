@@ -45,6 +45,8 @@ class Config:
     TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
     TWILIO_URL = 'https://api.twilio.com/2010-04-01/Accounts/'
     TWILIO_NUMBER = os.getenv('TWILIO_NUMBER')
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     # REDIS_URL = os.environ.get('REDIS_DEV_URL')
     # BROKER_URL = REDIS_URL
     # CELERY_RESULT_BACKEND = REDIS_URL

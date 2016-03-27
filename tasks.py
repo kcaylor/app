@@ -35,10 +35,27 @@ def long_task(self):
 def create_notebook(self, nbk_id=None):
     """Background process that creates an xlsx file from notebook data."""
     from app import create_app
+    from boto.s3.connection import S3Connection
     this_app = create_app(os.getenv('FLASK_CONFIG') or 'default')
     with this_app.app_context():
+        conn = S3Connection(
+            this_app.config['AWS_ACCESS_KEY_ID'],
+            this_app.config['AWS_SECRET_ACCESS_KEY']
+        )
+        bucket = conn.get_bucket('pulsepodnotebooks')
+        # Set the Amazon S3 filename:
+        s3_filename = '%s.xlsx' % str(nbk_id)
+        # filename = this_app.config['XLSX_PATH'] + '%s.xlsx' % str(nbk_id)
+        # xlsx_file = '%s.xlsx' % str(nbk_id)
+        # Create this key.
+        key = bucket.new_key(s3_filename)
+        bucket.set_acl('public-read', s3_filename)
+        # Generate a URL for this key:
+        url = key.generate_url(expires_in=0, query_auth=False)
+        # Update the celery task with the URL:
+        self.update_state(state='PROGESS', meta={'url': url})
+        # Build the notebook:
         notebook = Notebook.objects(id=nbk_id).first()
-        filename = current_app.config['XLSX_PATH'] + '%s.xlsx' % str(nbk_id)
-        self.update_state(state='PROGESS')
-        notebook.xls(filename=filename)
-        return {'status': 'Task completed!', 'filename': filename}
+        tmp_file = notebook.xls()
+        key.set_contents_from_filename(tmp_file)
+        return {'status': 'Task completed!', 'url': url}

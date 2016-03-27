@@ -1,8 +1,10 @@
+"""Notebook model definition for app.pulsepod.io."""
 from . import db
 import datetime
 
 
 class Notebook(db.Document):
+    """Notebook class object."""
 
     name = db.StringField(db_field='name')
     pod_id = db.IntField(
@@ -58,37 +60,47 @@ class Notebook(db.Document):
     }
 
     def __repr__(self):
+        """Representation of notebook class object."""
         return '<Notebook %r>' % self.name
 
     def get_id(self):
+        """Return the notebook id."""
         return unicode(self.id)
 
     def lat(self):
+        """Return the notebook latitude."""
         return self.location['coordinates'][1]
 
     def lng(self):
+        """Return the notebook longitude."""
         return self.location['coordinates'][0]
 
     def map_coords(self):
+        """Return the map coordinates of this notebook."""
         return [self.location['coordinates'][1],
                 self.location['coordinates'][0]]
 
     def reset_observations(self):
+        """Reset the total number of notebook observations."""
         from .data import Data
         self.observations = Data.objects(notebook=self).count()
         self.save()
 
     def xls(self, filename=None):
+        """Generate an xlsx file from notebook data."""
         import xlsxwriter
         from .data import Data
-        from flask import current_app as app
-        xlsx_path = app.config['XLSX_PATH']
+        # from flask import current_app as app
+        # xlsx_path = app.config['XLSX_PATH']
         # Go get all the data for this notebook
         data = Data.objects(notebook=self.id)
         # Initalize the workbook
         if not filename:
-            filename = xlsx_path + '%s.xlsx' % str(self.id)
-        workbook = xlsxwriter.Workbook(filename)
+            filename = 'tmp/%s.xlsx' % str(self.id)
+        workbook = xlsxwriter.Workbook(
+            filename,
+            {'in_memory': True}
+        )
         # Set up formatting for cells
         date_format = workbook.add_format(
             {'num_format': 'mmm d yyyy hh:mm:ss AM/PM'}
@@ -226,7 +238,7 @@ class Notebook(db.Document):
                 )
 
         workbook.close()
-
+        return filename
         # Put the file on Amazon...?
         # Why? Just que it and re-generate on each request...
         # Or write it to Amazon, and then re-write on each new post.
@@ -234,6 +246,7 @@ class Notebook(db.Document):
 
     @staticmethod
     def generate_fake(count=100):
+        """Generate a fake notebook for testing purposes."""
         from random import choice, randint
         from faker import Faker
         from .pod import Pod

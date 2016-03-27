@@ -151,7 +151,7 @@ function update_xls_progress(status_url, l, nbk_id) {
             if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                 // show result
                 l.stop()
-                $('#xlsButton').prop("href", "/static/xlsx/" + nbk_id + ".xlsx");
+                $('#xlsButton').prop("href", data['url']);
                 $('#xlsButton').html('<span class="ladda-label">Download .xls file</span>');
                 $('#xlsButton').prop("onclick", "");
                 console.log(data['state'])
@@ -159,6 +159,7 @@ function update_xls_progress(status_url, l, nbk_id) {
             else {
                 // rerun in 2 seconds
                 console.log(data['state'])
+                console.log(data)
                 setTimeout(function() {
                     update_xls_progress(status_url, l, nbk_id);
                 }, 2000);
