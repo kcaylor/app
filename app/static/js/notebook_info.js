@@ -168,7 +168,7 @@ function update_xls_progress(status_url, l, nbk_id) {
                 console.log(data)
                 setTimeout(function() {
                     update_xls_progress(status_url, l, nbk_id);
-                }, 2000);
+                }, 500);
             }
         });
     }

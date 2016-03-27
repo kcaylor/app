@@ -23,7 +23,7 @@ def create_xls_notebook(self, nbk_id=None):
     # Guess the URL and update the link before anything else.
     url = 'https://pulsepodnotebooks.s3.amazonaws.com/{id}.xlsx'.format(
         id=nbk_id)
-    self.update_state(state='PROGESS', meta={'url': url, 'nbk_id': nbk_id})
+    # self.update_state(state='PROGESS', meta={'url': url, 'nbk_id': nbk_id})
     with this_app.app_context():
         conn = S3Connection(
             this_app.config['AWS_ACCESS_KEY_ID'],
@@ -43,7 +43,15 @@ def create_xls_notebook(self, nbk_id=None):
         key.set_contents_from_filename(tmp_file, cb=upload_status)
         url = key.generate_url(expires_in=0, query_auth=False)
         bucket.set_acl('public-read', s3_filename)
-        self.update_state(state='PROGESS', meta={'url': url, 'nbk_id': nbk_id})
+        self.update_state(
+            state='PROGESS',
+            meta={
+                'url': url,
+                'nbk_id': nbk_id,
+                's3_size': 1,
+                'tmp_size': tmp_size
+            }
+        )
         for i in range(10):
             resp = requests.head(url)
             size = float(resp.headers['content-length'])
