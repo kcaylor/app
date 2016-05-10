@@ -57,7 +57,7 @@ function set_nbk_event_sensor(nbk_id, event_var, sid, nbk_name) {
     });
 }
 
-$.fn.editable.defaults.mode = 'inline';
+// $.fn.editable.defaults.mode = 'inline';
 
 $(".tm-input").tagsManager({
     prefilled: nbk_tags,
@@ -203,6 +203,7 @@ $(document).ready(function () {
     $('#notebook_name').editable({
         placement: "right",
         inputclass: "notebook_name",
+        mode: "inline",
         error: function (errors) {
         },
         display: function (value, response) {

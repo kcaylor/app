@@ -24,15 +24,15 @@
     <script src="/static/js/spin.min.js"</script>
     <script src="/static/js/ladda.jquery.min.js"</script>
     <script src="/static/js/ladda.min.js"</script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
     <script src="/static/js/tagmanager.js"></script>
-    <script src="/static/js/notebook_info.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.4.6/rickshaw.min.js"></script>
     <script src="/static/js/Rickshaw.Graph.RangeSlider.Preview.js"></script>
     <script src="/static/js/Rickshaw.Graph.RangeSlider.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.1/modernizr.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="/static/js/notebook_info.js"></script>
 {% endblock %}
 
 {% block page_content %}
@@ -45,7 +45,7 @@
 <div class="page-header">
 {% if current_user.can_edit(notebook) %}
   <h2>
-      <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}" 
+      <a href="#" id="notebook_name" data-type="text" data-pk="{{notebook.id}}"  data-url="{{ url_for('edit.nbk_name') }}"
          data-title="Change this notebook name">{{notebook.name}}</a>
 {% else %}
   <h2>{{notebook.name}}
@@ -78,7 +78,7 @@
       {% if sensor.variable == 'Counts' and current_data[sensor.get_id()] is defined %}
           <div id='event-alert' class="alert alert-warning alert-dismissible" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-           Hi! It looks like you've connected an event sensor. Is it measuring <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.nbk_id}}','Rainfall','{{sensor.get_id()}}','{{notebook.name}}')"><button type="button" class="btn btn-success">Rainfall</button></a> or is it measuring 
+           Hi! It looks like you've connected an event sensor. Is it measuring <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.nbk_id}}','Rainfall','{{sensor.get_id()}}','{{notebook.name}}')"><button type="button" class="btn btn-success">Rainfall</button></a> or is it measuring
             <a href="javascript:void(0);" onclick="set_nbk_event_sensor('{{notebook.nbk_id}}','Flow','{{sensor.get_id()}}','{{notebook.name}}')"><button type="button" class="btn btn-success">Flow</button></a>?
           </div>
           <br>
@@ -87,7 +87,7 @@
 {% endif %}
 
 <div id="forecast" class="container">
-</div> 
+</div>
 
 <!-- Nav tabs -->
 <div>
@@ -109,7 +109,7 @@
         <thead>
         <tr>
             <th>Address</th><th>Latitude</th><th>Longitude</th><th>Elevation</th>
-        </tr> 
+        </tr>
         </thead>
         <tbody>
             <tr>
