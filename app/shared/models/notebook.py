@@ -214,9 +214,13 @@ class Notebook(db.Document):
                         row, col + 2, self.lng(), location_format
                     )
                     if type(value) is int or type(value) is float:
-                        data_worksheet[this_sensor].write(
-                            row, col + 3, value, value_format
-                        )
+                        try:
+                            data_worksheet[this_sensor].write(
+                                row, col + 3, value, value_format
+                            )
+                        except:
+                            print "Value {value} is bad.".format(
+                                value=value)
                     row += 1
                 data_worksheet[this_sensor].write(
                     row, 2, 'Average:', average_format
